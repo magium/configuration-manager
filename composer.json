@@ -12,7 +12,7 @@
   "autoload": {
     "psr-4": {
       "Magium\\Configuration\\": "lib/",
-      "Magium\\Configuration\\Tests": "tests/"
+      "Magium\\Configuration\\Tests\\": "tests/"
     }
   }
 }
