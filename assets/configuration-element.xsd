@@ -13,7 +13,7 @@
                                             <xs:complexType mixed="true">
                                                 <xs:sequence>
                                                     <xs:element type="xs:string" name="description" minOccurs="0" />
-                                                    <xs:element type="xs:string" name="value" minOccurs="0">
+                                                    <xs:element name="value" minOccurs="0">
                                                         <xs:complexType mixed="true">
                                                             <xs:attribute type="xs:string" name="callbackToStorage"
                                                                           use="optional"/>
