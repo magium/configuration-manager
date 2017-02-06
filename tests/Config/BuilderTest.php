@@ -7,7 +7,7 @@ use Magium\Configuration\Config\Config;
 use Magium\Configuration\Config\Storage\StorageInterface;
 use PHPUnit\Framework\TestCase;
 
-class TestBuilder extends TestCase
+class BuilderTest extends TestCase
 {
 
     public function testBuildConfigurationStructureMerges()
