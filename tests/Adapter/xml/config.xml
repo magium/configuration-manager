@@ -5,7 +5,7 @@
     <section id="general" name="General">
         <group id="website" name="Website">
             <element id="title" name="Title">
-                <default>My Homepage</default>
+                <value>My Homepage</value>
             </element>
             <element id="languages" name="Languages" source="Namespace\MySource" type="multi"/>
         </group>

@@ -7,7 +7,7 @@ use Magium\Configuration\File\InvalidFileStructureException;
 use Magium\Configuration\File\XmlFile;
 use PHPUnit\Framework\TestCase;
 
-class TestXmlFile extends TestCase
+class XmlFileTest extends TestCase
 {
 
     public function testInvalidFileThrowsException()

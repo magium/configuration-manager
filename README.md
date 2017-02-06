@@ -69,3 +69,4 @@ Here are a list of features that I want to have included
   * ACL resources
 * A local/remote cache system that caches the configuration locally, but synchronizes with a remote cache
 * Integrations/adapters with multiple third party Dependency Injection Containers, allowing you to either manage DI configuration centrally, and/or, modify DI configuration on the fly without requiring a deployment.
+* Oh yes, and integration with persistent storage
