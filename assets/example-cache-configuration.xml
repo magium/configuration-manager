@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration xmlns="http://www.magiumlib.com/BaseConfiguration"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.magiumlib.com/BaseConfiguration cache-configuration.xsd">
+    <cache>
+        <adapter>file</adapter>
+        <host>localhost</host>
+        <port>6379</port>
+    </cache>
+</configuration>

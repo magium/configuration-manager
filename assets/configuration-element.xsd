@@ -1,0 +1,44 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+           targetNamespace="http://www.magiumlib.com/Configuration" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="configuration">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="section" maxOccurs="unbounded" minOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="group" maxOccurs="unbounded" minOccurs="1">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="element" maxOccurs="unbounded" minOccurs="1">
+                                            <xs:complexType mixed="true">
+                                                <xs:sequence>
+                                                    <xs:element type="xs:string" name="description" minOccurs="0" />
+                                                    <xs:element type="xs:string" name="value" minOccurs="0">
+                                                        <xs:complexType mixed="true">
+                                                            <xs:attribute type="xs:string" name="callbackToStorage"
+                                                                          use="optional"/>
+                                                            <xs:attribute type="xs:string" name="callbackFromStorage"
+                                                                          use="optional"/>
+                                                        </xs:complexType>
+                                                    </xs:element>
+                                                </xs:sequence>
+                                                <xs:attribute type="xs:string" name="id" use="required"/>
+                                                <xs:attribute type="xs:string" name="name" use="optional"/>
+                                                <xs:attribute type="xs:string" name="source" use="optional"/>
+                                                <xs:attribute type="xs:string" name="type" use="optional"/>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                    <xs:attribute type="xs:string" name="id" use="required"/>
+                                    <xs:attribute type="xs:string" name="name" use="optional"/>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                        <xs:attribute type="xs:string" name="id" use="required"/>
+                        <xs:attribute type="xs:string" name="name" use="optional"/>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
