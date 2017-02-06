@@ -14,5 +14,9 @@
       "Magium\\Configuration\\": "lib/",
       "Magium\\Configuration\\Tests\\": "tests/"
     }
+  },
+  "require": {
+    "phpunit/phpunit": "5.x.x",
+    "zendframework/zend-cache": "^2.7"
   }
 }
