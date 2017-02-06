@@ -59,3 +59,13 @@ I don't have the working code done yet, but it would like something like this:
 $config = $configManager->getConfig(getenv('ENVIRONMENT'));
 $siteTitle = $config->getValue('general/website/title');
 ```
+
+### Moving forward
+
+Here are a list of features that I want to have included
+
+* An HTML based UI for making configuration changes
+  * Embeddable user restrictions
+  * ACL resources
+* A local/remote cache system that caches the configuration locally, but synchronizes with a remote cache
+* Integrations/adapters with multiple third party Dependency Injection Containers, allowing you to either manage DI configuration centrally, and/or, modify DI configuration on the fly without requiring a deployment.
