@@ -37,9 +37,4 @@ class Config extends \SimpleXMLElement
         return false;
     }
 
-    public function merge(\SimpleXMLElement $element)
-    {
-
-    }
-
 }

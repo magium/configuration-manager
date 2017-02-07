@@ -114,7 +114,6 @@ class BuilderTest extends TestCase
         $builder->build();
     }
 
-
     public function testXmlFileMerge()
     {
         $builder = $this->getMockConfigurationBuilder();
