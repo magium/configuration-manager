@@ -4,7 +4,10 @@ namespace Magium\Configuration\Tests\Config;
 
 use Magium\Configuration\Config\Builder;
 use Magium\Configuration\Config\Config;
+use Magium\Configuration\Config\InvalidConfigurationLocationException;
+use Magium\Configuration\Config\InvalidDirectoryException;
 use Magium\Configuration\Config\Storage\StorageInterface;
+use Magium\Configuration\File\XmlFile;
 use PHPUnit\Framework\TestCase;
 
 class BuilderTest extends TestCase
@@ -17,9 +20,26 @@ class BuilderTest extends TestCase
         $builder = $this->getMockConfigurationBuilder(null, 0);
 
         $builder->mergeStructure($base, $merge);
-        $xml = $base->asXML();
         $base->registerXPathNamespace('s', 'http://www.magiumlib.com/Configuration');
         $paths = $base->xpath('/*/s:section[@id="sectionId"]/s:group[@id="groupId"]/s:element[@id="elementId2"]');
+        self::assertCount(1, $paths);
+        self::assertEquals('Test Value 2', (string)$paths[0]->value);
+    }
+
+    public function testBuildConfigurationNewChildren()
+    {
+        /*
+         * This code is almost exactly the same as the previous test except that new XML nodes are created whereas
+         * previously they were merged.  This difference is in the result of the $merge variable
+         */
+
+        $base = $this->getStructureXml();
+        $merge = $this->getUniqueStructureXml();
+        $builder = $this->getMockConfigurationBuilder(null, 0);
+
+        $builder->mergeStructure($base, $merge);
+        $base->registerXPathNamespace('s', 'http://www.magiumlib.com/Configuration');
+        $paths = $base->xpath('/*/s:section[@id="sectionId2"]/s:group[@id="groupId2"]/s:element[@id="elementId2"]');
         self::assertCount(1, $paths);
         self::assertEquals('Test Value 2', (string)$paths[0]->value);
     }
@@ -83,6 +103,31 @@ class BuilderTest extends TestCase
         self::assertTrue($value);
     }
 
+    public function testConfigOutsideSecureBaseFails()
+    {
+        $this->expectException(InvalidConfigurationLocationException::class);
+        $builder = $this->getMockConfigurationBuilder(null, 0);
+        $file = new XmlFile(realpath(__DIR__ . '/xml/config-merge-1.xml'));
+        $builder->registerConfigurationFile($file);
+        $builder->build();
+    }
+
+
+    public function testXmlFileMerge()
+    {
+        $builder = $this->getMockConfigurationBuilder();
+        $base = realpath(__DIR__ . '/xml');
+        $builder->addSecureBase($base);
+
+        foreach (['/xml/config-merge-1.xml', '/xml/config-merge-2.xml'] as $file) {
+            $file = new XmlFile(realpath(__DIR__ . $file));
+            $builder->registerConfigurationFile($file);
+        }
+        $config = $builder->build();
+        $title = $config->getValue('general/website/title');
+        self::assertEquals('My Homepage', $title);
+    }
+
     protected function getMockConfigurationBuilder($value = null, $atLeast = 1)
     {
         $storageBuilder = $this->getMockBuilder(StorageInterface::class);
@@ -124,6 +169,7 @@ class BuilderTest extends TestCase
 XML
         );
     }
+
     protected function getMergedStructureXml()
     {
         $schemaFile = realpath(__DIR__ . '/../../assets/configuration-element.xsd');
@@ -133,6 +179,26 @@ XML
           xsi:schemaLocation="http://www.magiumlib.com/Configuration $schemaFile">
     <section id="sectionId">
       <group id="groupId">
+          <element id="elementId2">
+              <value>Test Value 2</value>
+          </element>
+      </group>
+    </section>
+</configuration>
+XML
+        );
+    }
+
+
+    protected function getUniqueStructureXml()
+    {
+        $schemaFile = realpath(__DIR__ . '/../../assets/configuration-element.xsd');
+        return new \SimpleXMLElement(<<<XML
+<configuration xmlns="http://www.magiumlib.com/Configuration"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.magiumlib.com/Configuration $schemaFile">
+    <section id="sectionId2">
+      <group id="groupId2">
           <element id="elementId2">
               <value>Test Value 2</value>
           </element>

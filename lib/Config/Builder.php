@@ -46,9 +46,19 @@ class Builder
         $this->secureBases[] = $path;
     }
 
-    public function build(Config $config)
+    /**
+     * @param Config|null $config
+     * @return Config
+     * @throws InvalidConfigurationLocationException
+     * @throws InvalidFileException
+     */
+
+    public function build($context = Config::CONTEXT_DEFAULT, Config $config = null)
     {
-        $structure = new \SimpleXMLElement('<structure />');
+        if (!$config instanceof Config) {
+            $config = new Config('<config />');
+        }
+        $structure = null;
         foreach ($this->files as $file) {
             if (!$file instanceof AdapterInterface) {
                 throw new InvalidFileException('Configuration file object must implement ' . AdapterInterface::class);
@@ -67,14 +77,20 @@ class Builder
                 throw new InvalidConfigurationLocationException($path . ' is not in one of the designated secure configuration paths.');
             }
             $simpleXml = $file->toXml();
-            $this->mergeStructure($structure, $simpleXml);
+            if (!$structure instanceof \SimpleXMLElement) {
+                $structure = $simpleXml;
+            } else {
+                $this->mergeStructure($structure, $simpleXml);
+            }
         }
 
-        $this->buildConfigurationObject($structure, $config);
+        $xml = $structure->asXML();
+
+        $this->buildConfigurationObject($structure, $config, $context);
 
         $hash = hash_hmac($this->hashAlgo, $config->asXML(), '');
 
-
+        return $config;
     }
 
     /**
@@ -109,6 +125,7 @@ class Builder
 
                 if ($value) {
                     $config->$sectionId->$groupId->$elementId = $value;
+                    $xml = $config->asXML();
                 }
             }
         }
