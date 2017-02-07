@@ -12,7 +12,7 @@ class Builder
 
     protected $files = [];
 
-    protected $secureBases;
+    protected $secureBases = [];
     protected $cache;
     protected $hashAlgo;
     protected $storage;
@@ -25,10 +25,13 @@ class Builder
     )
     {
         $this->cache = $cache;
-        $this->secureBases = $secureBases;
         $this->storage = $storage;
         $this->hashAlgo = $hashAlgo;
         $this->storage = $storage;
+
+        foreach ($secureBases as $base) {
+            $this->addSecureBase($base);
+        }
     }
 
 
@@ -55,6 +58,10 @@ class Builder
 
     public function build($context = Config::CONTEXT_DEFAULT, Config $config = null)
     {
+        if (!$this->files) {
+            throw new MissingConfigurationException('No configuration files have been provided.  Please add via registerConfigurationFile()');
+        }
+
         if (!$config instanceof Config) {
             $config = new Config('<config />');
         }
@@ -83,8 +90,6 @@ class Builder
                 $this->mergeStructure($structure, $simpleXml);
             }
         }
-
-        $xml = $structure->asXML();
 
         $this->buildConfigurationObject($structure, $config, $context);
 
@@ -125,7 +130,6 @@ class Builder
 
                 if ($value) {
                     $config->$sectionId->$groupId->$elementId = $value;
-                    $xml = $config->asXML();
                 }
             }
         }

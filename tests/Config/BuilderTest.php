@@ -6,6 +6,7 @@ use Magium\Configuration\Config\Builder;
 use Magium\Configuration\Config\Config;
 use Magium\Configuration\Config\InvalidConfigurationLocationException;
 use Magium\Configuration\Config\InvalidDirectoryException;
+use Magium\Configuration\Config\MissingConfigurationException;
 use Magium\Configuration\Config\Storage\StorageInterface;
 use Magium\Configuration\File\XmlFile;
 use PHPUnit\Framework\TestCase;
@@ -126,6 +127,13 @@ class BuilderTest extends TestCase
         $config = $builder->build();
         $title = $config->getValue('general/website/title');
         self::assertEquals('My Homepage', $title);
+    }
+
+    public function testBuilderThrowsExceptionWhenNoFilesHaveBeenProvided()
+    {
+        $this->expectException(MissingConfigurationException::class);
+        $builder = $this->getMockConfigurationBuilder(null, 0);
+        $builder->build();
     }
 
     protected function getMockConfigurationBuilder($value = null, $atLeast = 1)
