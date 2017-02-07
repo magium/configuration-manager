@@ -2,6 +2,7 @@
 
 namespace Magium\Configuration\Config;
 
+use Interop\Container\ContainerInterface;
 use Magium\Configuration\Config\Storage\StorageInterface as ConfigurationStorageInterface;
 use Magium\Configuration\File\AdapterInterface;
 use Magium\Configuration\File\InvalidFileException;
@@ -14,6 +15,7 @@ class Builder
 
     protected $secureBases = [];
     protected $cache;
+    protected $container;
     protected $hashAlgo;
     protected $storage;
 
@@ -21,6 +23,7 @@ class Builder
         StorageInterface $cache,
         ConfigurationStorageInterface $storage,
         array $secureBases = [],
+        ContainerInterface $container = null,
         $hashAlgo = 'sha1'
     )
     {
@@ -28,12 +31,20 @@ class Builder
         $this->storage = $storage;
         $this->hashAlgo = $hashAlgo;
         $this->storage = $storage;
+        $this->container = $container;
 
         foreach ($secureBases as $base) {
             $this->addSecureBase($base);
         }
     }
 
+    public function getContainer()
+    {
+        if (!$this->container instanceof ContainerInterface) {
+            throw new MissingContainerException('You are using functionality that requires either a DI Container or Service Locator');
+        }
+        return $this->container;
+    }
 
     public function registerConfigurationFile(AdapterInterface $file)
     {
@@ -124,22 +135,37 @@ class Builder
     /**
      * @param \SimpleXMLElement $structure The object representing the merged configuration structure
      * @param \SimpleXmlElement $config An empty config object to be populated
+     * @return Config The resulting configuration object
      */
 
     public function buildConfigurationObject(\SimpleXMLElement $structure, Config $config, $context = Config::CONTEXT_DEFAULT)
     {
         $structure->registerXPathNamespace('s', 'http://www.magiumlib.com/Configuration');
-        $paths = $structure->xpath('/*/s:section/s:group/s:element');
-        foreach ($paths as $path) {
-            if ($path instanceof \SimpleXMLElement) {
-                $elementId = $path['id'];
-                $group = $path->xpath('..')[0];
+        $elements = $structure->xpath('/*/s:section/s:group/s:element');
+        foreach ($elements as $element) {
+            if ($element instanceof \SimpleXMLElement) {
+                $elementId = $element['id'];
+                $group = $element->xpath('..')[0];
                 $groupId = $group['id'];
                 $section = $group->xpath('..')[0];
                 $sectionId = $section['id'];
                 $configPath = sprintf('%s/%s/%s', $sectionId, $groupId, $elementId);
                 $value = $this->storage->getValue($configPath, $context);
-                if (!$value) {
+                if ($value) {
+                    if (isset($element['callbackFromStorage'])) {
+                        $callbackString = (string)$element['callbackFromStorage'];
+                        $callback = explode('::', $callbackString);
+                        if (count($callback) == 2) {
+                            $callback[0] = $this->getContainer()->get($element['callbackFromStorage']);
+                        } else {
+                            $callback = array_shift($callback);
+                        }
+                        if (!is_callable($callback)) {
+                            throw new UncallableCallbackException('Unable to execute callback: ' . $callbackString);
+                        }
+                        $value = call_user_func($callback, $value);
+                    }
+                } else {
                     $xpath = sprintf('/*/s:section[@id="%s"]/s:group[@id="%s"]/s:element[@id="%s"]/s:value',
                         $sectionId,
                         $groupId,

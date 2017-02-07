@@ -2,11 +2,13 @@
 
 namespace Magium\Configuration\Tests\Config;
 
+use Interop\Container\ContainerInterface;
 use Magium\Configuration\Config\Builder;
 use Magium\Configuration\Config\Config;
 use Magium\Configuration\Config\InvalidConfigurationLocationException;
 use Magium\Configuration\Config\InvalidDirectoryException;
 use Magium\Configuration\Config\MissingConfigurationException;
+use Magium\Configuration\Config\MissingContainerException;
 use Magium\Configuration\Config\Storage\StorageInterface;
 use Magium\Configuration\File\InvalidFileException;
 use Magium\Configuration\File\XmlFile;
@@ -179,6 +181,36 @@ class BuilderTest extends TestCase
         );
     }
 
+    public function testFunctionCallback()
+    {
+        $builder = $this->getMockConfigurationBuilder('some lowercase value');
+        $config = new Config('<config />');
+        $builder->buildConfigurationObject($this->getFunctionCallbackStructureXml(), $config);
+        $value = $config->getValue('section/group/element');
+        self::assertNotNull($value);
+        self::assertEquals(strtoupper($value), $value); // strtoupper() is what we're expecting
+    }
+
+    public function testFunctionalityRequiringObjectContainerThrowsExceptionWhenMissing()
+    {
+        $this->expectException(MissingContainerException::class);
+        $builder = $this->getMockConfigurationBuilder('some lowercase value');
+        $config = new Config('<config />');
+        $builder->buildConfigurationObject($this->getMethodCallbackStructureXml(), $config);
+    }
+
+    public function testObjectCallback()
+    {
+        $container = $this->getMockBuilder(ContainerInterface::class)->setMethods(['get', 'has'])->getMock();
+        $container->expects(self::atLeast(1))->method('get')->willReturn(new Callback());
+        $builder = $this->getMockConfigurationBuilder('some lowercase value', 1, $container);
+        $config = new Config('<config />');
+        $builder->buildConfigurationObject($this->getMethodCallbackStructureXml(), $config);
+        $value = $config->getValue('section/group/element');
+        self::assertNotNull($value);
+        self::assertEquals(strtoupper($value), $value); // strtoupper() is what we're expecting
+    }
+
     protected function getCacheStorageMock()
     {
         $cacheStorage = $this->getMockBuilder(\Zend\Cache\Storage\StorageInterface::class)->getMock();
@@ -198,7 +230,7 @@ class BuilderTest extends TestCase
         return $storage;
     }
 
-    protected function getMockConfigurationBuilder($value = null, $atLeast = 1)
+    protected function getMockConfigurationBuilder($value = null, $atLeast = 1, ContainerInterface $container = null)
     {
         $storage = $this->getPersistenceStorageMock();
         $storage->expects(self::atLeast($atLeast))->method('getValue')->willReturn($value);
@@ -206,7 +238,9 @@ class BuilderTest extends TestCase
 
         $builder = new Builder(
             $cacheStorage,
-            $storage
+            $storage,
+            [],
+            $container
         );
         return $builder;
     }
@@ -265,6 +299,41 @@ XML
           <element id="elementId2">
               <value>Test Value 2</value>
           </element>
+      </group>
+    </section>
+</configuration>
+XML
+        );
+    }
+
+    protected function getFunctionCallbackStructureXml()
+    {
+        $schemaFile = realpath(__DIR__ . '/../../assets/configuration-element.xsd');
+        return new \SimpleXMLElement(<<<XML
+<configuration xmlns="http://www.magiumlib.com/Configuration"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.magiumlib.com/Configuration $schemaFile">
+    <section id="section">
+      <group id="group">
+          <element id="element" callbackFromStorage="strtoupper"/>
+      </group>
+    </section>
+</configuration>
+XML
+        );
+    }
+
+    protected function getMethodCallbackStructureXml()
+    {
+        $class = Callback::class;
+        $schemaFile = realpath(__DIR__ . '/../../assets/configuration-element.xsd');
+        return new \SimpleXMLElement(<<<XML
+<configuration xmlns="http://www.magiumlib.com/Configuration"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.magiumlib.com/Configuration $schemaFile">
+    <section id="section">
+      <group id="group">
+          <element id="element" callbackFromStorage="$class::strtoupper" />
       </group>
     </section>
 </configuration>
