@@ -6,7 +6,9 @@ use Magium\Configuration\Config\Builder;
 use Magium\Configuration\Config\Config;
 use Magium\Configuration\Config\InvalidConfigurationLocationException;
 use Magium\Configuration\Config\InvalidDirectoryException;
+use Magium\Configuration\Config\MissingConfigurationException;
 use Magium\Configuration\Config\Storage\StorageInterface;
+use Magium\Configuration\File\InvalidFileException;
 use Magium\Configuration\File\XmlFile;
 use PHPUnit\Framework\TestCase;
 
@@ -128,18 +130,76 @@ class BuilderTest extends TestCase
         self::assertEquals('My Homepage', $title);
     }
 
-    protected function getMockConfigurationBuilder($value = null, $atLeast = 1)
+    public function testBuilderThrowsExceptionWhenNoFilesHaveBeenProvided()
     {
-        $storageBuilder = $this->getMockBuilder(StorageInterface::class);
-        $storage = $storageBuilder->setMethods(['getValue'])->getMock();
-        $storage->expects(self::atLeast($atLeast))->method('getValue')->willReturn($value);
+        $this->expectException(MissingConfigurationException::class);
+        $builder = $this->getMockConfigurationBuilder(null, 0);
+        $builder->build();
+    }
+
+    public function testExceptionThrownWhenFileAdapterIsWrongType()
+    {
+        $this->expectException(InvalidFileException::class);
+
+        $builder = $this->getMockBuilder(Builder::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getRegisteredConfigurationFiles'])
+            ->getMock();
+        $builder->expects(self::atLeast(1))->method('getRegisteredConfigurationFiles')->willReturn(['a string']);
+        $builder->build();
+    }
+
+    public function testAddingSecureBaseViaConstructor()
+    {
+        $cacheStorage = $this->getCacheStorageMock();
+        $persistenceStorage = $this->getPersistenceStorageMock();
+
+        $builder = new Builder(
+            $cacheStorage,
+            $persistenceStorage,
+            [__DIR__]
+        );
+
+        self::assertArraySubset([__DIR__], $builder->getSecureBases());
+    }
+
+    public function testAddingInvalidSecureBaseViaConstructorThrowsException()
+    {
+        $this->expectException(InvalidDirectoryException::class);
+        $cacheStorage = $this->getCacheStorageMock();
+        $persistenceStorage = $this->getPersistenceStorageMock();
+
+        new Builder(
+            $cacheStorage,
+            $persistenceStorage,
+            ['boogers']
+        );
+    }
+
+    protected function getCacheStorageMock()
+    {
         $cacheStorage = $this->getMockBuilder(\Zend\Cache\Storage\StorageInterface::class)->getMock();
         if (!$cacheStorage instanceof \Zend\Cache\Storage\StorageInterface) {
             throw new \Exception('You created the wrong kind of mock, buddy');
         }
+        return $cacheStorage;
+    }
+
+    protected function getPersistenceStorageMock()
+    {
+        $storageBuilder = $this->getMockBuilder(StorageInterface::class);
+        $storage = $storageBuilder->setMethods(['getValue'])->getMock();
         if (!$storage instanceof StorageInterface) {
             throw new \Exception('You created the wrong kind of mock, buddy');
         }
+        return $storage;
+    }
+
+    protected function getMockConfigurationBuilder($value = null, $atLeast = 1)
+    {
+        $storage = $this->getPersistenceStorageMock();
+        $storage->expects(self::atLeast($atLeast))->method('getValue')->willReturn($value);
+        $cacheStorage = $this->getCacheStorageMock();
 
         $builder = new Builder(
             $cacheStorage,

@@ -12,7 +12,7 @@ class Builder
 
     protected $files = [];
 
-    protected $secureBases;
+    protected $secureBases = [];
     protected $cache;
     protected $hashAlgo;
     protected $storage;
@@ -25,16 +25,30 @@ class Builder
     )
     {
         $this->cache = $cache;
-        $this->secureBases = $secureBases;
         $this->storage = $storage;
         $this->hashAlgo = $hashAlgo;
         $this->storage = $storage;
+
+        foreach ($secureBases as $base) {
+            $this->addSecureBase($base);
+        }
     }
 
 
     public function registerConfigurationFile(AdapterInterface $file)
     {
         $this->files[] = $file;
+    }
+
+    /**
+     * Retrieves a list of secure base directories
+     *
+     * @return array
+     */
+
+    public function getSecureBases()
+    {
+        return $this->secureBases;
     }
 
     public function addSecureBase($base)
@@ -47,6 +61,17 @@ class Builder
     }
 
     /**
+     * Retrieves a list of files that have been registered
+     *
+     * @return array
+     */
+
+    public function getRegisteredConfigurationFiles()
+    {
+        return $this->files;
+    }
+
+    /**
      * @param Config|null $config
      * @return Config
      * @throws InvalidConfigurationLocationException
@@ -55,11 +80,16 @@ class Builder
 
     public function build($context = Config::CONTEXT_DEFAULT, Config $config = null)
     {
+        $files = $this->getRegisteredConfigurationFiles();
+        if (!$files) {
+            throw new MissingConfigurationException('No configuration files have been provided.  Please add via registerConfigurationFile()');
+        }
+
         if (!$config instanceof Config) {
             $config = new Config('<config />');
         }
         $structure = null;
-        foreach ($this->files as $file) {
+        foreach ($files as $file) {
             if (!$file instanceof AdapterInterface) {
                 throw new InvalidFileException('Configuration file object must implement ' . AdapterInterface::class);
             }
@@ -83,8 +113,6 @@ class Builder
                 $this->mergeStructure($structure, $simpleXml);
             }
         }
-
-        $xml = $structure->asXML();
 
         $this->buildConfigurationObject($structure, $config, $context);
 
@@ -125,7 +153,6 @@ class Builder
 
                 if ($value) {
                     $config->$sectionId->$groupId->$elementId = $value;
-                    $xml = $config->asXML();
                 }
             }
         }
