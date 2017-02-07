@@ -103,6 +103,10 @@ class BuilderTest extends TestCase
         $value = $config->getValueFlag('sectionId/groupId/elementFlagId');
         self::assertInternalType('bool', $value);
         self::assertTrue($value);
+
+        $value = $config->getValueFlag('sectionId/groupId/noExists');
+        self::assertInternalType('bool', $value);
+        self::assertFalse($value);
     }
 
     public function testConfigOutsideSecureBaseFails()
