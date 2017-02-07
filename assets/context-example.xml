@@ -1,0 +1,8 @@
+<defaultContext xmlns="http://www.magiumlib.com/ConfigurationContext">
+    <context name="production">
+        <context name="integration">
+            <context name="staging" />
+        </context>
+    </context>
+    <context name="development"/>
+</defaultContext>

@@ -1,10 +1,10 @@
 <?php
 
-namespace Magium\Configuration\Tests\Adapter;
+namespace Magium\Configuration\Tests\Adapter\Configuration;
 
 use Magium\Configuration\File\InvalidFileException;
 use Magium\Configuration\File\InvalidFileStructureException;
-use Magium\Configuration\File\XmlFile;
+use Magium\Configuration\File\Configuration\XmlFile;
 use PHPUnit\Framework\TestCase;
 
 class XmlFileTest extends TestCase

@@ -1,8 +1,8 @@
 <?php
 
-namespace Magium\Configuration\File;
+namespace Magium\Configuration\File\Configuration;
 
-class PhpFile extends AbstractAdapter
+class PhpFile extends AbstractConfigurationFile
 {
 
     public function toXml()
