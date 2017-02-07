@@ -3,12 +3,6 @@
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                xsi:schemaLocation="http://www.magiumlib.com/Configuration ../../../assets/configuration-element.xsd">
     <section id="general" name="General">
-        <group id="website" name="Website">
-            <element id="title" name="Title">
-                <value>My Homepage</value>
-            </element>
-            <element id="languages" name="Languages" source="Namespace\MySource" type="multi"/>
-        </group>
         <group id="design" name="Design">
             <element id="theme" name="Theme"/>
         </group>

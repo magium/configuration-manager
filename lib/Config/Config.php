@@ -14,8 +14,12 @@ class Config extends \SimpleXMLElement
     public function getValue($path)
     {
         list($section, $group, $element) = explode('/', $path);
-        $value = $this->$section->$group->$element;
-        $value = (string)$value;
+        $xpath = sprintf('/*/%s/%s/%s', $section, $group, $element);
+        $element = $this->xpath($xpath);
+        if (!$element) {
+            return null;
+        }
+        $value = (string)$element[0];
         if ($value == '') {
             return null;
         }
@@ -31,11 +35,6 @@ class Config extends \SimpleXMLElement
             }
         }
         return false;
-    }
-
-    public function merge(\SimpleXMLElement $element)
-    {
-
     }
 
 }

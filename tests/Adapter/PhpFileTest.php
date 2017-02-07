@@ -6,7 +6,7 @@ use Magium\Configuration\File\InvalidFileException;
 use Magium\Configuration\File\PhpFile;
 use PHPUnit\Framework\TestCase;
 
-class TestPhpFile extends TestCase
+class PhpFileTest extends TestCase
 {
 
     public function testInvalidFileThrowsException()
