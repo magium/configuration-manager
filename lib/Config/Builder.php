@@ -40,6 +40,17 @@ class Builder
         $this->files[] = $file;
     }
 
+    /**
+     * Retrieves a list of secure base directories
+     *
+     * @return array
+     */
+
+    public function getSecureBases()
+    {
+        return $this->secureBases;
+    }
+
     public function addSecureBase($base)
     {
         $path = realpath($base);
@@ -47,6 +58,17 @@ class Builder
             throw new InvalidDirectoryException('Unable to determine real path for directory: ' . $base);
         }
         $this->secureBases[] = $path;
+    }
+
+    /**
+     * Retrieves a list of files that have been registered
+     *
+     * @return array
+     */
+
+    public function getRegisteredConfigurationFiles()
+    {
+        return $this->files;
     }
 
     /**
@@ -58,7 +80,8 @@ class Builder
 
     public function build($context = Config::CONTEXT_DEFAULT, Config $config = null)
     {
-        if (!$this->files) {
+        $files = $this->getRegisteredConfigurationFiles();
+        if (!$files) {
             throw new MissingConfigurationException('No configuration files have been provided.  Please add via registerConfigurationFile()');
         }
 
@@ -66,7 +89,7 @@ class Builder
             $config = new Config('<config />');
         }
         $structure = null;
-        foreach ($this->files as $file) {
+        foreach ($files as $file) {
             if (!$file instanceof AdapterInterface) {
                 throw new InvalidFileException('Configuration file object must implement ' . AdapterInterface::class);
             }
