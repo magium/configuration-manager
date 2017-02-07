@@ -30,7 +30,6 @@ class RelationalDatabase implements StorageInterface
 
     public function getValue($location, $context = Config::CONTEXT_DEFAULT)
     {
-
         $select = new Select(self::TABLE);
         $where = new Where();
         $where->equalTo('path', $location);

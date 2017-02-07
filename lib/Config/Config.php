@@ -36,5 +36,4 @@ class Config extends \SimpleXMLElement
         }
         return false;
     }
-
 }
