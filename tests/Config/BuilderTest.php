@@ -11,7 +11,7 @@ use Magium\Configuration\Config\MissingConfigurationException;
 use Magium\Configuration\Config\MissingContainerException;
 use Magium\Configuration\Config\Storage\StorageInterface;
 use Magium\Configuration\File\InvalidFileException;
-use Magium\Configuration\File\XmlFile;
+use Magium\Configuration\File\Configuration\XmlFile;
 use PHPUnit\Framework\TestCase;
 
 class BuilderTest extends TestCase
@@ -223,7 +223,7 @@ class BuilderTest extends TestCase
     protected function getPersistenceStorageMock()
     {
         $storageBuilder = $this->getMockBuilder(StorageInterface::class);
-        $storage = $storageBuilder->setMethods(['getValue'])->getMock();
+        $storage = $storageBuilder->setMethods(['getValue','create', 'setValue'])->getMock();
         if (!$storage instanceof StorageInterface) {
             throw new \Exception('You created the wrong kind of mock, buddy');
         }

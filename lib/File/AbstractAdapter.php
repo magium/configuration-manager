@@ -26,6 +26,8 @@ abstract class AbstractAdapter implements AdapterInterface
         return $this->file;
     }
 
+    abstract protected function configureSchema(\DOMElement $element);
+
     /**
      * @param \DOMDocument $doc
      * @throws InvalidFileStructureException
@@ -34,12 +36,11 @@ abstract class AbstractAdapter implements AdapterInterface
     protected function validateSchema(\DOMDocument $doc)
     {
         try {
-            $schema = realpath(__DIR__ . '/../../assets/configuration-element.xsd');
             $element = $doc->firstChild;
-            if ($element instanceof \DOMElement) {
-                $element->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns', 'http://www.magiumlib.com/Configuration');
-                $element->setAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation', 'http://www.magiumlib.com/Configuration ' . $schema);
+            if (!$element instanceof \DOMElement) {
+                throw new \Exception('Invalid XML file');
             }
+            $schema = $this->configureSchema($element);
             $out = $doc->saveXML();
             $validateDoc = new \DOMDocument();
             $validateDoc->loadXML($out);
