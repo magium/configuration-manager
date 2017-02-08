@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <configuration xmlns="http://www.magiumlib.com/Configuration"
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               xsi:schemaLocation="http://www.magiumlib.com/Configuration ../../../assets/configuration-element.xsd">
+               xsi:schemaLocation="http://www.magiumlib.com/Configuration ../../../../assets/configuration.xsd">
     <section id="general" name="General">
         <group id="website" name="Website">
             <element id="title" name="Title">

@@ -1,9 +1,9 @@
 <?php
 
-namespace Magium\Configuration\Tests\Adapter;
+namespace Magium\Configuration\Tests\Adapter\Configuration;
 
 use Magium\Configuration\File\InvalidFileException;
-use Magium\Configuration\File\PhpFile;
+use Magium\Configuration\File\Configuration\PhpFile;
 use PHPUnit\Framework\TestCase;
 
 class PhpFileTest extends TestCase

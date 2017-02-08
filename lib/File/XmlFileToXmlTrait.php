@@ -2,8 +2,12 @@
 
 namespace Magium\Configuration\File;
 
-class XmlFile extends AbstractAdapter
+trait XmlFileToXmlTrait
 {
+
+    abstract function getFile();
+
+    abstract function validateSchema(\DOMDocument $doc);
 
     public function toXml()
     {
