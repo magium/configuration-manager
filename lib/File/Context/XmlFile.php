@@ -8,4 +8,5 @@ use Magium\Configuration\File\XmlFileToXmlTrait;
 class XmlFile extends AbstractContextConfigurationFile
 {
     use XmlFileToXmlTrait;
+
 }

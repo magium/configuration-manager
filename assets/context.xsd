@@ -4,9 +4,9 @@
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:complexType name="contextType">
         <xs:sequence>
-            <xs:element name="context" type="contextType" minOccurs="0"/>
+            <xs:element name="context" type="contextType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
-        <xs:attribute name="name" use="required"/>
+        <xs:attribute name="id" type="xs:ID"/>
         <xs:attribute name="title" use="optional"/>
     </xs:complexType>
     <xs:element name="defaultContext">

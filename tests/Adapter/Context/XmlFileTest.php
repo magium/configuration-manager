@@ -15,7 +15,7 @@ class XmlFileTest extends TestCase
         $xml = $file->toXml();
         self::assertInstanceOf(\SimpleXMLElement::class, $xml);
         self::assertInstanceOf(\SimpleXMLElement::class, $xml->context);
-        self::assertEquals('production', $xml->context['name']);
+        self::assertEquals('production', $xml->context['id']);
 
     }
 

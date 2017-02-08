@@ -14,20 +14,28 @@
                                         <xs:element name="element" maxOccurs="unbounded" minOccurs="1">
                                             <xs:complexType mixed="true">
                                                 <xs:sequence>
-                                                    <xs:element type="xs:string" name="description" minOccurs="0" />
-                                                    <xs:element name="value" minOccurs="0" />
+                                                    <xs:element type="xs:string" name="description" minOccurs="0"/>
+                                                    <xs:element name="value" minOccurs="0" maxOccurs="unbounded">
+                                                        <xs:complexType>
+                                                            <xs:simpleContent>
+                                                                <xs:extension base="xs:string">
+                                                                    <xs:attribute type="xs:string" name="context"/>
+                                                                </xs:extension>
+                                                            </xs:simpleContent>
+                                                        </xs:complexType>
+                                                    </xs:element>
                                                 </xs:sequence>
                                                 <xs:attribute type="xs:string" name="callbackToStorage"
                                                               use="optional"/>
                                                 <xs:attribute type="xs:string" name="callbackFromStorage"
                                                               use="optional"/>
-                                                <xs:attribute type="xs:string" name="id" use="required"/>
+                                                <xs:attribute name="id" type="xs:ID"/>
                                                 <xs:attribute type="xs:string" name="name" use="optional"/>
                                                 <xs:attribute name="hidden" use="optional">
                                                     <xs:simpleType>
                                                         <xs:restriction base="xs:string">
-                                                            <xs:enumeration value="yes" />
-                                                            <xs:enumeration value="no" />
+                                                            <xs:enumeration value="yes"/>
+                                                            <xs:enumeration value="no"/>
                                                         </xs:restriction>
                                                     </xs:simpleType>
                                                 </xs:attribute>
@@ -35,12 +43,12 @@
                                                 <xs:attribute name="type" use="optional">
                                                     <xs:simpleType>
                                                         <xs:restriction base="xs:string">
-                                                            <xs:enumeration value="multi" />
-                                                            <xs:enumeration value="select" />
-                                                            <xs:enumeration value="text" />
-                                                            <xs:enumeration value="textbox" />
-                                                            <xs:enumeration value="date" />
-                                                            <xs:enumeration value="datetime" />
+                                                            <xs:enumeration value="multi"/>
+                                                            <xs:enumeration value="select"/>
+                                                            <xs:enumeration value="text"/>
+                                                            <xs:enumeration value="textbox"/>
+                                                            <xs:enumeration value="date"/>
+                                                            <xs:enumeration value="datetime"/>
                                                         </xs:restriction>
                                                     </xs:simpleType>
                                                 </xs:attribute>
@@ -48,27 +56,27 @@
 
                                         </xs:element>
                                     </xs:sequence>
-                                    <xs:attribute type="xs:string" name="id" use="required"/>
+                                    <xs:attribute name="id" type="xs:ID"/>
                                     <xs:attribute type="xs:string" name="name" use="optional"/>
 
                                     <xs:attribute name="hidden" use="optional">
                                         <xs:simpleType>
                                             <xs:restriction base="xs:string">
-                                                <xs:enumeration value="yes" />
-                                                <xs:enumeration value="no" />
+                                                <xs:enumeration value="yes"/>
+                                                <xs:enumeration value="no"/>
                                             </xs:restriction>
                                         </xs:simpleType>
                                     </xs:attribute>
                                 </xs:complexType>
                             </xs:element>
                         </xs:sequence>
-                        <xs:attribute type="xs:string" name="id" use="required"/>
+                        <xs:attribute name="id" type="xs:ID"/>
                         <xs:attribute type="xs:string" name="name" use="optional"/>
                         <xs:attribute name="hidden" use="optional">
                             <xs:simpleType>
                                 <xs:restriction base="xs:string">
-                                    <xs:enumeration value="yes" />
-                                    <xs:enumeration value="no" />
+                                    <xs:enumeration value="yes"/>
+                                    <xs:enumeration value="no"/>
                                 </xs:restriction>
                             </xs:simpleType>
                         </xs:attribute>

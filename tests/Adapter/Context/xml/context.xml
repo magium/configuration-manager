@@ -1,10 +1,10 @@
 <defaultContext  xmlns="http://www.magiumlib.com/ConfigurationContext"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xsi:schemaLocation="http://www.magiumlib.com/ConfigurationContext ../../../../assets/context.xsd">
-    <context name="production">
-        <context name="integration">
-            <context name="staging" />
+    <context id="production">
+        <context id="integration">
+            <context id="staging" />
         </context>
     </context>
-    <context name="development"/>
+    <context id="development"/>
 </defaultContext>

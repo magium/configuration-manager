@@ -20,9 +20,6 @@ class Config extends \SimpleXMLElement
             return null;
         }
         $value = (string)$element[0];
-        if ($value == '') {
-            return null;
-        }
         return $value;
     }
 
