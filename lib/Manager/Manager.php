@@ -1,9 +1,8 @@
 <?php
 
-namespace Magium\Configuration;
+namespace Magium\Configuration\Manager;
 
 use Magium\Configuration\Config\Config;
-use Magium\Configuration\Manager\NoConfigurationException;
 use Zend\Cache\Storage\StorageInterface;
 
 class Manager

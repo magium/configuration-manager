@@ -2,10 +2,15 @@
 
 namespace Magium\Configuration;
 
+use Magium\Configuration\Manager\Manager;
+use Zend\Cache\StorageFactory;
+
 class MagiumConfigurationFactory
 {
     protected $file;
     protected $xml;
+
+    protected $manager;
 
     public function __construct($magiumConfigurationFile = null)
     {
@@ -39,9 +44,36 @@ class MagiumConfigurationFactory
         return $result;
     }
 
+    protected function getCache(\SimpleXMLElement $element)
+    {
+        $config = [
+            'adapter'   => (string)$element->adapter,
+            'options'   => []
+        ];
+        if (isset($element->options)) {
+            foreach ($element->options->children() as $value) {
+                if ($value instanceof \SimpleXMLElement) {
+                    $config['options'][$value->getName()] = (string)$value;
+                }
+            }
+        }
+        $cache = StorageFactory::factory($config);
+        return $cache;
+    }
+
     public function getManager()
     {
-
+        if (!$this->manager instanceof Manager) {
+            $cacheConfig = $this->xml->cache;
+            $globalAdapter = $this->getCache($cacheConfig);
+            $localCache = null;
+            $localCacheConfig = $this->xml->localCache;
+            if ($localCacheConfig) {
+                $localCache = $this->getCache($localCacheConfig);
+            }
+            $this->manager = new Manager($globalAdapter, $localCache);
+        }
+        return $this->manager;
     }
 
 }
