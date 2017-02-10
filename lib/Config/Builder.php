@@ -79,7 +79,10 @@ class Builder
     public function getContainer()
     {
         if (!$this->container instanceof ContainerInterface) {
-            throw new MissingContainerException('You are using functionality that requires either a DI Container or Service Locator');
+            throw new MissingContainerException(
+                'You are using functionality that requires either a DI Container or Service Locator.  '
+                . 'The container, or container adapter, must implement Interop\Container\ContainerInterface'
+            );
         }
         return $this->container;
     }
