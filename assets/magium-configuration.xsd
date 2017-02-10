@@ -24,6 +24,16 @@
     <xs:element name="configuration">
         <xs:complexType>
             <xs:sequence>
+                <xs:element name="contextConfigurationFile" type="xs:string" minOccurs="1" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:attribute name="file" use="required">
+                            <xs:annotation>
+                                <xs:documentation>The file here is an XML file that documents the context hierarchy.
+                                It must use the xmlns http://www.magiumlib.com/ConfigurationContext.</xs:documentation>
+                            </xs:annotation>
+                        </xs:attribute>
+                    </xs:complexType>
+                </xs:element>
                 <xs:element name="cache" type="cacheConfiguration" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="localCache" type="cacheConfiguration" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="bootstrap" minOccurs="0" maxOccurs="1">
@@ -31,8 +41,8 @@
                         <xs:attribute name="file" use="optional">
                             <xs:annotation>
                                 <xs:documentation><![CDATA[
-The path for this file MUST be from the file location of the magium-configuration.xml file.  Additionally, the file
-MUST return a configured instance of Magium\Configuration\Config\Builder.
+The path for this file must be either fully qualified or relative to the location of the magium-configuration.xml file.
+Additionally, the file MUST return a configured instance of Magium\Configuration\Config\Builder.
                                 ]]></xs:documentation>
                             </xs:annotation>
                         </xs:attribute>
