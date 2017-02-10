@@ -5,6 +5,7 @@ namespace Magium\Configuration\Config;
 use Interop\Container\ContainerInterface;
 use Magium\Configuration\Config\Storage\StorageInterface as ConfigurationStorageInterface;
 use Magium\Configuration\File\AdapterInterface;
+use Magium\Configuration\File\Configuration\UnsupportedFileTypeException;
 use Magium\Configuration\File\InvalidFileException;
 use Zend\Cache\Storage\StorageInterface;
 
@@ -24,6 +25,7 @@ class Builder
         ConfigurationStorageInterface $storage,
         array $secureBases = [],
         ContainerInterface $container = null,
+        array $configurationFiles = [],
         $hashAlgo = 'sha1'
     )
     {
@@ -35,6 +37,42 @@ class Builder
 
         foreach ($secureBases as $base) {
             $this->addSecureBase($base);
+        }
+
+        $supportedTypes = [];
+        if ($configurationFiles) {
+            $checkSupportedTypes = glob(__DIR__ . '/../File/Configuration/*.php');
+            foreach ($checkSupportedTypes as $file) {
+                $file = basename($file);
+                if ($file != 'AbstractConfigurationFile.php') {
+                    $match = null;
+                    if (preg_match('/^([a-zA-Z]+)File.php$/', $file, $match)) {
+                        $supportedTypes[] = strtolower($match[1]);
+                    }
+                }
+            }
+        }
+
+        foreach ($configurationFiles as $file) {
+            $fileName = basename($file);
+            $typeFound = false;
+            foreach ($supportedTypes as $type) {
+                if (strpos($fileName, '.' . $type) !== false) {
+                    $class = 'Magium\Configuration\File\Configuration\\' . ucfirst($type) . 'File';
+                    $configurationFile = new $class($file);
+                    $this->registerConfigurationFile($configurationFile);
+                    $typeFound = true;
+                }
+            }
+            if (!$typeFound) {
+                throw new UnsupportedFileTypeException(
+                    sprintf(
+                        'File %s does not have a supported file extension: %s',
+                        $file,
+                        implode(',', $supportedTypes)
+                    ))
+                ;
+            }
         }
     }
 
@@ -126,8 +164,6 @@ class Builder
         }
 
         $this->buildConfigurationObject($structure, $config, $context);
-
-        $hash = hash_hmac($this->hashAlgo, $config->asXML(), '');
 
         return $config;
     }
