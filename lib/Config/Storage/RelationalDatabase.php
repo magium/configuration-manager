@@ -11,9 +11,7 @@ use Zend\Db\Sql\Ddl\Column\Varchar;
 use Zend\Db\Sql\Ddl\Constraint\UniqueKey;
 use Zend\Db\Sql\Ddl\CreateTable;
 use Zend\Db\Sql\Insert;
-use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Sql;
-use Zend\Db\Sql\Where;
 
 class RelationalDatabase implements StorageInterface
 {

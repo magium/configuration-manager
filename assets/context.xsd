@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
            targetNamespace="http://www.magiumlib.com/ConfigurationContext"
            xmlns="http://www.magiumlib.com/ConfigurationContext"

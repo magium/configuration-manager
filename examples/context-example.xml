@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <defaultContext xmlns="http://www.magiumlib.com/ConfigurationContext">
     <context id="production" title="Production">
         <context id="english" title="English" />

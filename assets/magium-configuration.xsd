@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://www.magiumlib.com/BaseConfiguration"
+           elementFormDefault="qualified"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:cc="http://www.magiumlib.com/BaseConfiguration">
+    <xs:complexType name="cacheConfiguration" >
+        <xs:sequence>
+            <xs:element type="xs:string" name="adapter" />
+            <xs:element name="options" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>
+                        The children of this element will be passed into the Zend Framework StorageFactory factory.
+                        See https://framework.zend.com/manual/2.3/en/modules/zend.cache.storage.adapter.html#overview
+                        for more information
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:any processContents="lax"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="configuration">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="contextConfigurationFile" minOccurs="1" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:attribute name="file" use="required">
+                            <xs:annotation>
+                                <xs:documentation>The file here is an XML file that documents the context hierarchy.
+                                It must use the xmlns http://www.magiumlib.com/ConfigurationContext.</xs:documentation>
+                            </xs:annotation>
+                        </xs:attribute>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="cache" type="cc:cacheConfiguration" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="localCache" type="cc:cacheConfiguration" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="bootstrap" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:attribute name="file" use="optional">
+                            <xs:annotation>
+                                <xs:documentation><![CDATA[
+The path for this file must be either fully qualified or relative to the location of the magium-configuration.xml file.
+Additionally, the file MUST return a configured instance of Magium\Configuration\Config\Builder.
+                                ]]></xs:documentation>
+                            </xs:annotation>
+                        </xs:attribute>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
