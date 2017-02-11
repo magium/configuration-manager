@@ -34,6 +34,32 @@ class FactoryTest extends TestCase
         new MagiumConfigurationFactory($path);
     }
 
+    public function testValidateDocumentSucceeds()
+    {
+        $this->setValidFile();
+        $path = realpath($this->configFile);
+        $factory = new MagiumConfigurationFactory($path);
+        $result = $factory->validateConfigurationFile();
+        self::assertTrue($result);
+    }
+
+    public function testValidateDocumentFailsWithImproperConfigFile()
+    {
+        $this->setFile(<<<XML
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+    <contextConfigurationFile file="contexts.xml" />
+    <cached />
+</configuration>
+
+XML
+);
+        $path = realpath($this->configFile);
+        $factory = new MagiumConfigurationFactory($path);
+        $result = $factory->validateConfigurationFile();
+        self::assertFalse($result);
+    }
+
     public function testFindExistingConfigFile()
     {
         $this->setFile();
@@ -46,6 +72,14 @@ class FactoryTest extends TestCase
     }
 
     public function testGetManager()
+    {
+        $this->setValidFile();
+        $factory = new MagiumConfigurationFactory();
+        $manager = $factory->getManager();
+        self::assertInstanceOf(Manager::class, $manager);
+    }
+
+    protected function setValidFile()
     {
         $tmp = sys_get_temp_dir();
         $this->setFile(<<<XML
@@ -64,9 +98,6 @@ class FactoryTest extends TestCase
 
 XML
         );
-        $factory = new MagiumConfigurationFactory();
-        $manager = $factory->getManager();
-        self::assertInstanceOf(Manager::class, $manager);
     }
 
 }

@@ -38,9 +38,14 @@ class MagiumConfigurationFactory
 
     public function validateConfigurationFile()
     {
-        $doc = new \DOMDocument();
-        $doc->load($this->file);
-        $result = $doc->schemaValidate(__DIR__ . '/../assets/magium-configuration.xsd');
+        $result = false;
+        try {
+            $doc = new \DOMDocument();
+            $doc->load($this->file);
+            $result = $doc->schemaValidate(__DIR__ . '/../assets/magium-configuration.xsd');
+        } catch (\Exception $e) {
+            // $result value is already set
+        }
         return $result;
     }
 
