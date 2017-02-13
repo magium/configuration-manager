@@ -108,7 +108,7 @@ XML
         $contextPath = $this->getContextFileFromConfigPath($result);
         if (!file_exists($contextPath)) {
             $result = $this->askContextFileQuestion($input, $output, $contextPath);
-            if ($result) {
+            if ($result != null) {
                 $this->writeContextFileXml($contextPath);
             }
         }
