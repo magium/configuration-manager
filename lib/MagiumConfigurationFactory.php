@@ -7,7 +7,6 @@ use Magium\Configuration\Config\BuilderFactory;
 use Magium\Configuration\Config\BuilderFactoryInterface;
 use Magium\Configuration\Manager\CacheFactory;
 use Magium\Configuration\Manager\Manager;
-use Zend\Cache\StorageFactory;
 
 class MagiumConfigurationFactory
 {
@@ -68,6 +67,9 @@ class MagiumConfigurationFactory
         return $cacheFactory->getCache($element);
     }
 
+    /**
+     * @return Builder
+     */
     public function getBuilder()
     {
         if (!$this->builder instanceof Builder) {
