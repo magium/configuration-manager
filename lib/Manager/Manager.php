@@ -2,6 +2,7 @@
 
 namespace Magium\Configuration\Manager;
 
+use Magium\Configuration\Config\Builder;
 use Magium\Configuration\Config\Config;
 use Zend\Cache\Storage\StorageInterface;
 
@@ -12,15 +13,23 @@ class Manager
 
     protected $cache;
     protected $localCache;
+    protected $builder;
     protected $configurationLocation;
 
     public function __construct(
         StorageInterface $cache,
+        Builder $builder,
         StorageInterface $localCache = null
     )
     {
         $this->cache = $cache;
+        $this->builder = $builder;
         $this->localCache = $localCache;
+     }
+
+     public function getBuilder()
+     {
+         return $this->builder;
      }
 
     /**
@@ -71,7 +80,8 @@ class Manager
             $this->config[$key] = $config;
             return $this->config[$key];
         }
-        throw new NoConfigurationException('Could not find configuration');
+        $config = $this->builder->build($context);
+        return $config;
     }
 
 }

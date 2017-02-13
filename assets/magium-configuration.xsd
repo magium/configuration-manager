@@ -22,10 +22,29 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
+    <xs:complexType name="dbConfiguration">
+        <xs:annotation>
+            <xs:documentation>
+                The children of this element will be passed into the Zend Framework Zend\Db\Adapter\Adapter class.
+                See https://framework.zend.com/manual/2.1/en/modules/zend.db.adapter.html
+                for more information
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="xs:string" name="driver" />
+            <xs:element type="xs:string" name="database" />
+            <xs:element type="xs:string" name="username" minOccurs="0"/>
+            <xs:element type="xs:string" name="password"  minOccurs="0"/>
+            <xs:element type="xs:string" name="hostname"  minOccurs="0"/>
+            <xs:element type="xs:string" name="port"  minOccurs="0"/>
+            <xs:element type="xs:string" name="charset"  minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
     <xs:element name="configuration">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="contextConfigurationFile" minOccurs="1" maxOccurs="1">
+                <xs:element name="persistenceConfiguration" type="cc:dbConfiguration" minOccurs="1" maxOccurs="1" />
+                <xs:element name="contextConfigurationFile">
                     <xs:complexType>
                         <xs:attribute name="file" use="required">
                             <xs:annotation>
@@ -33,6 +52,27 @@
                                 It must use the xmlns http://www.magiumlib.com/ConfigurationContext.</xs:documentation>
                             </xs:annotation>
                         </xs:attribute>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="baseDirectories" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="directory" maxOccurs="unbounded" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="builderFactory" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="configuration" minOccurs="0" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:any processContents="lax"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="class" />
                     </xs:complexType>
                 </xs:element>
                 <xs:element name="cache" type="cc:cacheConfiguration" minOccurs="0" maxOccurs="1"/>

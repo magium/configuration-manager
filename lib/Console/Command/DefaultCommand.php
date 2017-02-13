@@ -15,9 +15,9 @@ class DefaultCommand extends Command
     protected function configure()
     {
         $this->setName(self::COMMAND)
-             ->setHelp('Initializes Magium Configuration')
-             ->setDescription('Initializes Magium Configuration by creating the default magium-configuration.xml and '
-                              . 'contexts.xml files');
+            ->setHelp('Initializes Magium Configuration')
+            ->setDescription('Initializes Magium Configuration by creating the default magium-configuration.xml and '
+                . 'contexts.xml files');
     }
 
     protected function getPossibleLocations()
@@ -53,6 +53,10 @@ class DefaultCommand extends Command
         file_put_contents($file, <<<XML
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration xmlns="http://www.magiumlib.com/BaseConfiguration">
+    <persistenceConfiguration>
+        <driver></driver>
+        <database></database>
+    </persistenceConfiguration>
     <contextConfigurationFile file="contexts.xml"/>
     <cache>
         <adapter>filesystem</adapter>

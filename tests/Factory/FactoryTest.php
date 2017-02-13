@@ -2,6 +2,7 @@
 
 namespace Magium\Configuration\Tests\Factory;
 
+use Magium\Configuration\Config\InvalidConfigurationLocationException;
 use Magium\Configuration\InvalidConfigurationFileException;
 use Magium\Configuration\MagiumConfigurationFactory;
 use Magium\Configuration\Manager\Manager;
@@ -79,6 +80,36 @@ XML
         self::assertInstanceOf(Manager::class, $manager);
     }
 
+    public function testInvalidBaseDirectoryThrowsException()
+    {
+        $base = $tmp = sys_get_temp_dir();
+        $base .= DIRECTORY_SEPARATOR . 'remove-me'; // Won't exist
+        $this->setFile(<<<XML
+<?xml version="1.0" encoding="utf-8"?>
+<configuration xmlns="http://www.magiumlib.com/BaseConfiguration"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.magiumlib.com/BaseConfiguration">
+      <persistenceConfiguration>
+        <driver>pdo_sqlite</driver>
+        <database>:memory:</database>
+    </persistenceConfiguration>
+    <baseDirectories><directory>$base</directory></baseDirectories>
+    <contextConfigurationFile file="contexts.xml" />
+    <cache>
+        <adapter>filesystem</adapter>
+        <options>
+            <cache_dir>$tmp</cache_dir>
+        </options>
+    </cache>
+</configuration>
+
+XML
+        );
+        $factory = new MagiumConfigurationFactory();
+        $this->expectException(InvalidConfigurationLocationException::class);
+        $factory->getManager();
+    }
+
     protected function setValidFile()
     {
         $tmp = sys_get_temp_dir();
@@ -87,6 +118,10 @@ XML
 <configuration xmlns="http://www.magiumlib.com/BaseConfiguration"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.magiumlib.com/BaseConfiguration">
+      <persistenceConfiguration>
+        <driver>pdo_sqlite</driver>
+        <database>:memory:</database>
+    </persistenceConfiguration>
     <contextConfigurationFile file="contexts.xml" />
     <cache>
         <adapter>filesystem</adapter>
