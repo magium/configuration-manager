@@ -91,7 +91,7 @@ XML
         self::assertEquals('test', $value);
     }
 
-    public function testScopeStoredLocally()
+    public function testScopeStoredLocallyIsSet()
     {
         $builder = $this->getBuilderMock(0);
         $remoteCache = $this->getCacheMock();
@@ -103,7 +103,31 @@ XML
         $manager->getConfiguration(Config::CONTEXT_DEFAULT, true);
     }
 
+    public function testScopeStoredLocallyButRetrievedRemotelyIsCalledLocallyTheSecondTime()
+    {
+        $builder = $this->getBuilderMock(0);
+        $remoteCache = $this->getCacheMock();
+        $localCache = $this->getCacheMock();
+        $remoteCache->expects(self::exactly(2))->method('getItem')->willReturnOnConsecutiveCalls('test', '<a />');
+        $localCache->expects(self::exactly(2))->method('getItem')->willReturnOnConsecutiveCalls(null, null);
+        $localCache->expects(self::exactly(2))->method('setItem');
+        $manager = new Manager($remoteCache, $builder, $localCache);
+        $manager->getConfiguration(Config::CONTEXT_DEFAULT, true);
+        $manager->getConfiguration(Config::CONTEXT_DEFAULT, true);
+    }
+
     public function testScopeNotStoredLocally()
+    {
+        $builder = $this->getBuilderMock(0);
+        $remoteCache = $this->getCacheMock();
+        $localCache = $this->getCacheMock();
+        $remoteCache->expects(self::exactly(2))->method('getItem')->willReturn('<configuration></configuration>');
+        $localCache->expects(self::exactly(1))->method('getItem')->willReturn(null);
+        $localCache->expects(self::exactly(1))->method('setItem');
+        $manager = new Manager($remoteCache, $builder, $localCache);
+        $manager->getConfiguration(Config::CONTEXT_DEFAULT);
+    }
+    public function testDataRetrievedRemotelyStoredLocally()
     {
         $builder = $this->getBuilderMock(0);
         $remoteCache = $this->getCacheMock();
