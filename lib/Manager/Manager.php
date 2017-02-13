@@ -1,9 +1,9 @@
 <?php
 
-namespace Magium\Configuration;
+namespace Magium\Configuration\Manager;
 
+use Magium\Configuration\Config\Builder;
 use Magium\Configuration\Config\Config;
-use Magium\Configuration\Manager\NoConfigurationException;
 use Zend\Cache\Storage\StorageInterface;
 
 class Manager
@@ -13,15 +13,23 @@ class Manager
 
     protected $cache;
     protected $localCache;
+    protected $builder;
     protected $configurationLocation;
 
     public function __construct(
         StorageInterface $cache,
+        Builder $builder,
         StorageInterface $localCache = null
     )
     {
         $this->cache = $cache;
+        $this->builder = $builder;
         $this->localCache = $localCache;
+     }
+
+     public function getBuilder()
+     {
+         return $this->builder;
      }
 
     /**
@@ -63,16 +71,21 @@ class Manager
         // Either way, if the config is null we check the global cache
         if ($config === null) {
             $config = $this->cache->getItem($currentConfigItem);
-            if ($this->localCache instanceof StorageInterface) {
-                $this->localCache->setItem($currentConfigItem, $config);
-            }
+            if ($config !== null) {
+                if ($this->localCache instanceof StorageInterface) {
+                    $this->localCache->setItem($currentConfigItem, $config);
+                }
+             }
         }
 
-        if ($config instanceof Config) {
+        if ($config) {
+            $config = new Config($config);
             $this->config[$key] = $config;
             return $this->config[$key];
         }
-        throw new NoConfigurationException('Could not find configuration');
+        $config = $this->builder->build($context);
+        $this->config[$key] = $config;
+        return $config;
     }
 
 }

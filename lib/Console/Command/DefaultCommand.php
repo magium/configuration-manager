@@ -3,6 +3,7 @@
 namespace Magium\Configuration\Console\Command;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
@@ -15,9 +16,9 @@ class DefaultCommand extends Command
     protected function configure()
     {
         $this->setName(self::COMMAND)
-             ->setHelp('Initializes Magium Configuration')
-             ->setDescription('Initializes Magium Configuration by creating the default magium-configuration.xml and '
-                              . 'contexts.xml files');
+            ->setHelp('Initializes Magium Configuration')
+            ->setDescription('Initializes Magium Configuration by creating the default magium-configuration.xml and '
+                . 'contexts.xml files');
     }
 
     protected function getPossibleLocations()
@@ -52,7 +53,11 @@ class DefaultCommand extends Command
     {
         file_put_contents($file, <<<XML
 <?xml version="1.0" encoding="UTF-8" ?>
-<configuration xmlns="http://www.magiumlib.com/BaseConfiguration">
+<magium xmlns="http://www.magiumlib.com/BaseConfiguration">
+    <persistenceConfiguration>
+        <driver></driver>
+        <database></database>
+    </persistenceConfiguration>
     <contextConfigurationFile file="contexts.xml"/>
     <cache>
         <adapter>filesystem</adapter>
@@ -60,7 +65,7 @@ class DefaultCommand extends Command
             <cache_dir>/tmp</cache_dir>
         </options>
     </cache>
-</configuration>
+</magium>
 XML
         );
     }
@@ -106,16 +111,24 @@ XML
             'Could not find a magium-configuration.xml file.  Where would you like me to put it?',
             $possibleLocations
         );
-        $result = $this->getHelper('question')->ask($input, $output, $question);
-        return $result;
+        $ask = $this->getHelper('question');
+        if ($ask instanceof QuestionHelper) {
+            $result = $ask->ask($input, $output, $question);
+            return $result;
+        }
+        return null;
     }
 
 
     protected function askContextFileQuestion(InputInterface $input, OutputInterface $output, $contextPath)
     {
         $question = new ConfirmationQuestion(sprintf('The context file %s does not exist next to the magium-configuration.xml file.  Create it? ', $contextPath));
-        $result = $this->getHelper('question')->ask($input, $output, $question);
-        return $result;
+        $ask = $this->getHelper('question');
+        if ($ask instanceof QuestionHelper) {
+            $result = $ask->ask($input, $output, $question);
+            return $result;
+        }
+        return null;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

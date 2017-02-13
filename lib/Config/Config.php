@@ -16,7 +16,7 @@ class Config extends \SimpleXMLElement
         list($section, $group, $element) = explode('/', $path);
         $xpath = sprintf('/*/%s/%s/%s', $section, $group, $element);
         $element = $this->xpath($xpath);
-        if (!$element) {
+        if (empty($element)) {
             return null;
         }
         $value = (string)$element[0];
