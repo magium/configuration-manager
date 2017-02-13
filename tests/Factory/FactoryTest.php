@@ -50,7 +50,7 @@ class FactoryTest extends TestCase
     {
         $this->setFile(<<<XML
 <?xml version="1.0" encoding="utf-8"?>
-<configuration xmlns="http://www.magiumlib.com/BaseConfiguration"
+<magium xmlns="http://www.magiumlib.com/BaseConfiguration"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.magiumlib.com/BaseConfiguration">
     <cache>
@@ -59,7 +59,7 @@ class FactoryTest extends TestCase
     <localCache>
         <adapter>filesystem</adapter>
     </localCache>
-</configuration>
+</magium>
 
 XML
         );
@@ -153,7 +153,7 @@ XML
         $base .= DIRECTORY_SEPARATOR . 'remove-me'; // Won't exist
         $this->setFile(<<<XML
 <?xml version="1.0" encoding="utf-8"?>
-<configuration xmlns="http://www.magiumlib.com/BaseConfiguration"
+<magium xmlns="http://www.magiumlib.com/BaseConfiguration"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.magiumlib.com/BaseConfiguration">
       <persistenceConfiguration>
@@ -168,7 +168,7 @@ XML
             <cache_dir>$tmp</cache_dir>
         </options>
     </cache>
-</configuration>
+</magium>
 
 XML
         );
@@ -182,7 +182,7 @@ XML
         $tmp = sys_get_temp_dir();
         $this->setFile(<<<XML
 <?xml version="1.0" encoding="utf-8"?>
-<configuration xmlns="http://www.magiumlib.com/BaseConfiguration"
+<magium xmlns="http://www.magiumlib.com/BaseConfiguration"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.magiumlib.com/BaseConfiguration">
       <persistenceConfiguration>
@@ -196,7 +196,7 @@ XML
             <cache_dir>$tmp</cache_dir>
         </options>
     </cache>
-</configuration>
+</magium>
 
 XML
         );

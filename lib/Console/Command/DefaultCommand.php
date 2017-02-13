@@ -52,7 +52,7 @@ class DefaultCommand extends Command
     {
         file_put_contents($file, <<<XML
 <?xml version="1.0" encoding="UTF-8" ?>
-<configuration xmlns="http://www.magiumlib.com/BaseConfiguration">
+<magium xmlns="http://www.magiumlib.com/BaseConfiguration">
     <persistenceConfiguration>
         <driver></driver>
         <database></database>
@@ -64,7 +64,7 @@ class DefaultCommand extends Command
             <cache_dir>/tmp</cache_dir>
         </options>
     </cache>
-</configuration>
+</magium>
 XML
         );
     }

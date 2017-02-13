@@ -71,16 +71,20 @@ class Manager
         // Either way, if the config is null we check the global cache
         if ($config === null) {
             $config = $this->cache->getItem($currentConfigItem);
-            if ($this->localCache instanceof StorageInterface) {
-                $this->localCache->setItem($currentConfigItem, $config);
-            }
+            if ($config !== null) {
+                if ($this->localCache instanceof StorageInterface) {
+                    $this->localCache->setItem($currentConfigItem, $config);
+                }
+             }
         }
 
-        if ($config instanceof Config) {
+        if ($config) {
+            $config = new Config($config);
             $this->config[$key] = $config;
             return $this->config[$key];
         }
         $config = $this->builder->build($context);
+        $this->config[$key] = $config;
         return $config;
     }
 

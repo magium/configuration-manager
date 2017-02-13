@@ -2,6 +2,10 @@
 <configuration xmlns="http://www.magiumlib.com/BaseConfiguration"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.magiumlib.com/BaseConfiguration ../assets/magium-configuration.xsd">
+    <persistenceConfiguration>
+        <driver>pdo_sqlite</driver>
+        <database></database>
+    </persistenceConfiguration>
     <contextConfigurationFile file="contexts.xml" />
     <cache>
         <adapter>filesystem</adapter>

@@ -40,7 +40,7 @@
             <xs:element type="xs:string" name="charset"  minOccurs="0"/>
         </xs:sequence>
     </xs:complexType>
-    <xs:element name="configuration">
+    <xs:element name="magium">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="persistenceConfiguration" type="cc:dbConfiguration" minOccurs="1" maxOccurs="1" />
