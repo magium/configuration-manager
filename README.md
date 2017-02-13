@@ -1,3 +1,4 @@
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/magium/configuration-manager/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/magium/configuration-manager/?branch=develop)
 # Magium configuration-manager
 A library for managing context-based configuration for PHP applications, currently a work in progress.  It is meant to be functionality similar to how Magento manages configuration.  It was born out of frustration with having to deal with YAML, PHP and/or XML files that may or may not follow a well-defined, predictable pattern.  The goal of this project is to provide 1) an embeddable frontend UI that can be used to manage application settings, 2) simple programmer level access to individual configuration settings both for PHP code and also via a REST-like interface, 3) inheritable configuration contexts, 4) Configuration merging from multiple different sources (e.g. multiple XML, PHP, YAML, or JSON files for different ad-hoc modules).
 
