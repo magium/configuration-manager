@@ -7,6 +7,7 @@ use Magium\Configuration\Config\Storage\StorageInterface as ConfigurationStorage
 use Magium\Configuration\File\AdapterInterface;
 use Magium\Configuration\File\Configuration\UnsupportedFileTypeException;
 use Magium\Configuration\File\InvalidFileException;
+use Magium\Configuration\InvalidConfigurationException;
 use Zend\Cache\Storage\StorageInterface;
 
 class Builder
@@ -40,7 +41,7 @@ class Builder
         }
 
         $supportedTypes = [];
-        if ($configurationFiles) {
+        if (!empty($configurationFiles)) {
             $checkSupportedTypes = glob(__DIR__ . '/../File/Configuration/*.php');
             foreach ($checkSupportedTypes as $file) {
                 $file = basename($file);
@@ -133,7 +134,7 @@ class Builder
     public function build($context = Config::CONTEXT_DEFAULT, Config $config = null)
     {
         $files = $this->getRegisteredConfigurationFiles();
-        if (!$files) {
+        if (empty($files)) {
             throw new MissingConfigurationException('No configuration files have been provided.  Please add via registerConfigurationFile()');
         }
 
@@ -164,6 +165,10 @@ class Builder
             } else {
                 $this->mergeStructure($structure, $simpleXml);
             }
+        }
+
+        if (!$structure instanceof \SimpleXMLElement) {
+            throw new InvalidConfigurationException('No configuration files provided');
         }
 
         $this->buildConfigurationObject($structure, $config, $context);
@@ -211,7 +216,7 @@ class Builder
                         $elementId
                     );
                     $result = $structure->xpath($xpath);
-                    if ($result) {
+                    if (!empty($result)) {
                         $value = trim((string)$result[0]);
                     }
                 }
@@ -230,8 +235,8 @@ class Builder
             if ($item instanceof \SimpleXMLElement) {
                 $xpath = sprintf('/*/s:section[@id="%s"]', $item['id']);
                 $sectionExists = $base->xpath($xpath);
-                $section = null;
-                if ($sectionExists && $sectionExists[0] instanceof \SimpleXMLElement) {
+
+                if (!empty($sectionExists) && $sectionExists[0] instanceof \SimpleXMLElement) {
                     $section = $sectionExists[0];
                 } else {
                     $section = $base->addChild('section');
@@ -254,8 +259,8 @@ class Builder
             if ($newGroup instanceof \SimpleXMLElement) {
                 $xpath = sprintf('./s:group[@id="%s"]', $newGroup['id']);
                 $groupExists = $section->xpath($xpath);
-                $group = null;
-                if ($groupExists && $groupExists[0] instanceof \SimpleXMLElement) {
+
+                if (!empty($groupExists) && $groupExists[0] instanceof \SimpleXMLElement) {
                     $group = $groupExists[0];
                 } else {
                     $group = $section->addChild('group');
@@ -275,8 +280,8 @@ class Builder
             if ($newElement instanceof \SimpleXMLElement) {
                 $xpath = sprintf('./s:element[@id="%s"]', $newElement['id']);
                 $elementExists = $group->xpath($xpath);
-                $element = null;
-                if ($elementExists && $elementExists[0] instanceof \SimpleXMLElement) {
+
+                if (!empty($elementExists) && $elementExists[0] instanceof \SimpleXMLElement) {
                     $element = $elementExists[0];
                 } else {
                     $element = $group->addChild('element');

@@ -66,8 +66,9 @@ class RelationalDatabase implements StorageInterface
                 throw new InvalidContextException('Unable to find context: ' . $requestedContext);
             }
 
+            $context = array_shift($contexts);
             do {
-                $context = array_shift($contexts);
+
                 if (!$context instanceof \SimpleXMLElement) {
                     break;
                 }
@@ -81,7 +82,7 @@ class RelationalDatabase implements StorageInterface
 
     public function getValue($path, $requestedContext = Config::CONTEXT_DEFAULT)
     {
-        if (!$this->data) {
+        if (empty($this->data)) {
             $contexts = $this->getContexts();
             foreach ($contexts as $context) {
                 $sql = new Sql($this->adapter);
@@ -110,7 +111,8 @@ class RelationalDatabase implements StorageInterface
         if (!in_array($requestedContext, $contexts)) {
             throw new InvalidContextException('Could not find the context: ' . $requestedContext);
         }
-        $insert = new Insert(self::TABLE);
+        $sql = new Sql($this->adapter);
+        $insert = $sql->insert(self::TABLE);
         $insert->values([
             'path'      => $path,
             'value'     => $value,

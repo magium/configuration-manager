@@ -5,9 +5,9 @@ namespace Magium\Configuration\File;
 trait XmlFileToXmlTrait
 {
 
-    abstract function getFile();
+    abstract public function getFile();
 
-    abstract function validateSchema(\DOMDocument $doc);
+    abstract public function validateSchema(\DOMDocument $doc);
 
     public function toXml()
     {

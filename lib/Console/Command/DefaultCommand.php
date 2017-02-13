@@ -3,6 +3,7 @@
 namespace Magium\Configuration\Console\Command;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
@@ -110,16 +111,24 @@ XML
             'Could not find a magium-configuration.xml file.  Where would you like me to put it?',
             $possibleLocations
         );
-        $result = $this->getHelper('question')->ask($input, $output, $question);
-        return $result;
+        $ask = $this->getHelper('question');
+        if ($ask instanceof QuestionHelper) {
+            $result = $ask->ask($input, $output, $question);
+            return $result;
+        }
+        return null;
     }
 
 
     protected function askContextFileQuestion(InputInterface $input, OutputInterface $output, $contextPath)
     {
         $question = new ConfirmationQuestion(sprintf('The context file %s does not exist next to the magium-configuration.xml file.  Create it? ', $contextPath));
-        $result = $this->getHelper('question')->ask($input, $output, $question);
-        return $result;
+        $ask = $this->getHelper('question');
+        if ($ask instanceof QuestionHelper) {
+            $result = $ask->ask($input, $output, $question);
+            return $result;
+        }
+        return null;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
