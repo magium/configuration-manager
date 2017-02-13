@@ -32,6 +32,13 @@ class CrudTest extends TestCase
         $db->setValue('path', 'value', 'boogers');
     }
 
+    public function testNullReturnedForNonExistentPath()
+    {
+        $db = $this->createDatabase();
+        $result = $db->getValue('no-existe');
+        self::assertNull($result);
+    }
+
     public function testRelationalCreateOnInvalidContextThrowsException()
     {
         $this->expectException(InvalidContextException::class);

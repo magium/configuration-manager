@@ -38,6 +38,7 @@ abstract class AbstractAdapter implements AdapterInterface
         try {
             $element = $doc->firstChild;
             if (!$element instanceof \DOMElement) {
+                // This is more for code completion.  If the first child is not a DOMElement, PHP is probably broken
                 throw new \Exception('Invalid XML file');
             }
             $schema = $this->configureSchema($element);
