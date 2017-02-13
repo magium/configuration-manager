@@ -80,6 +80,37 @@ XML
         self::assertInstanceOf(Manager::class, $manager);
     }
 
+    public function testLocalCacheIsNotCreatedIfItIsNotConfigured()
+    {
+        $this->setFile(<<<XML
+<?xml version="1.0" encoding="utf-8"?>
+<configuration xmlns="http://www.magiumlib.com/BaseConfiguration"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.magiumlib.com/BaseConfiguration">
+    <cache>
+        <adapter>filesystem</adapter>
+    </cache>
+</configuration>
+
+XML
+        );
+        $path = realpath($this->configFile);
+        $factory = $this->getMockBuilder(
+            MagiumConfigurationFactory::class
+        )->setMethods(['getCache', 'getBuilder'])
+            ->setConstructorArgs([$path])
+            ->getMock();
+        $factory->expects(self::exactly(1))->method('getCache')->willReturn(
+            $this->getMockBuilder(StorageInterface::class)->disableOriginalConstructor()->getMock()
+        );
+        $factory->expects(self::exactly(1))->method('getBuilder')->willReturn(
+            $this->getMockBuilder(Builder::class)->disableOriginalConstructor()->getMock()
+        );
+        /* @var $factory MagiumConfigurationFactory */
+        $manager = $factory->getManager();
+        self::assertInstanceOf(Manager::class, $manager);
+    }
+
     public function testValidateDocumentFailsWithImproperConfigFile()
     {
         $this->setFile(<<<XML
