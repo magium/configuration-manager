@@ -10,7 +10,6 @@ use Zend\Db\Sql\Ddl\Column\Text;
 use Zend\Db\Sql\Ddl\Column\Varchar;
 use Zend\Db\Sql\Ddl\Constraint\UniqueKey;
 use Zend\Db\Sql\Ddl\CreateTable;
-use Zend\Db\Sql\Insert;
 use Zend\Db\Sql\Sql;
 
 class RelationalDatabase implements StorageInterface

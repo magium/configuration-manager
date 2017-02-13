@@ -49,6 +49,9 @@ class DefaultCommand extends Command
         return $possibleLocations;
     }
 
+    /**
+     * @param string|null $file
+     */
     protected function writeMagiumConfigurationFile($file)
     {
         file_put_contents($file, <<<XML
@@ -70,6 +73,9 @@ XML
         );
     }
 
+    /**
+     * @param string|null $configPath
+     */
     protected function getContextFileFromConfigPath($configPath)
     {
         $basePath = dirname($configPath);
@@ -77,6 +83,9 @@ XML
         return $contextPath;
     }
 
+    /**
+     * @param string $contextPath
+     */
     protected function writeContextFileXml($contextPath)
     {
         file_put_contents($contextPath, <<<XML
@@ -120,6 +129,9 @@ XML
     }
 
 
+    /**
+     * @param string $contextPath
+     */
     protected function askContextFileQuestion(InputInterface $input, OutputInterface $output, $contextPath)
     {
         $question = new ConfirmationQuestion(sprintf('The context file %s does not exist next to the magium-configuration.xml file.  Create it? ', $contextPath));

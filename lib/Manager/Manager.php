@@ -25,12 +25,12 @@ class Manager
         $this->cache = $cache;
         $this->builder = $builder;
         $this->localCache = $localCache;
-     }
+        }
 
-     public function getBuilder()
-     {
-         return $this->builder;
-     }
+        public function getBuilder()
+        {
+            return $this->builder;
+        }
 
     /**
      * @param string $context The (configurable) context for the needed configuration object
@@ -75,7 +75,7 @@ class Manager
                 if ($this->localCache instanceof StorageInterface) {
                     $this->localCache->setItem($currentConfigItem, $config);
                 }
-             }
+                }
         }
 
         if ($config) {
