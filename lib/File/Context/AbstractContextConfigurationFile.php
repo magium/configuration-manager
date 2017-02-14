@@ -18,7 +18,9 @@ abstract class AbstractContextConfigurationFile extends AbstractAdapter
     public function getContexts()
     {
         $contexts = [Config::CONTEXT_DEFAULT];
-        $configuredContexts = $this->toXml()->xpath('//s:context');
+        $xml = $this->toXml();
+        $xml->registerXPathNamespace('s', 'http://www.magiumlib.com/ConfigurationContext');
+        $configuredContexts = $xml->xpath('//s:context');
         foreach ($configuredContexts as $context) {
             $contexts[] = (string)$context['id'];
         }

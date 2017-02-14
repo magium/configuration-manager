@@ -15,10 +15,11 @@ trait XmlFileToXmlTrait
     {
         if (!$this->xml instanceof \SimpleXMLElement) {
             $file = $this->getFile();
+            $content = file_get_contents($file);
             $doc = new \DOMDocument();
-            $doc->load($file);
+            $doc->loadXML($content);
             $this->validateSchema($doc);
-            $this->xml = simplexml_import_dom($doc);
+            $this->xml = new \SimpleXMLElement($content);
         }
         return $this->xml;
     }

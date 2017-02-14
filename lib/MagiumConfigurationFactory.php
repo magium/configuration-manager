@@ -69,7 +69,7 @@ class MagiumConfigurationFactory
 
     public function getContextFile()
     {
-        if (!$this->contextFile) {
+        if (!$this->contextFile instanceof AbstractContextConfigurationFile) {
             $this->contextFile = $this->buildContextFile();
         }
         return $this->contextFile;
