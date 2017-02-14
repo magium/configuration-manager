@@ -3,8 +3,11 @@
 namespace Magium\Configuration\Console\Command;
 
 use Magium\Configuration\Config\Config;
+use Magium\Configuration\MagiumConfigurationFactory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class ConfigurationList extends Command
 {
@@ -21,6 +24,12 @@ class ConfigurationList extends Command
 
         $this->addArgument('path', InputArgument::REQUIRED, 'Configuration Path');
         $this->addArgument('context', InputArgument::OPTIONAL, 'Configuration Context', Config::CONTEXT_DEFAULT);
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $factory = new MagiumConfigurationFactory();
+        $factory->getBuilder();
     }
 
 }

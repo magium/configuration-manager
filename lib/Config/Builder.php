@@ -5,6 +5,7 @@ namespace Magium\Configuration\Config;
 use Interop\Container\ContainerInterface;
 use Magium\Configuration\Config\Storage\StorageInterface as ConfigurationStorageInterface;
 use Magium\Configuration\File\AdapterInterface;
+use Magium\Configuration\File\Configuration\ConfigurationFileRepository;
 use Magium\Configuration\File\Configuration\UnsupportedFileTypeException;
 use Magium\Configuration\File\InvalidFileException;
 use Magium\Configuration\InvalidConfigurationException;
@@ -13,9 +14,7 @@ use Zend\Cache\Storage\StorageInterface;
 class Builder
 {
 
-    protected $files = [];
-
-    protected $secureBases = [];
+    protected $repository;
     protected $cache;
     protected $container;
     protected $hashAlgo;
@@ -24,57 +23,21 @@ class Builder
     public function __construct(
         StorageInterface $cache,
         ConfigurationStorageInterface $storage,
-        array $secureBases = [],
+        ConfigurationFileRepository $repository,
         ContainerInterface $container = null,
-        array $configurationFiles = [],
         $hashAlgo = 'sha1'
     )
     {
         $this->cache = $cache;
         $this->storage = $storage;
         $this->hashAlgo = $hashAlgo;
-        $this->storage = $storage;
+        $this->repository = $repository;
         $this->container = $container;
+    }
 
-        foreach ($secureBases as $base) {
-            $this->addSecureBase($base);
-        }
-
-        $supportedTypes = [];
-        if (!empty($configurationFiles)) {
-            $checkSupportedTypes = glob(__DIR__ . '/../File/Configuration/*.php');
-            foreach ($checkSupportedTypes as $file) {
-                $file = basename($file);
-                if ($file != 'AbstractConfigurationFile.php') {
-                    $match = null;
-                    if (preg_match('/^([a-zA-Z]+)File.php$/', $file, $match)) {
-                        $supportedTypes[] = strtolower($match[1]);
-                    }
-                }
-            }
-        }
-
-        foreach ($configurationFiles as $file) {
-            $fileName = basename($file);
-            $typeFound = false;
-            foreach ($supportedTypes as $type) {
-                if (strpos($fileName, '.' . $type) !== false) {
-                    $class = 'Magium\Configuration\File\Configuration\\' . ucfirst($type) . 'File';
-                    $configurationFile = new $class($file);
-                    $this->registerConfigurationFile($configurationFile);
-                    $typeFound = true;
-                }
-            }
-            if (!$typeFound) {
-                throw new UnsupportedFileTypeException(
-                    sprintf(
-                        'File %s does not have a supported file extension: %s',
-                        $file,
-                        implode(',', $supportedTypes)
-                    ))
-                ;
-            }
-        }
+    public function getConfigurationRepository()
+    {
+        return $this->repository;
     }
 
     public function getContainer()
@@ -88,40 +51,15 @@ class Builder
         return $this->container;
     }
 
-    public function registerConfigurationFile(AdapterInterface $file)
-    {
-        $this->files[] = $file;
-    }
-
-    /**
-     * Retrieves a list of secure base directories
-     *
-     * @return array
-     */
-
-    public function getSecureBases()
-    {
-        return $this->secureBases;
-    }
-
-    public function addSecureBase($base)
-    {
-        $path = realpath($base);
-        if (!is_dir($path)) {
-            throw new InvalidDirectoryException('Unable to determine real path for directory: ' . $base);
-        }
-        $this->secureBases[] = $path;
-    }
-
     /**
      * Retrieves a list of files that have been registered
      *
-     * @return array
+     * @return ConfigurationFileRepository
      */
 
     public function getRegisteredConfigurationFiles()
     {
-        return $this->files;
+        return $this->repository;
     }
 
     /**
@@ -129,12 +67,13 @@ class Builder
      * @return Config
      * @throws InvalidConfigurationLocationException
      * @throws InvalidFileException
+     * @throws
      */
 
     public function build($context = Config::CONTEXT_DEFAULT, Config $config = null)
     {
         $files = $this->getRegisteredConfigurationFiles();
-        if (empty($files)) {
+        if (!count($files)) {
             throw new MissingConfigurationException('No configuration files have been provided.  Please add via registerConfigurationFile()');
         }
 
@@ -146,19 +85,7 @@ class Builder
             if (!$file instanceof AdapterInterface) {
                 throw new InvalidFileException('Configuration file object must implement ' . AdapterInterface::class);
             }
-            $path = $file->getFile();
-            $path = realpath($path);
-            $inSecurePath = false;
-            foreach ($this->secureBases as $base) {
-                if (strpos($path, $base) === 0) {
-                    $inSecurePath = true;
-                    break;
-                }
-            }
 
-            if (!$inSecurePath) {
-                throw new InvalidConfigurationLocationException($path . ' is not in one of the designated secure configuration paths.');
-            }
             $simpleXml = $file->toXml();
             if (!$structure instanceof \SimpleXMLElement) {
                 $structure = $simpleXml;

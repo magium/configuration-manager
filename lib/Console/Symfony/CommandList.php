@@ -4,6 +4,7 @@ namespace Magium\Configuration\Console\Symfony;
 
 use Magium\Configuration\Console\Command\ConfigurationBuild;
 use Magium\Configuration\Console\Command\ConfigurationList;
+use Magium\Configuration\Console\Command\ContextList;
 use Magium\Configuration\Console\Command\DefaultCommand;
 use Symfony\Component\Console\Application;
 
@@ -15,6 +16,7 @@ class CommandList
         $application->add(new DefaultCommand());
         $application->add(new ConfigurationBuild());
         $application->add(new ConfigurationList());
+        $application->add(new ContextList());
         $application->setDefaultCommand(DefaultCommand::COMMAND);
     }
 

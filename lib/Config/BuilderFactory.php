@@ -3,6 +3,7 @@
 namespace Magium\Configuration\Config;
 
 use Magium\Configuration\Config\Storage\RelationalDatabase;
+use Magium\Configuration\File\Configuration\ConfigurationFileRepository;
 use Magium\Configuration\Manager\CacheFactory;
 use Zend\Db\Adapter\Adapter;
 
@@ -54,6 +55,7 @@ class BuilderFactory implements BuilderFactoryInterface
         $cache = $this->getCache($this->configuration->cache);
         $persistence = $this->getAdapter();
         $secureBases = $this->getSecureBaseDirectories();
+        $repository = new ConfigurationFileRepository($secureBases);
 
         /*
          * We only populate up to the secureBases because adding a DIC or service manager by configuration starts
@@ -65,7 +67,7 @@ class BuilderFactory implements BuilderFactoryInterface
         $builder = new Builder(
             $cache,
             $persistence,
-            $secureBases
+            $repository
         );
 
         return $builder;

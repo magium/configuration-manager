@@ -5,6 +5,9 @@ namespace Magium\Configuration;
 use Magium\Configuration\Config\Builder;
 use Magium\Configuration\Config\BuilderFactory;
 use Magium\Configuration\Config\BuilderFactoryInterface;
+use Magium\Configuration\Config\InvalidConfigurationLocationException;
+use Magium\Configuration\Config\MissingConfigurationException;
+use Magium\Configuration\File\Context\AbstractContextConfigurationFile;
 use Magium\Configuration\Manager\CacheFactory;
 use Magium\Configuration\Manager\Manager;
 
@@ -15,6 +18,8 @@ class MagiumConfigurationFactory
 
     protected $manager;
     protected $builder;
+    protected $baseDir;
+    protected $contextFile;
 
     public function __construct($magiumConfigurationFile = null)
     {
@@ -37,8 +42,37 @@ class MagiumConfigurationFactory
         } else {
             throw new InvalidConfigurationFileException('Unable to file configuration file: ' . $magiumConfigurationFile);
         }
-        chdir(dirname($this->file));
+        $this->baseDir = dirname($this->file);
+        chdir($this->baseDir);
         $this->xml = simplexml_load_file($magiumConfigurationFile);
+    }
+
+    protected function buildContextFile()
+    {
+        chdir($this->baseDir);
+        $contextFileCheck = (string)$this->xml->contextConfigurationFile['file'];
+        $contextFileType = (string)$this->xml->contextConfigurationFile['type'];
+        $contextFile = realpath($contextFileCheck);
+        if (!$contextFile) {
+            throw new MissingConfigurationException('Unable to find context file: ' . $contextFileCheck);
+        }
+        $class = 'Magium\Configuration\File\Context\\' . ucfirst($contextFileType) . 'File';
+        $reflectionClass = new \ReflectionClass($class);
+        if ($reflectionClass->isSubclassOf(AbstractContextConfigurationFile::class)) {
+            $instance = $reflectionClass->newInstance($contextFile);
+            if ($instance instanceof AbstractContextConfigurationFile) {
+                return $instance;
+            }
+        }
+        throw new InvalidConfigurationException('Unable to load context configuration file: ' . $contextFileCheck);
+    }
+
+    public function getContextFile()
+    {
+        if (!$this->contextFile instanceof AbstractContextConfigurationFile) {
+            $this->contextFile = $this->buildContextFile();
+        }
+        return $this->contextFile;
     }
 
     public function validateConfigurationFile()
@@ -97,17 +131,27 @@ class MagiumConfigurationFactory
         return $this->builder;
     }
 
+    protected function getRemoteCache()
+    {
+        $cacheConfig = $this->xml->cache;
+        $globalAdapter = $this->getCache($cacheConfig);
+        return $globalAdapter;
+    }
+
+    protected function getLocalCache()
+    {
+        $localCache = null;
+        $localCacheConfig = $this->xml->localCache;
+        if ($localCacheConfig) {
+            $localCache = $this->getCache($localCacheConfig);
+        }
+        return $localCache;
+    }
+
     public function getManager()
     {
         if (!$this->manager instanceof Manager) {
-            $cacheConfig = $this->xml->cache;
-            $globalAdapter = $this->getCache($cacheConfig);
-            $localCache = null;
-            $localCacheConfig = $this->xml->localCache;
-            if ($localCacheConfig) {
-                $localCache = $this->getCache($localCacheConfig);
-            }
-            $this->manager = new Manager($globalAdapter, $this->getBuilder(), $localCache);
+            $this->manager = new Manager($this->getRemoteCache(), $this->getBuilder(), $this->getLocalCache());
         }
         return $this->manager;
     }

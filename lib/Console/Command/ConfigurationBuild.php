@@ -3,8 +3,11 @@
 namespace Magium\Configuration\Console\Command;
 
 use Magium\Configuration\Config\Config;
+use Magium\Configuration\MagiumConfigurationFactory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class ConfigurationBuild extends Command
 {
@@ -25,6 +28,17 @@ class ConfigurationBuild extends Command
         $this->addArgument('context', InputArgument::OPTIONAL, 'Configuration Context (ignore to build all contexts)');
     }
 
-//    protected
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $factory = new MagiumConfigurationFactory();
+        $builder = $factory->getBuilder();
+        $contexts = [];
+        $contextFile = $factory->getContextFile();
+        if ($context = $input->getArgument('context')) {
+            $contexts[] = $context;
+        } else {
+            $factory->
+        }
+    }
 
 }

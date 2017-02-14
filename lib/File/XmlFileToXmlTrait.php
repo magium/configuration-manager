@@ -5,17 +5,23 @@ namespace Magium\Configuration\File;
 trait XmlFileToXmlTrait
 {
 
+    protected $xml;
+
     abstract public function getFile();
 
     abstract public function validateSchema(\DOMDocument $doc);
 
     public function toXml()
     {
-        $file = $this->getFile();
-        $doc = new \DOMDocument();
-        $doc->load($file);
-        $this->validateSchema($doc);
-        return simplexml_import_dom($doc);
+        if (!$this->xml instanceof \SimpleXMLElement) {
+            $file = $this->getFile();
+            $content = file_get_contents($file);
+            $doc = new \DOMDocument();
+            $doc->loadXML($content);
+            $this->validateSchema($doc);
+            $this->xml = new \SimpleXMLElement($content);
+        }
+        return $this->xml;
     }
 
 }
