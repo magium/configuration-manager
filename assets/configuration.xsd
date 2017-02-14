@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
            targetNamespace="http://www.magiumlib.com/Configuration" xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:element name="configuration">
@@ -29,7 +30,7 @@
                                                               use="optional"/>
                                                 <xs:attribute type="xs:string" name="callbackFromStorage"
                                                               use="optional"/>
-                                                <xs:attribute name="id" type="xs:ID"/>
+                                                <xs:attribute name="id" type="xs:ID" use="required"/>
                                                 <xs:attribute type="xs:string" name="name" use="optional"/>
                                                 <xs:attribute name="hidden" use="optional">
                                                     <xs:simpleType>
@@ -56,7 +57,7 @@
 
                                         </xs:element>
                                     </xs:sequence>
-                                    <xs:attribute name="id" type="xs:ID"/>
+                                    <xs:attribute name="id" type="xs:ID" use="required"/>
                                     <xs:attribute type="xs:string" name="name" use="optional"/>
 
                                     <xs:attribute name="hidden" use="optional">
@@ -70,7 +71,7 @@
                                 </xs:complexType>
                             </xs:element>
                         </xs:sequence>
-                        <xs:attribute name="id" type="xs:ID"/>
+                        <xs:attribute name="id" type="xs:ID" use="required"/>
                         <xs:attribute type="xs:string" name="name" use="optional"/>
                         <xs:attribute name="hidden" use="optional">
                             <xs:simpleType>

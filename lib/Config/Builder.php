@@ -5,15 +5,16 @@ namespace Magium\Configuration\Config;
 use Interop\Container\ContainerInterface;
 use Magium\Configuration\Config\Storage\StorageInterface as ConfigurationStorageInterface;
 use Magium\Configuration\File\AdapterInterface;
+use Magium\Configuration\File\Configuration\ConfigurationFileRepository;
+use Magium\Configuration\File\Configuration\UnsupportedFileTypeException;
 use Magium\Configuration\File\InvalidFileException;
+use Magium\Configuration\InvalidConfigurationException;
 use Zend\Cache\Storage\StorageInterface;
 
 class Builder
 {
 
-    protected $files = [];
-
-    protected $secureBases = [];
+    protected $repository;
     protected $cache;
     protected $container;
     protected $hashAlgo;
@@ -22,7 +23,7 @@ class Builder
     public function __construct(
         StorageInterface $cache,
         ConfigurationStorageInterface $storage,
-        array $secureBases = [],
+        ConfigurationFileRepository $repository,
         ContainerInterface $container = null,
         $hashAlgo = 'sha1'
     )
@@ -30,56 +31,35 @@ class Builder
         $this->cache = $cache;
         $this->storage = $storage;
         $this->hashAlgo = $hashAlgo;
-        $this->storage = $storage;
+        $this->repository = $repository;
         $this->container = $container;
+    }
 
-        foreach ($secureBases as $base) {
-            $this->addSecureBase($base);
-        }
+    public function getConfigurationRepository()
+    {
+        return $this->repository;
     }
 
     public function getContainer()
     {
         if (!$this->container instanceof ContainerInterface) {
-            throw new MissingContainerException('You are using functionality that requires either a DI Container or Service Locator');
+            throw new MissingContainerException(
+                'You are using functionality that requires either a DI Container or Service Locator.  '
+                . 'The container, or container adapter, must implement Interop\Container\ContainerInterface'
+            );
         }
         return $this->container;
-    }
-
-    public function registerConfigurationFile(AdapterInterface $file)
-    {
-        $this->files[] = $file;
-    }
-
-    /**
-     * Retrieves a list of secure base directories
-     *
-     * @return array
-     */
-
-    public function getSecureBases()
-    {
-        return $this->secureBases;
-    }
-
-    public function addSecureBase($base)
-    {
-        $path = realpath($base);
-        if (!is_dir($path)) {
-            throw new InvalidDirectoryException('Unable to determine real path for directory: ' . $base);
-        }
-        $this->secureBases[] = $path;
     }
 
     /**
      * Retrieves a list of files that have been registered
      *
-     * @return array
+     * @return ConfigurationFileRepository
      */
 
     public function getRegisteredConfigurationFiles()
     {
-        return $this->files;
+        return $this->repository;
     }
 
     /**
@@ -87,12 +67,13 @@ class Builder
      * @return Config
      * @throws InvalidConfigurationLocationException
      * @throws InvalidFileException
+     * @throws
      */
 
     public function build($context = Config::CONTEXT_DEFAULT, Config $config = null)
     {
         $files = $this->getRegisteredConfigurationFiles();
-        if (!$files) {
+        if (!count($files)) {
             throw new MissingConfigurationException('No configuration files have been provided.  Please add via registerConfigurationFile()');
         }
 
@@ -104,19 +85,7 @@ class Builder
             if (!$file instanceof AdapterInterface) {
                 throw new InvalidFileException('Configuration file object must implement ' . AdapterInterface::class);
             }
-            $path = $file->getFile();
-            $path = realpath($path);
-            $inSecurePath = false;
-            foreach ($this->secureBases as $base) {
-                if (strpos($path, $base) === 0) {
-                    $inSecurePath = true;
-                    break;
-                }
-            }
 
-            if (!$inSecurePath) {
-                throw new InvalidConfigurationLocationException($path . ' is not in one of the designated secure configuration paths.');
-            }
             $simpleXml = $file->toXml();
             if (!$structure instanceof \SimpleXMLElement) {
                 $structure = $simpleXml;
@@ -125,9 +94,11 @@ class Builder
             }
         }
 
-        $this->buildConfigurationObject($structure, $config, $context);
+        if (!$structure instanceof \SimpleXMLElement) {
+            throw new InvalidConfigurationException('No configuration files provided');
+        }
 
-        $hash = hash_hmac($this->hashAlgo, $config->asXML(), '');
+        $this->buildConfigurationObject($structure, $config, $context);
 
         return $config;
     }
@@ -172,7 +143,7 @@ class Builder
                         $elementId
                     );
                     $result = $structure->xpath($xpath);
-                    if ($result) {
+                    if (!empty($result)) {
                         $value = trim((string)$result[0]);
                     }
                 }
@@ -191,8 +162,8 @@ class Builder
             if ($item instanceof \SimpleXMLElement) {
                 $xpath = sprintf('/*/s:section[@id="%s"]', $item['id']);
                 $sectionExists = $base->xpath($xpath);
-                $section = null;
-                if ($sectionExists && $sectionExists[0] instanceof \SimpleXMLElement) {
+
+                if (!empty($sectionExists) && $sectionExists[0] instanceof \SimpleXMLElement) {
                     $section = $sectionExists[0];
                 } else {
                     $section = $base->addChild('section');
@@ -215,8 +186,8 @@ class Builder
             if ($newGroup instanceof \SimpleXMLElement) {
                 $xpath = sprintf('./s:group[@id="%s"]', $newGroup['id']);
                 $groupExists = $section->xpath($xpath);
-                $group = null;
-                if ($groupExists && $groupExists[0] instanceof \SimpleXMLElement) {
+
+                if (!empty($groupExists) && $groupExists[0] instanceof \SimpleXMLElement) {
                     $group = $groupExists[0];
                 } else {
                     $group = $section->addChild('group');
@@ -236,8 +207,8 @@ class Builder
             if ($newElement instanceof \SimpleXMLElement) {
                 $xpath = sprintf('./s:element[@id="%s"]', $newElement['id']);
                 $elementExists = $group->xpath($xpath);
-                $element = null;
-                if ($elementExists && $elementExists[0] instanceof \SimpleXMLElement) {
+
+                if (!empty($elementExists) && $elementExists[0] instanceof \SimpleXMLElement) {
                     $element = $elementExists[0];
                 } else {
                     $element = $group->addChild('element');

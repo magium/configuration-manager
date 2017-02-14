@@ -10,9 +10,13 @@ use Magium\Configuration\Config\InvalidDirectoryException;
 use Magium\Configuration\Config\MissingConfigurationException;
 use Magium\Configuration\Config\MissingContainerException;
 use Magium\Configuration\Config\Storage\StorageInterface;
+use Magium\Configuration\Config\UncallableCallbackException;
+use Magium\Configuration\File\Configuration\ConfigurationFileRepository;
+use Magium\Configuration\File\Configuration\UnsupportedFileTypeException;
 use Magium\Configuration\File\InvalidFileException;
 use Magium\Configuration\File\Configuration\XmlFile;
 use PHPUnit\Framework\TestCase;
+use Zend\EventManager\Exception\InvalidCallbackException;
 
 class BuilderTest extends TestCase
 {
@@ -70,6 +74,41 @@ class BuilderTest extends TestCase
         self::assertEquals('Storage Value', $value);
     }
 
+    public function testConfigurationFilesPassedIntoConstructor()
+    {
+        $repository = new ConfigurationFileRepository([__DIR__], [realpath(__DIR__ . '/xml/config-merge-2.xml')]);
+        $builder = new Builder(
+            $this->getCacheStorageMock(),
+            $this->getPersistenceStorageMock(),
+            $repository
+        );
+        $config = $builder->build();
+        $value = $config->getValue('general/website/title');
+        self::assertEquals('My Homepage', $value);
+    }
+
+    public function testInvalidConfigurationFilesPassedIntoConstructorThrowsException()
+    {
+        $this->expectException(InvalidFileException::class);
+        $repository = new ConfigurationFileRepository([__DIR__], [__DIR__  . '/no-location/config-merge-2.xml']);
+        new Builder(
+            $this->getCacheStorageMock(),
+            $this->getPersistenceStorageMock(),
+            $repository
+        );
+    }
+
+    public function testUnsupportedConfigurationFilesPassedIntoConstructorThrowsException()
+    {
+        $this->expectException(UnsupportedFileTypeException::class);
+        $repository = new ConfigurationFileRepository([__DIR__], [realpath('.') . '/not-supported/test.unsupported']);
+        new Builder(
+            $this->getCacheStorageMock(),
+            $this->getPersistenceStorageMock(),
+            $repository
+        );
+    }
+
     public function testConfigurationObjectResolution()
     {
         $structure = $this->getStructureXml();
@@ -116,7 +155,7 @@ class BuilderTest extends TestCase
         $this->expectException(InvalidConfigurationLocationException::class);
         $builder = $this->getMockConfigurationBuilder(null, 0);
         $file = new XmlFile(realpath(__DIR__ . '/xml/config-merge-1.xml'));
-        $builder->registerConfigurationFile($file);
+        $builder->getConfigurationRepository()->registerConfigurationFile($file);
         $builder->build();
     }
 
@@ -124,11 +163,12 @@ class BuilderTest extends TestCase
     {
         $builder = $this->getMockConfigurationBuilder();
         $base = realpath(__DIR__ . '/xml');
-        $builder->addSecureBase($base);
+        $repository = $builder->getConfigurationRepository();
+        $repository->addSecureBase($base);
 
         foreach (['/xml/config-merge-1.xml', '/xml/config-merge-2.xml'] as $file) {
             $file = new XmlFile(realpath(__DIR__ . $file));
-            $builder->registerConfigurationFile($file);
+            $repository->registerConfigurationFile($file);
         }
         $config = $builder->build();
         $title = $config->getValue('general/website/title');
@@ -142,30 +182,10 @@ class BuilderTest extends TestCase
         $builder->build();
     }
 
-    public function testExceptionThrownWhenFileAdapterIsWrongType()
-    {
-        $this->expectException(InvalidFileException::class);
-
-        $builder = $this->getMockBuilder(Builder::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getRegisteredConfigurationFiles'])
-            ->getMock();
-        $builder->expects(self::atLeast(1))->method('getRegisteredConfigurationFiles')->willReturn(['a string']);
-        $builder->build();
-    }
-
     public function testAddingSecureBaseViaConstructor()
     {
-        $cacheStorage = $this->getCacheStorageMock();
-        $persistenceStorage = $this->getPersistenceStorageMock();
-
-        $builder = new Builder(
-            $cacheStorage,
-            $persistenceStorage,
-            [__DIR__]
-        );
-
-        self::assertArraySubset([__DIR__], $builder->getSecureBases());
+        $repository = new ConfigurationFileRepository([__DIR__]);
+        self::assertArraySubset([__DIR__], $repository->getSecureBases());
     }
 
     public function testAddingInvalidSecureBaseViaConstructorThrowsException()
@@ -173,11 +193,12 @@ class BuilderTest extends TestCase
         $this->expectException(InvalidDirectoryException::class);
         $cacheStorage = $this->getCacheStorageMock();
         $persistenceStorage = $this->getPersistenceStorageMock();
+        $repository = new ConfigurationFileRepository(['boogers']);
 
         new Builder(
             $cacheStorage,
             $persistenceStorage,
-            ['boogers']
+            $repository
         );
     }
 
@@ -189,6 +210,14 @@ class BuilderTest extends TestCase
         $value = $config->getValue('section/group/element');
         self::assertNotNull($value);
         self::assertEquals(strtoupper($value), $value); // strtoupper() is what we're expecting
+    }
+
+    public function testInvalidFunctionCallbackThrowsException()
+    {
+        $this->expectException(UncallableCallbackException::class);
+        $builder = $this->getMockConfigurationBuilder('some lowercase value');
+        $config = new Config('<config />');
+        $builder->buildConfigurationObject($this->getFunctionCallbackStructureXml('notexistingfunction'), $config);
     }
 
     public function testFunctionalityRequiringObjectContainerThrowsExceptionWhenMissing()
@@ -239,7 +268,7 @@ class BuilderTest extends TestCase
         $builder = new Builder(
             $cacheStorage,
             $storage,
-            [],
+            new ConfigurationFileRepository(),
             $container
         );
         return $builder;
@@ -306,7 +335,7 @@ XML
         );
     }
 
-    protected function getFunctionCallbackStructureXml()
+    protected function getFunctionCallbackStructureXml($callback = 'strtoupper')
     {
         $schemaFile = realpath(__DIR__ . '/../../assets/configuration-element.xsd');
         return new \SimpleXMLElement(<<<XML
@@ -315,7 +344,7 @@ XML
           xsi:schemaLocation="http://www.magiumlib.com/Configuration $schemaFile">
     <section id="section">
       <group id="group">
-          <element id="element" callbackFromStorage="strtoupper"/>
+          <element id="element" callbackFromStorage="$callback"/>
       </group>
     </section>
 </configuration>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://www.magiumlib.com/BaseConfiguration"
+           elementFormDefault="qualified"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:cc="http://www.magiumlib.com/BaseConfiguration">
+    <xs:complexType name="cacheConfiguration" >
+        <xs:sequence>
+            <xs:element type="xs:string" name="adapter" />
+            <xs:element name="options" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>
+                        The children of this element will be passed into the Zend Framework StorageFactory factory.
+                        See https://framework.zend.com/manual/2.3/en/modules/zend.cache.storage.adapter.html#overview
+                        for more information
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:any processContents="lax"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="dbConfiguration">
+        <xs:annotation>
+            <xs:documentation>
+                The children of this element will be passed into the Zend Framework Zend\Db\Adapter\Adapter class.
+                See https://framework.zend.com/manual/2.1/en/modules/zend.db.adapter.html
+                for more information
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="xs:string" name="driver" />
+            <xs:element type="xs:string" name="database" />
+            <xs:element type="xs:string" name="username" minOccurs="0"/>
+            <xs:element type="xs:string" name="password"  minOccurs="0"/>
+            <xs:element type="xs:string" name="hostname"  minOccurs="0"/>
+            <xs:element type="xs:string" name="port"  minOccurs="0"/>
+            <xs:element type="xs:string" name="charset"  minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="validFileExtensions">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="xml" />
+            <xs:enumeration value="php" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="magium">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="persistenceConfiguration" type="cc:dbConfiguration" minOccurs="1" maxOccurs="1" />
+                <xs:element name="contextConfigurationFile">
+                    <xs:complexType>
+                        <xs:attribute name="file" use="required" />
+                        <xs:attribute name="type" use="required" type="cc:validFileExtensions" />
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="baseDirectories" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="directory" maxOccurs="unbounded" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="builderFactory" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="configuration" minOccurs="0" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:any processContents="lax"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="class" />
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="cache" type="cc:cacheConfiguration" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="localCache" type="cc:cacheConfiguration" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="bootstrap" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:attribute name="file" use="optional">
+                            <xs:annotation>
+                                <xs:documentation><![CDATA[
+The path for this file must be either fully qualified or relative to the location of the magium-configuration.xml file.
+Additionally, the file MUST return a configured instance of Magium\Configuration\Config\Builder.
+                                ]]></xs:documentation>
+                            </xs:annotation>
+                        </xs:attribute>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

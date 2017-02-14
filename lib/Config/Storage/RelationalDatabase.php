@@ -10,10 +10,7 @@ use Zend\Db\Sql\Ddl\Column\Text;
 use Zend\Db\Sql\Ddl\Column\Varchar;
 use Zend\Db\Sql\Ddl\Constraint\UniqueKey;
 use Zend\Db\Sql\Ddl\CreateTable;
-use Zend\Db\Sql\Insert;
-use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Sql;
-use Zend\Db\Sql\Where;
 
 class RelationalDatabase implements StorageInterface
 {
@@ -68,8 +65,9 @@ class RelationalDatabase implements StorageInterface
                 throw new InvalidContextException('Unable to find context: ' . $requestedContext);
             }
 
+            $context = array_shift($contexts);
             do {
-                $context = array_shift($contexts);
+
                 if (!$context instanceof \SimpleXMLElement) {
                     break;
                 }
@@ -83,7 +81,7 @@ class RelationalDatabase implements StorageInterface
 
     public function getValue($path, $requestedContext = Config::CONTEXT_DEFAULT)
     {
-        if (!$this->data) {
+        if (empty($this->data)) {
             $contexts = $this->getContexts();
             foreach ($contexts as $context) {
                 $sql = new Sql($this->adapter);
@@ -112,7 +110,8 @@ class RelationalDatabase implements StorageInterface
         if (!in_array($requestedContext, $contexts)) {
             throw new InvalidContextException('Could not find the context: ' . $requestedContext);
         }
-        $insert = new Insert(self::TABLE);
+        $sql = new Sql($this->adapter);
+        $insert = $sql->insert(self::TABLE);
         $insert->values([
             'path'      => $path,
             'value'     => $value,

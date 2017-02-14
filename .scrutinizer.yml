@@ -1,0 +1,8 @@
+build:
+    tests:
+        override:
+            -
+                command: 'vendor/phpunit/phpunit/phpunit -c tests/phpunit.xml.dist --coverage-clover coverage'
+                coverage:
+                    file: 'coverage'
+                    format: 'php-clover'
