@@ -61,7 +61,7 @@ class DefaultCommand extends Command
         <driver></driver>
         <database></database>
     </persistenceConfiguration>
-    <contextConfigurationFile file="contexts.xml"/>
+    <contextConfigurationFile file="contexts.xml" type="xml"/>
     <cache>
         <adapter>filesystem</adapter>
         <options>

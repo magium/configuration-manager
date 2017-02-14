@@ -161,7 +161,7 @@ XML
         <database>:memory:</database>
     </persistenceConfiguration>
     <baseDirectories><directory>$base</directory></baseDirectories>
-    <contextConfigurationFile file="contexts.xml" />
+    <contextConfigurationFile file="contexts.xml" type="xml"/>
     <cache>
         <adapter>filesystem</adapter>
         <options>
@@ -189,7 +189,7 @@ XML
         <driver>pdo_sqlite</driver>
         <database>:memory:</database>
     </persistenceConfiguration>
-    <contextConfigurationFile file="contexts.xml" />
+    <contextConfigurationFile file="contexts.xml" type="xml"/>
     <cache>
         <adapter>filesystem</adapter>
         <options>
