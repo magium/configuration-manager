@@ -18,20 +18,13 @@ class ConfigurationFileRepository implements \ArrayAccess, \Iterator, \Countable
             $this->addSecureBase($base);
         }
 
-        $supportedTypes = [];
-        if (!empty($configurationFiles)) {
-            $checkSupportedTypes = glob(__DIR__ . '/*File.php');
-            foreach ($checkSupportedTypes as $file) {
-                $file = basename($file);
-                if ($file != 'AbstractConfigurationFile.php') {
-                    $match = null;
-                    if (preg_match('/^([a-zA-Z]+)File.php$/', $file, $match)) {
-                        $supportedTypes[] = strtolower($match[1]);
-                    }
-                }
-            }
-        }
+        $supportedTypes = $this->getSupportedTypes($configurationFiles);
+        $this->buildConfigurationFileList($configurationFiles, $supportedTypes);
 
+    }
+
+    protected function buildConfigurationFileList(array $configurationFiles, array $supportedTypes)
+    {
         foreach ($configurationFiles as $file) {
             $fileName = basename($file);
             $typeFound = false;
@@ -53,6 +46,24 @@ class ConfigurationFileRepository implements \ArrayAccess, \Iterator, \Countable
                 ;
             }
         }
+    }
+
+    protected function getSupportedTypes(array $configurationFiles)
+    {
+        $supportedTypes = [];
+        if (!empty($configurationFiles)) {
+            $checkSupportedTypes = glob(__DIR__ . '/*File.php');
+            foreach ($checkSupportedTypes as $file) {
+                $file = basename($file);
+                if ($file != 'AbstractConfigurationFile.php') {
+                    $match = null;
+                    if (preg_match('/^([a-zA-Z]+)File.php$/', $file, $match)) {
+                        $supportedTypes[] = strtolower($match[1]);
+                    }
+                }
+            }
+        }
+        return $supportedTypes;
     }
 
     public function count()

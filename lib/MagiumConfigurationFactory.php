@@ -64,12 +64,13 @@ class MagiumConfigurationFactory
                 return $instance;
             }
         }
+        throw new InvalidConfigurationException('Unable to load context configuration file: ' . $contextFileCheck);
     }
 
     public function getContextFile()
     {
         if (!$this->contextFile) {
-//            if ($this->)
+            $this->contextFile = $this->buildContextFile();
         }
         return $this->contextFile;
     }
