@@ -56,13 +56,6 @@
                         <xs:attribute name="type" use="required" type="cc:validFileExtensions" />
                     </xs:complexType>
                 </xs:element>
-                <xs:element name="baseDirectories" minOccurs="0" maxOccurs="1">
-                    <xs:complexType>
-                        <xs:sequence>
-                            <xs:element name="directory" maxOccurs="unbounded" />
-                        </xs:sequence>
-                    </xs:complexType>
-                </xs:element>
                 <xs:element name="builderFactory" minOccurs="0" maxOccurs="1">
                     <xs:complexType>
                         <xs:sequence>
@@ -75,6 +68,20 @@
                             </xs:element>
                         </xs:sequence>
                         <xs:attribute name="class" />
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="configurationDirectories" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="directory" minOccurs="1" maxOccurs="unbounded" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="configurationFiles" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="file" minOccurs="1" maxOccurs="unbounded" />
+                        </xs:sequence>
                     </xs:complexType>
                 </xs:element>
                 <xs:element name="cache" type="cc:cacheConfiguration" minOccurs="0" maxOccurs="1"/>
