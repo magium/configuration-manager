@@ -15,22 +15,30 @@ class Manager
     protected $localCache;
     protected $builder;
     protected $configurationLocation;
+    protected $hashAlgo;
 
     public function __construct(
         StorageInterface $cache,
         Builder $builder,
-        StorageInterface $localCache = null
+        StorageInterface $localCache = null,
+        $hashAlgo = 'sha1'
     )
     {
         $this->cache = $cache;
         $this->builder = $builder;
         $this->localCache = $localCache;
-        }
+        $this->hashAlgo = $hashAlgo;
+    }
 
-        public function getBuilder()
-        {
-            return $this->builder;
-        }
+    public function getBuilder()
+    {
+        return $this->builder;
+    }
+
+    public function getContextCacheKey($context = Config::CONTEXT_DEFAULT)
+    {
+        return strtoupper('current_cache_object_' . $context);
+    }
 
     /**
      * @param string $context The (configurable) context for the needed configuration object
@@ -40,7 +48,7 @@ class Manager
 
     public function getConfiguration($context = Config::CONTEXT_DEFAULT, $storeScopeLocally = false)
     {
-        $key = 'current_cache_object_' . $context;
+        $key = $this->getContextCacheKey($context);
         if (isset($this->config[$key]) && $this->config[$key] instanceof Config) {
             return $this->config[$key];
         }
@@ -84,8 +92,23 @@ class Manager
             return $this->config[$key];
         }
         $config = $this->builder->build($context);
+        $this->storeConfigurationObject($config, $context);
         $this->config[$key] = $config;
         return $config;
+    }
+
+    public function storeConfigurationObject(Config $config, $context = Config::CONTEXT_DEFAULT)
+    {
+        $contextCacheKey = $this->getContextCacheKey($context);
+        $previousConfigKey = $this->cache->getItem($contextCacheKey);
+        $xml = $config->asXML();
+        $configKey = hash_hmac($this->hashAlgo, $xml, '');
+        $this->cache->addItem($configKey, $xml);
+        $this->cache->setItem($contextCacheKey, $xml);
+
+        if ($previousConfigKey) {
+            $this->cache->removeItem($previousConfigKey);
+        }
     }
 
 }

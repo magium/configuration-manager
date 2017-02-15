@@ -14,7 +14,9 @@ class ManagerTest extends TestCase
     public function testBuilderIsCalledIfCacheIsEmpty()
     {
         // self::exactly() is set in getBuilderMock()
-        $manager = new Manager($this->getCacheMock(), $this->getBuilderMock());
+        $manager = $this->getMockBuilder(Manager::class)->setMethods(['storeConfigurationObject'])->setConstructorArgs(
+            [$this->getCacheMock(), $this->getBuilderMock()]
+        )->getMock();
         $manager->getConfiguration('test');
 
     }
@@ -22,7 +24,11 @@ class ManagerTest extends TestCase
     public function testBuilderIsCalledOnlyOnceOnSubsequentCalls()
     {
         // self::exactly() is set in getBuilderMock()
-        $manager = new Manager($this->getCacheMock(), $this->getBuilderMock(2));
+        // Not testing cache storage of the resulting configuration object here.  So, mocking.
+        $manager = $this->getMockBuilder(Manager::class)->setMethods(['storeConfigurationObject'])->setConstructorArgs(
+            [$this->getCacheMock(), $this->getBuilderMock()]
+        )->getMock();
+        $manager->expects(self::any())->method('storeConfigurationObject');
         $manager->getConfiguration('test');
         $manager->getConfiguration('test');
     }
@@ -30,17 +36,24 @@ class ManagerTest extends TestCase
     public function testCacheIsCalledFirstForCacheLocationSecondForData()
     {
         $cache = $this->getCacheMock();
-        $cache->expects(self::exactly(2))->method('getItem')->willReturnCallback(function($param) {
-            static $first = false;
-            if (!$first) {
-                $first = true;
-                return 'boogers';
-            } else {
-                TestCase::assertEquals('boogers', $param);
-            }
+        $cache->expects(self::exactly(2))->method('getItem')->willReturnCallback(
+            function($param) {
+                static $first = false;
+                if (!$first) {
+                    $first = true;
+                    return 'boogers';
+                } else {
+                    TestCase::assertEquals('boogers', $param);
+                }
             }
         );
-        $manager = new Manager($cache, $this->getBuilderMock());
+
+        // Not testing cache storage of the resulting configuration object here.  So, mocking.
+        $manager = $this->getMockBuilder(Manager::class)->setMethods(['storeConfigurationObject'])->setConstructorArgs(
+            [$cache, $this->getBuilderMock()]
+        )->getMock();
+        $manager->expects(self::any())->method('storeConfigurationObject');
+
         $manager->getConfiguration('test');
     }
 
@@ -49,9 +62,10 @@ class ManagerTest extends TestCase
         $cache = $this->getCacheMock();
         $cache->expects(self::exactly(4))->method('getItem')->willReturnCallback(function($param) {
             static $call = 0;
+            // strtoupper is there to normalize the values
             switch ($call) {
                 case 0:
-                    TestCase::assertContains(Config::CONTEXT_DEFAULT, $param);
+                    TestCase::assertContains(strtoupper(Config::CONTEXT_DEFAULT), strtoupper($param));
                     $call++;
                     return 'test1';
                 case 1:
@@ -59,7 +73,7 @@ class ManagerTest extends TestCase
                     $call++;
                     break;
                 case 2:
-                    TestCase::assertContains('second', $param);
+                    TestCase::assertContains(strtoupper('second'), strtoupper($param));
                     $call++;
                     return 'test2';
                 case 3:
@@ -68,7 +82,13 @@ class ManagerTest extends TestCase
                     break;
             }
         });
-        $manager = new Manager($cache, $this->getBuilderMock(2));
+
+        // Not testing cache storage of the resulting configuration object here.  So, mocking.
+        $manager = $this->getMockBuilder(Manager::class)->setMethods(['storeConfigurationObject'])->setConstructorArgs(
+            [$cache, $this->getBuilderMock(2)]
+        )->getMock();
+        $manager->expects(self::any())->method('storeConfigurationObject');
+
         $manager->getConfiguration();
         $manager->getConfiguration('second');
     }
@@ -142,7 +162,7 @@ XML
     protected function getBuilderMock($buildCalls = 1)
     {
         $builder = $this->getMockBuilder(Builder::class)->disableOriginalConstructor()->setMethods(['build'])->getMock();
-        $builder->expects(self::exactly($buildCalls))->method('build');
+        $builder->expects(self::exactly($buildCalls))->method('build')->willReturn(new Config('<config />'));
         /* @var $builder Builder */
         return $builder;
     }

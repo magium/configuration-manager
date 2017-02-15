@@ -20,6 +20,7 @@ class MagiumConfigurationFactory
     protected $builder;
     protected $baseDir;
     protected $contextFile;
+    protected $builderFactory;
 
     public function __construct($magiumConfigurationFile = null)
     {
@@ -101,12 +102,9 @@ class MagiumConfigurationFactory
         return $cacheFactory->getCache($element);
     }
 
-    /**
-     * @return Builder
-     */
-    public function getBuilder()
+    public function getBuilderFactory()
     {
-        if (!$this->builder instanceof Builder) {
+        if (!$this->builderFactory instanceof BuilderFactoryInterface) {
             $builderFactoryConfig = $this->xml->builderFactory;
             $class = (string)$builderFactoryConfig['class'];
             if (!$class) {
@@ -116,17 +114,19 @@ class MagiumConfigurationFactory
             if (!$reflection->implementsInterface(BuilderFactoryInterface::class)) {
                 throw new InvalidConfigurationException($class . ' must implement ' . BuilderFactoryInterface::class);
             }
-            $builderFactory = $reflection->newInstance($this->xml);
-            if (!$builderFactory instanceof BuilderFactoryInterface) {
-                throw new InvalidConfigurationException(
-                    sprintf(
-                        'The builder factory %s must implement %s',
-                        get_class($builderFactory),
-                        BuilderFactoryInterface::class
-                    )
-                );
-            }
-            $this->builder = $builderFactory->getBuilder();
+            $this->builderFactory = $reflection->newInstance($this->xml);
+        }
+        return $this->builderFactory;
+    }
+
+    /**
+     * @return Builder
+     */
+
+    public function getBuilder()
+    {
+        if (!$this->builder instanceof Builder) {
+            $this->builder = $this->getBuilderFactory()->getBuilder();
         }
         return $this->builder;
     }
