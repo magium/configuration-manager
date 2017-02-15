@@ -33,6 +33,61 @@ class ManagerTest extends TestCase
         $manager->getConfiguration('test');
     }
 
+    protected function buildComplexStoreCacheExpectations()
+    {
+
+    }
+
+    public function testStoreCacheWorksAsExpected()
+    {
+        $cache = $this->getCacheMock();
+        $builder = $this->getBuilderMock(0);
+        $manager = $this->getMockBuilder(Manager::class)->setMethods(['getContextCacheKey'])->setConstructorArgs(
+            [$cache, $builder]
+        )->getMock();
+
+        $xml = (new Config('<config />'))->asXML();
+
+        //  Called once to get the value for the test comparison, and again
+        $contextKeyMethod = $manager->expects(self::exactly(1))->method('getContextCacheKey');
+        /* @var $manager Manager */
+
+        $expectedCacheKey = 'test';
+        $cache->expects(self::exactly(1))->method('getItem')->willReturn(null)->with(self::equalTo($expectedCacheKey));
+        $contextKeyMethod->willReturn('test')->with($this->equalTo($expectedCacheKey));
+
+        $expectedKey = hash_hmac('sha1', $xml, '');
+        $cache->expects(self::never())->method('removeItem');
+        $cache->expects(self::exactly(1))->method('addItem')->with(self::equalTo($expectedKey));
+        $cache->expects(self::exactly(1))->method('setItem')->with(self::equalTo($expectedCacheKey), self::equalTo($xml));
+        $manager->storeConfigurationObject(new Config('<config />'), 'test');
+    }
+
+    public function testObsoleteCachedItemIsRemoved()
+    {
+        $cache = $this->getCacheMock();
+        $builder = $this->getBuilderMock(0);
+        $manager = $this->getMockBuilder(Manager::class)->setMethods(['getContextCacheKey'])->setConstructorArgs(
+            [$cache, $builder]
+        )->getMock();
+
+        $xml = (new Config('<config />'))->asXML();
+
+        //  Called once to get the value for the test comparison, and again
+        $contextKeyMethod = $manager->expects(self::exactly(1))->method('getContextCacheKey');
+        /* @var $manager Manager */
+
+        $expectedCacheKey = 'test';
+        $cache->expects(self::exactly(1))->method('getItem')->willReturn('delete-me')->with(self::equalTo($expectedCacheKey));
+        $contextKeyMethod->willReturn('test')->with($this->equalTo($expectedCacheKey));
+
+        $expectedKey = hash_hmac('sha1', $xml, '');
+        $cache->expects(self::exactly(1))->method('removeItem')->with(self::equalTo('delete-me'));
+        $cache->expects(self::exactly(1))->method('addItem')->with(self::equalTo($expectedKey));
+        $cache->expects(self::exactly(1))->method('setItem')->with(self::equalTo($expectedCacheKey), self::equalTo($xml));
+        $manager->storeConfigurationObject(new Config('<config />'), 'test');
+    }
+
     public function testCacheIsCalledFirstForCacheLocationSecondForData()
     {
         $cache = $this->getCacheMock();
