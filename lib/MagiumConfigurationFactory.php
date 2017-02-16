@@ -153,7 +153,7 @@ class MagiumConfigurationFactory implements MagiumConfigurationFactoryInterface
         if (!$this->manager instanceof ManagerInterface) {
             $managerClass = Manager::class;
             if (isset($this->xml->manager['class'])) {
-                $managerClass = $this->xml->manager['class'];
+                $managerClass = (string)$this->xml->manager['class'];
             }
             $reflectionClass = new \ReflectionClass($managerClass);
             if ($managerClass == Manager::class) {
