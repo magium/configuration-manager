@@ -5,13 +5,14 @@ namespace Magium\Configuration;
 use Magium\Configuration\Config\Builder;
 use Magium\Configuration\Config\BuilderFactory;
 use Magium\Configuration\Config\BuilderFactoryInterface;
+use Magium\Configuration\Config\BuilderInterface;
 use Magium\Configuration\Config\InvalidConfigurationLocationException;
 use Magium\Configuration\Config\MissingConfigurationException;
 use Magium\Configuration\File\Context\AbstractContextConfigurationFile;
 use Magium\Configuration\Manager\CacheFactory;
 use Magium\Configuration\Manager\Manager;
 
-class MagiumConfigurationFactory
+class MagiumConfigurationFactory implements MagiumConfigurationFileFactoryInterface
 {
     protected $file;
     protected $xml;
@@ -120,12 +121,12 @@ class MagiumConfigurationFactory
     }
 
     /**
-     * @return Builder
+     * @return BuilderInterface
      */
 
     public function getBuilder()
     {
-        if (!$this->builder instanceof Builder) {
+        if (!$this->builder instanceof BuilderInterface) {
             $this->builder = $this->getBuilderFactory()->getBuilder();
         }
         return $this->builder;

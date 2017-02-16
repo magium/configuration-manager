@@ -3,6 +3,7 @@
 namespace Magium\Configuration\Manager;
 
 use Magium\Configuration\Config\Builder;
+use Magium\Configuration\Config\BuilderInterface;
 use Magium\Configuration\Config\Config;
 use Zend\Cache\Storage\StorageInterface;
 
@@ -19,7 +20,7 @@ class Manager
 
     public function __construct(
         StorageInterface $cache,
-        Builder $builder,
+        BuilderInterface $builder,
         StorageInterface $localCache = null,
         $hashAlgo = 'sha1'
     )
