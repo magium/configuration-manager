@@ -51,9 +51,10 @@ class ConfigurationBuild extends Command
         $manager = $factory->getManager();
         $contexts = $factory->getContextFile()->getContexts();
         $context = $input->getArgument('context');
-        if ($context)
-            if (in_array($context, $contexts)) {
+        if ($context) {
+                    if (in_array($context, $contexts)) {
                 $contexts = [$context];
+        }
             } else {
             throw new InvalidContextException('Context does not exist: ' . $context);
         }
