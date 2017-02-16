@@ -2,7 +2,7 @@
 
 namespace Magium\Configuration\Config;
 
-class Config extends \SimpleXMLElement
+class Config extends \SimpleXMLElement implements ConfigInterface
 {
 
     const CONTEXT_DEFAULT = 'default';

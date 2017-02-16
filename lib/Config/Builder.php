@@ -70,7 +70,7 @@ class Builder implements BuilderInterface
      * @throws
      */
 
-    public function build($context = Config::CONTEXT_DEFAULT, Config $config = null)
+    public function build($context = Config::CONTEXT_DEFAULT, ConfigInterface $config = null)
     {
         $files = $this->getRegisteredConfigurationFiles();
         if (!count($files)) {
@@ -109,7 +109,11 @@ class Builder implements BuilderInterface
      * @return Config The resulting configuration object
      */
 
-    public function buildConfigurationObject(\SimpleXMLElement $structure, Config $config, $context = Config::CONTEXT_DEFAULT)
+    public function buildConfigurationObject(
+        \SimpleXMLElement $structure,
+        ConfigInterface $config,
+        $context = Config::CONTEXT_DEFAULT
+    )
     {
         $structure->registerXPathNamespace('s', 'http://www.magiumlib.com/Configuration');
         $elements = $structure->xpath('/*/s:section/s:group/s:element');
