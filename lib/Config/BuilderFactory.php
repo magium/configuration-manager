@@ -10,6 +10,7 @@ use Zend\Db\Adapter\Adapter;
 class BuilderFactory implements BuilderFactoryInterface
 {
     protected $configuration;
+    protected $adapter;
 
     public function __construct(\SimpleXMLElement $configuration)
     {
@@ -22,18 +23,25 @@ class BuilderFactory implements BuilderFactoryInterface
         return $cacheFactory->getCache($element);
     }
 
-    protected function getAdapter()
+    public function getAdapter()
     {
-        $config = json_encode($this->configuration->persistenceConfiguration);
-        $config = json_decode($config, true);
-        $adapter = new Adapter($config);
-        $persistence = new RelationalDatabase($adapter);
+        if (!$this->adapter instanceof Adapter) {
+            $config = json_encode($this->configuration->persistenceConfiguration);
+            $config = json_decode($config, true);
+            $this->adapter = new Adapter($config);
+        }
+        return $this->adapter;
+    }
+
+    public function getPersistence()
+    {
+        $persistence = new RelationalDatabase($this->getAdapter());
         return $persistence;
     }
 
     protected function getSecureBaseDirectories()
     {
-        $config = json_encode($this->configuration->baseDirectories);
+        $config = json_encode($this->configuration->configurationDirectories);
         $config = json_decode($config, true);
         $baseDirs = [];
         if (is_array($config)) {
@@ -49,13 +57,36 @@ class BuilderFactory implements BuilderFactoryInterface
         return $baseDirs;
     }
 
+    protected function getConfigurationFiles(array $secureBaseDirectories = [])
+    {
+        $config = json_encode($this->configuration->configurationFiles);
+        $config = json_decode($config, true);
+        $files = [];
+        foreach ($config as $file) {
+            $found = false;
+            foreach ($secureBaseDirectories as $base) {
+                chdir($base);
+                $path = realpath($file);
+                if ($path) {
+                    $found = true;
+                    $files[] = $path;
+                }
+            }
+            if (!$found) {
+                throw new InvalidConfigurationLocationException('Could not find file: ' . $file);
+            }
+        }
+        return $files;
+    }
+
     public function getBuilder()
     {
         // This method expects that chdir() has been called on the same level as the magium-configuration.xml file
         $cache = $this->getCache($this->configuration->cache);
-        $persistence = $this->getAdapter();
+        $persistence = $this->getPersistence();
         $secureBases = $this->getSecureBaseDirectories();
-        $repository = new ConfigurationFileRepository($secureBases);
+        $configurationFiles = $this->getConfigurationFiles($secureBases);
+        $repository = new ConfigurationFileRepository($secureBases, $configurationFiles);
 
         /*
          * We only populate up to the secureBases because adding a DIC or service manager by configuration starts

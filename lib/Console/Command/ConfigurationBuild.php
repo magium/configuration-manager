@@ -2,8 +2,9 @@
 
 namespace Magium\Configuration\Console\Command;
 
-use Magium\Configuration\Config\Config;
+use Magium\Configuration\Config\InvalidContextException;
 use Magium\Configuration\MagiumConfigurationFactory;
+use Magium\Configuration\MagiumConfigurationFactoryInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,6 +14,8 @@ class ConfigurationBuild extends Command
 {
 
     const COMMAND = 'magium:configuration:build';
+
+    protected $configurationFactory;
 
     protected function configure()
     {
@@ -28,16 +31,37 @@ class ConfigurationBuild extends Command
         $this->addArgument('context', InputArgument::OPTIONAL, 'Configuration Context (ignore to build all contexts)');
     }
 
+    public function setConfigurationFactory(MagiumConfigurationFactoryInterface $factory)
+    {
+        $this->configurationFactory = $factory;
+    }
+
+    protected function getConfigurationFactory()
+    {
+        if (!$this->configurationFactory instanceof MagiumConfigurationFactoryInterface) {
+            $this->configurationFactory = new MagiumConfigurationFactory();
+        }
+        return $this->configurationFactory;
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $factory = new MagiumConfigurationFactory();
+        $factory = $this->getConfigurationFactory();
         $builder = $factory->getBuilder();
-        $contexts = [];
-        $contextFile = $factory->getContextFile();
-        if ($context = $input->getArgument('context')) {
-            $contexts[] = $context;
-        } else {
-            $factory->
+        $manager = $factory->getManager();
+        $contexts = $factory->getContextFile()->getContexts();
+        $context = $input->getArgument('context');
+        if ($context) {
+                    if (in_array($context, $contexts)) {
+                $contexts = [$context];
+        }
+            } else {
+            throw new InvalidContextException('Context does not exist: ' . $context);
+        }
+        foreach ($contexts as $context) {
+            $output->writeln('Building context: ' . $context);
+            $config = $builder->build($context);
+            $manager->storeConfigurationObject($config, $context);
         }
     }
 

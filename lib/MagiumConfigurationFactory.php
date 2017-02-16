@@ -2,16 +2,16 @@
 
 namespace Magium\Configuration;
 
-use Magium\Configuration\Config\Builder;
 use Magium\Configuration\Config\BuilderFactory;
 use Magium\Configuration\Config\BuilderFactoryInterface;
-use Magium\Configuration\Config\InvalidConfigurationLocationException;
+use Magium\Configuration\Config\BuilderInterface;
 use Magium\Configuration\Config\MissingConfigurationException;
 use Magium\Configuration\File\Context\AbstractContextConfigurationFile;
 use Magium\Configuration\Manager\CacheFactory;
 use Magium\Configuration\Manager\Manager;
+use Magium\Configuration\Manager\ManagerInterface;
 
-class MagiumConfigurationFactory
+class MagiumConfigurationFactory implements MagiumConfigurationFactoryInterface
 {
     protected $file;
     protected $xml;
@@ -20,6 +20,7 @@ class MagiumConfigurationFactory
     protected $builder;
     protected $baseDir;
     protected $contextFile;
+    protected $builderFactory;
 
     public function __construct($magiumConfigurationFile = null)
     {
@@ -101,12 +102,9 @@ class MagiumConfigurationFactory
         return $cacheFactory->getCache($element);
     }
 
-    /**
-     * @return Builder
-     */
-    public function getBuilder()
+    public function getBuilderFactory()
     {
-        if (!$this->builder instanceof Builder) {
+        if (!$this->builderFactory instanceof BuilderFactoryInterface) {
             $builderFactoryConfig = $this->xml->builderFactory;
             $class = (string)$builderFactoryConfig['class'];
             if (!$class) {
@@ -116,17 +114,19 @@ class MagiumConfigurationFactory
             if (!$reflection->implementsInterface(BuilderFactoryInterface::class)) {
                 throw new InvalidConfigurationException($class . ' must implement ' . BuilderFactoryInterface::class);
             }
-            $builderFactory = $reflection->newInstance($this->xml);
-            if (!$builderFactory instanceof BuilderFactoryInterface) {
-                throw new InvalidConfigurationException(
-                    sprintf(
-                        'The builder factory %s must implement %s',
-                        get_class($builderFactory),
-                        BuilderFactoryInterface::class
-                    )
-                );
-            }
-            $this->builder = $builderFactory->getBuilder();
+            $this->builderFactory = $reflection->newInstance($this->xml);
+        }
+        return $this->builderFactory;
+    }
+
+    /**
+     * @return BuilderInterface
+     */
+
+    public function getBuilder()
+    {
+        if (!$this->builder instanceof BuilderInterface) {
+            $this->builder = $this->getBuilderFactory()->getBuilder();
         }
         return $this->builder;
     }
@@ -150,8 +150,26 @@ class MagiumConfigurationFactory
 
     public function getManager()
     {
-        if (!$this->manager instanceof Manager) {
-            $this->manager = new Manager($this->getRemoteCache(), $this->getBuilder(), $this->getLocalCache());
+        if (!$this->manager instanceof ManagerInterface) {
+            $managerClass = Manager::class;
+            if (isset($this->xml->manager['class'])) {
+                $managerClass = $this->xml->manager['class'];
+            }
+            $reflectionClass = new \ReflectionClass($managerClass);
+            if ($managerClass == Manager::class) {
+                // just a shortcut so I don't have to rewrite some complicated unit tests.  I'm just lazy.
+                $this->manager = new Manager($this->getLocalCache(), $this->getBuilder(), $this->getRemoteCache());
+                return $this->manager;
+            }
+            if (!$reflectionClass->implementsInterface(ManagerInterface::class)) {
+                throw new InvalidConfigurationException('Manager class must implement ' . ManagerInterface::class);
+            }
+            $manager = $reflectionClass->newInstance();
+            /* @var $manager ManagerInterface */
+            $manager->setBuilder($this->getBuilder());
+            $manager->setLocalCache($this->getLocalCache());
+            $manager->setRemoteCache($this->getRemoteCache());
+            $this->manager = $manager;
         }
         return $this->manager;
     }

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<configuration xmlns="http://www.magiumlib.com/BaseConfiguration"
+<magium xmlns="http://www.magiumlib.com/BaseConfiguration"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.magiumlib.com/BaseConfiguration ../assets/magium-configuration.xsd">
     <persistenceConfiguration>
         <driver>pdo_sqlite</driver>
         <database></database>
     </persistenceConfiguration>
-    <contextConfigurationFile file="contexts.xml" />
+    <contextConfigurationFile file="contexts.xml" type="xml"/>
     <cache>
         <adapter>filesystem</adapter>
         <options>
             <cache_dir>/tmp/</cache_dir>
         </options>
     </cache>
-</configuration>
+</magium>

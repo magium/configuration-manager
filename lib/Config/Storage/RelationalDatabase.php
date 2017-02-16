@@ -91,7 +91,7 @@ class RelationalDatabase implements StorageInterface
                 $resultSet = $statement->execute();
                 $this->data[$context] = [];
                 foreach ($resultSet as $result) {
-                    $this->data[$context][$result['path']]  = $result['value'];
+                    $this->data[$context][$result['path']] = $result['value'];
                 }
             }
         }
@@ -128,7 +128,7 @@ class RelationalDatabase implements StorageInterface
         $table->addColumn(new Text('value'));
         $table->addColumn(new Varchar('context', 255));
         $table->addConstraint(
-          new UniqueKey(['path','context'], 'configuration_uniqueness_index')
+            new UniqueKey(['path','context'], 'configuration_uniqueness_index')
         );
 
         $sql = new Sql($this->adapter);

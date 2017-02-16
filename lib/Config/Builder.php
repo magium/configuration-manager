@@ -11,7 +11,7 @@ use Magium\Configuration\File\InvalidFileException;
 use Magium\Configuration\InvalidConfigurationException;
 use Zend\Cache\Storage\StorageInterface;
 
-class Builder
+class Builder implements BuilderInterface
 {
 
     protected $repository;

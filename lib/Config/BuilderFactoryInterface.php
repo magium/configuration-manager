@@ -2,6 +2,8 @@
 
 namespace Magium\Configuration\Config;
 
+use Zend\Db\Adapter\Adapter;
+
 interface BuilderFactoryInterface
 {
 
@@ -14,6 +16,22 @@ interface BuilderFactoryInterface
 
     public function __construct(\SimpleXMLElement $config);
 
+    /**
+     * @return Builder
+     */
+
     public function getBuilder();
+
+    /**
+     * @return Adapter
+     */
+
+    public function getAdapter();
+
+    /**
+     * @return Storage\StorageInterface
+     */
+
+    public function getPersistence();
 
 }
