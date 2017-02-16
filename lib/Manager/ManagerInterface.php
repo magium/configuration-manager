@@ -11,7 +11,7 @@ interface ManagerInterface
 
     public function getConfiguration($context = Config::CONTEXT_DEFAULT);
 
-    public function setLocalCache(StorageInterface $storage);
+    public function setLocalCache(StorageInterface $storage = null);
 
     public function setRemoteCache(StorageInterface $storage);
 
