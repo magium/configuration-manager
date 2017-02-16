@@ -61,10 +61,9 @@ class ConfigurationGet extends Command
         if (is_null($value)) {
             $value = '<null>';
         } else if (!is_string($value) && !is_numeric($value)) {
-            ob_start();
-            var_dump($value);
-            $value = ob_get_clean();
-            $value = trim($value);
+            $type = gettype($value);
+            $value = json_encode($value);
+            $value = sprintf('%s:%s', $type, $value);
         } else if ($value == '') {
             $value = '<empty>';
         }
