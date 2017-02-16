@@ -70,6 +70,11 @@
                         <xs:attribute name="class" />
                     </xs:complexType>
                 </xs:element>
+                <xs:element name="manager" minOccurs="0">
+                    <xs:complexType>
+                        <xs:attribute name="class" use="required" />
+                    </xs:complexType>
+                </xs:element>
                 <xs:element name="configurationDirectories" minOccurs="0" maxOccurs="1">
                     <xs:complexType>
                         <xs:sequence>

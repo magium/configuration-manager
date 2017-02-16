@@ -7,7 +7,7 @@ use Magium\Configuration\Config\BuilderInterface;
 use Magium\Configuration\Config\Config;
 use Zend\Cache\Storage\StorageInterface;
 
-class Manager
+class Manager implements ManagerInterface
 {
 
     protected $config = [];
@@ -19,8 +19,8 @@ class Manager
     protected $hashAlgo;
 
     public function __construct(
-        StorageInterface $cache,
-        BuilderInterface $builder,
+        StorageInterface $cache = null,
+        BuilderInterface $builder = null,
         StorageInterface $localCache = null,
         $hashAlgo = 'sha1'
     )
@@ -35,6 +35,22 @@ class Manager
     {
         return $this->builder;
     }
+
+    public function setLocalCache(StorageInterface $storage)
+    {
+        $this->localCache = $storage;
+    }
+
+    public function setRemoteCache(StorageInterface $storage)
+    {
+        $this->cache = $storage;
+    }
+
+    public function setBuilder(BuilderInterface $builder)
+    {
+        $this->builder = $builder;
+    }
+
 
     public function getContextCacheKey($context = Config::CONTEXT_DEFAULT)
     {
