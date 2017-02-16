@@ -13,7 +13,7 @@ use Magium\Configuration\Manager\CacheFactory;
 use Magium\Configuration\Manager\Manager;
 use Magium\Configuration\Manager\ManagerInterface;
 
-class MagiumConfigurationFactory implements MagiumConfigurationFileFactoryInterface
+class MagiumConfigurationFactory implements MagiumConfigurationFactoryInterface
 {
     protected $file;
     protected $xml;

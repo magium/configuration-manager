@@ -8,7 +8,7 @@ use Magium\Configuration\Config\BuilderInterface;
 use Magium\Configuration\File\Context\AbstractContextConfigurationFile;
 use Magium\Configuration\Manager\ManagerInterface;
 
-interface MagiumConfigurationFileFactoryInterface
+interface MagiumConfigurationFactoryInterface
 {
 
     /**
