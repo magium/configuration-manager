@@ -7,7 +7,7 @@ class PhpFile extends AbstractConfigurationFile
 
     public function toXml()
     {
-        $file  = $this->getFile();
+        $file = $this->getFile();
         $results = include $file;
         $config = new \SimpleXMLElement('<configuration />');
         foreach ($results as $section => $sectionData) {

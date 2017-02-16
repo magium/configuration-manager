@@ -117,7 +117,7 @@ class ConfigurationFileRepository implements \ArrayAccess, \Iterator, \Countable
 
     public function current()
     {
-        $current =  current($this->files);
+        $current = current($this->files);
         $this->checkFileLocation($current);
         return $current;
     }
