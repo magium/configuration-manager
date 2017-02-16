@@ -104,6 +104,27 @@ class ConfigurationBuilderTest extends CommandTestCase
         $this->executeTest($factory, $input);
     }
 
+    public function testOnlyProvidedContextIsRun()
+    {
+        $builder = $this->getBuilder(1);
+        $manager = $this->getManager();
+
+        $contextFile = $this->getMockBuilder(AbstractContextConfigurationFile::class)->disableOriginalConstructor()->getMock();
+        $contextFile->expects(self::once())->method('getContexts')->willReturn([
+            'context1',
+        ]);
+
+        $factory = $this->getFactory($builder, $manager, $contextFile);
+        /* @var $factory \Magium\Configuration\MagiumConfigurationFactoryInterface */
+
+        $input = $this->createMock(InputInterface::class);
+
+        // The return value "context" does not match "context1" in the $contextFile mock, triggering the exception
+        $input->expects(self::once())->method('getArgument')->with(self::equalTo('context'))->willReturn('context1');
+
+        $this->executeTest($factory, $input);
+    }
+
     protected function executeTest(
         MagiumConfigurationFactoryInterface $factory,
         InputInterface $input = null)

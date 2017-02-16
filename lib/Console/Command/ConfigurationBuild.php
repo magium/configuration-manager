@@ -25,8 +25,7 @@ class ConfigurationBuild extends Command
             ->setHelp(
                 'This command will build the configuration object based off of configuration files and '
                 . 'persistent storage data.  By default, it will rebuild all contexts, but you can specify an '
-                . 'individual context if you so like.')
-        ;
+                . 'individual context if you so like.');
 
         $this->addArgument('context', InputArgument::OPTIONAL, 'Configuration Context (ignore to build all contexts)');
     }
@@ -52,11 +51,11 @@ class ConfigurationBuild extends Command
         $contexts = $factory->getContextFile()->getContexts();
         $context = $input->getArgument('context');
         if ($context) {
-                    if (in_array($context, $contexts)) {
+            if (in_array($context, $contexts)) {
                 $contexts = [$context];
-        }
             } else {
-            throw new InvalidContextException('Context does not exist: ' . $context);
+                throw new InvalidContextException('Context does not exist: ' . $context);
+            }
         }
         foreach ($contexts as $context) {
             $output->writeln('Building context: ' . $context);
