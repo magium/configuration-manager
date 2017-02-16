@@ -3,6 +3,7 @@
 namespace Magium\Configuration\Console\Command;
 
 use Magium\Configuration\Config\Config;
+use Magium\Configuration\Config\ConfigInterface;
 use Magium\Configuration\MagiumConfigurationFactory;
 use Magium\Configuration\MagiumConfigurationFactoryInterface;
 use Symfony\Component\Console\Command\Command;
@@ -43,6 +44,33 @@ class ConfigurationGet extends Command
         return $this->factory;
     }
 
+    protected function getValue(ConfigInterface $config, $path)
+    {
+        $value = $config->getValueFlag($path);
+        if ($value) {
+            $value = 'flag:true';
+        } else {
+            $value = 'flag:false';
+        }
+        return $value;
+    }
+
+    protected function getValueFlag(ConfigInterface $config, $path)
+    {
+        $value = $config->getValue($path);
+        if (is_null($value)) {
+            $value = '<null>';
+        } else if (!is_string($value) && !is_numeric($value)) {
+            ob_start();
+            var_dump($value);
+            $value = ob_get_clean();
+            $value = trim($value);
+        } else if ($value == '') {
+            $value = '<empty>';
+        }
+        return $value;
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $factory = $this->getConfigurationFactory();
@@ -52,24 +80,9 @@ class ConfigurationGet extends Command
         $config = $manager->getConfiguration($context);
         $useFlag = $input->getOption('use-flag');
         if ($useFlag) {
-            $value = $config->getValueFlag($path);
-            if ($value) {
-                $value = 'flag:true';
-            } else {
-                $value = 'flag:false';
-            }
+            $value = $this->getValueFlag($config, $path);
         } else {
-            $value = $config->getValue($path);
-            if (is_null($value)) {
-                $value = '<null>';
-            } else if (!is_string($value) && !is_numeric($value)) {
-                ob_start();
-                var_dump($value);
-                $value = ob_get_clean();
-                $value = trim($value);
-            } else if ($value == '') {
-                $value = '<empty>';
-            }
+            $value = $this->getValue($config, $path);
         }
         $out = sprintf("Value for %s (context: %s): %s", $path, $context, $value);
 
