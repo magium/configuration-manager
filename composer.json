@@ -1,7 +1,7 @@
 {
   "name": "magium/configuration-manager",
   "description": "Provides a generic plugable configuration management interface similar to Magento",
-  "minimum-stability": "dev",
+  "minimum-stability": "stable",
   "license": "ASL-2.0",
   "authors": [
     {
@@ -16,7 +16,7 @@
     }
   },
   "require": {
-    "phpunit/phpunit": "5.x.x",
+    "phpunit/phpunit": "~5.7",
     "zendframework/zend-cache": "^2.7",
     "psr/container": "^1.0@dev",
     "zendframework/zend-db": "^2.8",
