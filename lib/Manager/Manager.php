@@ -5,6 +5,7 @@ namespace Magium\Configuration\Manager;
 use Magium\Configuration\Config\Builder;
 use Magium\Configuration\Config\BuilderInterface;
 use Magium\Configuration\Config\Config;
+use Magium\Configuration\Config\ConfigInterface;
 use Zend\Cache\Storage\StorageInterface;
 
 class Manager implements ManagerInterface
@@ -114,7 +115,7 @@ class Manager implements ManagerInterface
         return $config;
     }
 
-    public function storeConfigurationObject(Config $config, $context = Config::CONTEXT_DEFAULT)
+    public function storeConfigurationObject(ConfigInterface $config, $context = Config::CONTEXT_DEFAULT)
     {
         $contextCacheKey = $this->getContextCacheKey($context);
         $previousConfigKey = $this->cache->getItem($contextCacheKey);
