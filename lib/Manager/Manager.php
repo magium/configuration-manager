@@ -36,7 +36,7 @@ class Manager implements ManagerInterface
         return $this->builder;
     }
 
-    public function setLocalCache(StorageInterface $storage)
+    public function setLocalCache(StorageInterface $storage = null)
     {
         $this->localCache = $storage;
     }
