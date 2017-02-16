@@ -44,7 +44,7 @@ class ConfigurationGet extends Command
         return $this->factory;
     }
 
-    protected function getValue(ConfigInterface $config, $path)
+    protected function getValueFlag(ConfigInterface $config, $path)
     {
         $value = $config->getValueFlag($path);
         if ($value) {
@@ -55,7 +55,7 @@ class ConfigurationGet extends Command
         return $value;
     }
 
-    protected function getValueFlag(ConfigInterface $config, $path)
+    protected function getValue(ConfigInterface $config, $path)
     {
         $value = $config->getValue($path);
         if (is_null($value)) {
