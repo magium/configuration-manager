@@ -246,6 +246,30 @@ XML
         self::assertInstanceOf(Manager::class, $manager);
     }
 
+    public function testGetNotManagerAndMakeSureSettersAreCalled()
+    {
+        $this->setFile(<<<XML
+<?xml version="1.0" encoding="utf-8"?>
+<magium xmlns="http://www.magiumlib.com/BaseConfiguration"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.magiumlib.com/BaseConfiguration">
+          <persistenceConfiguration><driver>pdo_sqlite</driver><database>:memory:</database></persistenceConfiguration>
+      <manager class="Magium\Configuration\Tests\Factory\NotManagerManager" />
+      <cache><adapter>filesystem</adapter></cache>
+      <localCache><adapter>filesystem</adapter></localCache>
+</magium>
+
+XML
+        );
+        $factory = new MagiumConfigurationFactory();
+        $manager = $factory->getManager();
+        self::assertInstanceOf(NotManagerManager::class, $manager);
+        /* @var $manager NotManagerManager */
+        self::assertInstanceOf(Builder::class, $manager->getBuilder());
+        self::assertInstanceOf(StorageInterface::class, $manager->getLocalCache());
+        self::assertInstanceOf(StorageInterface::class, $manager->getRemoteCache());
+    }
+
     public function testInvalidBaseDirectoryThrowsException()
     {
         $base = $tmp = sys_get_temp_dir();
