@@ -11,6 +11,7 @@ use Magium\Configuration\Config\MissingConfigurationException;
 use Magium\Configuration\File\Context\AbstractContextConfigurationFile;
 use Magium\Configuration\Manager\CacheFactory;
 use Magium\Configuration\Manager\Manager;
+use Magium\Configuration\Manager\ManagerInterface;
 
 class MagiumConfigurationFactory implements MagiumConfigurationFileFactoryInterface
 {
@@ -151,8 +152,26 @@ class MagiumConfigurationFactory implements MagiumConfigurationFileFactoryInterf
 
     public function getManager()
     {
-        if (!$this->manager instanceof Manager) {
-            $this->manager = new Manager($this->getRemoteCache(), $this->getBuilder(), $this->getLocalCache());
+        if (!$this->manager instanceof ManagerInterface) {
+            $managerClass = Manager::class;
+            if (isset($this->xml->manager['class'])) {
+                $managerClass = $this->xml->manager['class'];
+            }
+            $reflectionClass = new \ReflectionClass($managerClass);
+            if ($managerClass == Manager::class) {
+                // just a shortcut so I don't have to rewrite some complicated unit tests.  I'm just lazy.
+                $this->manager = new Manager($this->getLocalCache(), $this->getBuilder(), $this->getRemoteCache());
+                return $this->manager;
+            }
+            if (!$reflectionClass->implementsInterface(ManagerInterface::class)) {
+                throw new InvalidConfigurationException('Manager class must implement ' . ManagerInterface::class);
+            }
+            $manager = $reflectionClass->newInstance();
+            /* @var $manager ManagerInterface */
+            $manager->setBuilder($this->getBuilder());
+            $manager->setLocalCache($this->getLocalCache());
+            $manager->setRemoteCache($this->getRemoteCache());
+            $this->manager = $manager;
         }
         return $this->manager;
     }
