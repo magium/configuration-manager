@@ -63,7 +63,7 @@ class ConfigurationGetTest extends CommandTestCase
     {
         $factory = $this->getFactory($this->getManager($this->getConfig('path', true)));
         $output = $this->getMockBuilder(OutputInterface::class)->setMethods(get_class_methods(OutputInterface::class))->getMock();
-        $output->expects(self::once())->method('writeln')->with(self::stringContains('bool(true)'));
+        $output->expects(self::once())->method('writeln')->with(self::stringContains('boolean:true'));
         $this->executeTest($factory, $output);
     }
 
