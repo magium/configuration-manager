@@ -72,14 +72,29 @@ class Builder implements BuilderInterface
 
     public function build($context = Config::CONTEXT_DEFAULT, ConfigInterface $config = null)
     {
+
+        if (!$config instanceof Config) {
+            $config = new Config('<config />');
+        }
+
+        $structure = $this->getMergedStructure();
+
+        if (!$structure instanceof \SimpleXMLElement) {
+            throw new InvalidConfigurationException('No configuration files provided');
+        }
+
+        $this->buildConfigurationObject($structure, $config, $context);
+
+        return $config;
+    }
+
+    public function getMergedStructure()
+    {
         $files = $this->getRegisteredConfigurationFiles();
         if (!count($files)) {
             throw new MissingConfigurationException('No configuration files have been provided.  Please add via registerConfigurationFile()');
         }
 
-        if (!$config instanceof Config) {
-            $config = new Config('<config />');
-        }
         $structure = null;
         foreach ($files as $file) {
             if (!$file instanceof AdapterInterface) {
@@ -93,15 +108,9 @@ class Builder implements BuilderInterface
                 $this->mergeStructure($structure, $simpleXml);
             }
         }
-
-        if (!$structure instanceof \SimpleXMLElement) {
-            throw new InvalidConfigurationException('No configuration files provided');
-        }
-
-        $this->buildConfigurationObject($structure, $config, $context);
-
-        return $config;
+        return $structure;
     }
+
 
     /**
      * @param \SimpleXMLElement $structure The object representing the merged configuration structure

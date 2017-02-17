@@ -24,13 +24,17 @@ class CommandListTest extends TestCase
             $name = basename($file);
             $name = substr($name, 0,  -4);
             $class = sprintf('%s\%s', $namespace, $name);
+            $reflectionClass = new \ReflectionClass($class);
+            if (!$reflectionClass->isInstantiable() || $reflectionClass->isSubclassOf(\Exception::class)) {
+                continue;
+            }
             $object = new $class();
             if ($object instanceof Command) {
                 $consoleName = $object->getName();
                 $appInstance = $application->get($consoleName);
                 self::assertInstanceOf($class, $appInstance);
             } else {
-                self::fail('Command classes need to extend Command');
+                self::fail('Command classes need to extend Command: ' . $class);
             }
         }
     }
