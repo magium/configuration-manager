@@ -21,5 +21,6 @@
     "psr/container": "^1.0@dev",
     "zendframework/zend-db": "^2.8",
     "symfony/console": "^3.2"
-  }
+  },
+  "bin": ["bin/magento-configuration"]
 }
