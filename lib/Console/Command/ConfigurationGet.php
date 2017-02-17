@@ -15,6 +15,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ConfigurationGet extends Command
 {
 
+    use ConfigurationFactoryTrait;
+
     const COMMAND = 'magium:configuration:get';
 
     protected $factory;
@@ -29,19 +31,6 @@ class ConfigurationGet extends Command
         $this->addOption('use-flag', 'f', InputOption::VALUE_NONE, 'Get value as flag');
         $this->addArgument('path', InputArgument::REQUIRED, 'Configuration Path');
         $this->addArgument('context', InputArgument::OPTIONAL, 'Configuration Context', Config::CONTEXT_DEFAULT);
-    }
-
-    public function setConfigurationFactory(MagiumConfigurationFactoryInterface $factory)
-    {
-        $this->factory = $factory;
-    }
-
-    protected function getConfigurationFactory()
-    {
-        if (!$this->factory instanceof MagiumConfigurationFactoryInterface) {
-            $this->factory = new MagiumConfigurationFactory();
-        }
-        return $this->factory;
     }
 
     protected function getValueFlag(ConfigInterface $config, $path)

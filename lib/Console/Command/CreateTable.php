@@ -13,6 +13,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 class CreateTable extends Command
 {
 
+    use ConfigurationFactoryTrait;
+
     const COMMAND = 'magium:configuration:create-table';
 
     protected function configure()
@@ -29,7 +31,7 @@ class CreateTable extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln('Creating configuration table...');
-        $factory = new MagiumConfigurationFactory();
+        $factory = $this->getConfigurationFactory();
         $persistence = $factory->getBuilderFactory()->getPersistence();
         try {
             $persistence->create();
