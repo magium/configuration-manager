@@ -11,6 +11,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ContextList extends Command
 {
+    use ConfigurationFactoryTrait;
+
     const TAB = '    ';
     const COMMAND = 'magium:configuration:list-contexts';
 
@@ -27,7 +29,7 @@ class ContextList extends Command
     {
         $output->writeln('Context List');
         $output->writeln(['Following is list of contexts shown by inheritance', '']);
-        $factory = new MagiumConfigurationFactory();
+        $factory = $this->getConfigurationFactory();
         $contextFile = $factory->getContextFile();
         $context = $contextFile->toXml();
         $output->writeln($this->formatNode('default', 'Default'));

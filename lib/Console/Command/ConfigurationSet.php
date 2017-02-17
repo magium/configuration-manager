@@ -14,6 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ConfigurationSet extends Command
 {
+    use ConfigurationFactoryTrait;
 
     const COMMAND = 'magium:configuration:set';
 
@@ -32,18 +33,6 @@ class ConfigurationSet extends Command
         $this->addArgument('context', InputArgument::OPTIONAL, 'Configuration Context', Config::CONTEXT_DEFAULT);
     }
 
-    public function setConfigurationFactory(MagiumConfigurationFactoryInterface $factory)
-    {
-        $this->factory = $factory;
-    }
-
-    protected function getConfigurationFactory()
-    {
-        if (!$this->factory instanceof MagiumConfigurationFactoryInterface) {
-            $this->factory = new MagiumConfigurationFactory();
-        }
-        return $this->factory;
-    }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -52,6 +41,20 @@ class ConfigurationSet extends Command
         $path = $input->getArgument('path');
         $value = $input->getArgument('value');
         $context = $input->getArgument('context');
+
+        $structure = $factory->getBuilder()->getMergedStructure();
+        $structure->registerXPathNamespace('s', 'http://www.magiumlib.com/Configuration');
+        $paths = explode('/', $path);
+        $xpath = '/';
+        foreach ($paths as $pathName) {
+            $xpath .= sprintf('/s:*[@id="%s"]', $pathName);
+        }
+
+        $results = $structure->xpath($xpath);
+        if (!$results) {
+            throw new UnconfiguredPathException(sprintf('Path (%s) is not configured.  Do you need to create a configuration file?', $path));
+        }
+
         $builderFactory->getPersistence()->setValue($path, $value, $context);
 
         $out = sprintf("Set %s to %s (context: %s)", $path, $value, $context);

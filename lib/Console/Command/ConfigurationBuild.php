@@ -12,6 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ConfigurationBuild extends Command
 {
+    use ConfigurationFactoryTrait;
 
     const COMMAND = 'magium:configuration:build';
 
@@ -28,19 +29,6 @@ class ConfigurationBuild extends Command
                 . 'individual context if you so like.');
 
         $this->addArgument('context', InputArgument::OPTIONAL, 'Configuration Context (ignore to build all contexts)');
-    }
-
-    public function setConfigurationFactory(MagiumConfigurationFactoryInterface $factory)
-    {
-        $this->configurationFactory = $factory;
-    }
-
-    protected function getConfigurationFactory()
-    {
-        if (!$this->configurationFactory instanceof MagiumConfigurationFactoryInterface) {
-            $this->configurationFactory = new MagiumConfigurationFactory();
-        }
-        return $this->configurationFactory;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
