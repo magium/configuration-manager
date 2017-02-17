@@ -17,8 +17,6 @@ class ConfigurationListKeys extends Command
 
     const INITIAL_MESSAGE = 'Valid configuration keys';
 
-    protected $factory;
-
     protected function configure()
     {
         $this

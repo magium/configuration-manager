@@ -18,8 +18,6 @@ class ConfigurationSet extends Command
 
     const COMMAND = 'magium:configuration:set';
 
-    protected $factory;
-
     protected function configure()
     {
         $this

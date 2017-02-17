@@ -16,8 +16,6 @@ class ConfigurationBuild extends Command
 
     const COMMAND = 'magium:configuration:build';
 
-    protected $configurationFactory;
-
     protected function configure()
     {
         $this
