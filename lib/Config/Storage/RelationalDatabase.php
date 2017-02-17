@@ -117,6 +117,7 @@ class RelationalDatabase implements StorageInterface
             'value'     => $value,
             'context'   => $requestedContext
         ]);
+        $insert = $insert->getSqlString($this->adapter->getPlatform());
         $this->adapter->query($insert);
         $this->data[$requestedContext][$path] = $value;
     }

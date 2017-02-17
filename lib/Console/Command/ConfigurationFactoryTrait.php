@@ -8,6 +8,8 @@ use Magium\Configuration\MagiumConfigurationFactoryInterface;
 trait ConfigurationFactoryTrait
 {
 
+    protected $factory;
+
     public function setConfigurationFactory(MagiumConfigurationFactoryInterface $factory)
     {
         $this->factory = $factory;
