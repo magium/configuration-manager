@@ -19,8 +19,6 @@ class ConfigurationGet extends Command
 
     const COMMAND = 'magium:configuration:get';
 
-    protected $factory;
-
     protected function configure()
     {
         $this
