@@ -158,7 +158,7 @@ class MagiumConfigurationFactory implements MagiumConfigurationFactoryInterface
             $reflectionClass = new \ReflectionClass($managerClass);
             if ($managerClass == Manager::class) {
                 // just a shortcut so I don't have to rewrite some complicated unit tests.  I'm just lazy.
-                $this->manager = new Manager($this->getLocalCache(), $this->getBuilder(), $this->getRemoteCache());
+                $this->manager = new Manager($this->getRemoteCache(), $this->getBuilder(), $this->getLocalCache());
                 return $this->manager;
             }
             if (!$reflectionClass->implementsInterface(ManagerInterface::class)) {
