@@ -12,6 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ConfigurationListKeys extends Command
 {
+    use ConfigurationFactoryTrait;
 
     const COMMAND = 'magium:configuration:list-keys';
 
@@ -24,19 +25,6 @@ class ConfigurationListKeys extends Command
             ->setDescription('List configuration settings')
             ->setHelp("This command lists all of the configuration setting options")
         ;
-    }
-
-    public function getConfigurationFactory()
-    {
-        if (!$this->factory instanceof MagiumConfigurationFactoryInterface) {
-            $this->factory = new MagiumConfigurationFactory();
-        }
-        return $this->factory;
-    }
-
-    public function setConfigurationFactory(MagiumConfigurationFactoryInterface $factory)
-    {
-        $this->factory = $factory;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
