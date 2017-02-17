@@ -3,7 +3,7 @@
 
 $autoload = [
         realpath(__DIR__.'/../vendor/autoload.php'),
-        realpath(__DIR__.'/../../../vendor/autoload.php'),
+        realpath(__DIR__.'/../../../autoload.php'),
 ];
 
 foreach ($autoload as $item) {
