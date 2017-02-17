@@ -22,5 +22,5 @@
     "zendframework/zend-db": "^2.8",
     "symfony/console": "^3.2"
   },
-  "bin": ["bin/magento-configuration"]
+  "bin": ["bin/magium-configuration"]
 }
