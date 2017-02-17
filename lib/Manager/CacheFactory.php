@@ -14,11 +14,8 @@ class CacheFactory
             'options'   => []
         ];
         if (isset($element->options)) {
-            foreach ($element->options->children() as $value) {
-                if ($value instanceof \SimpleXMLElement) {
-                    $config['options'][$value->getName()] = (string)$value;
-                }
-            }
+            $options = json_encode($element->options);
+            $config['options'] = json_decode($options, true);
         }
         $cache = StorageFactory::factory($config);
         return $cache;
