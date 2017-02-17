@@ -1,7 +1,17 @@
 #!/usr/bin/env php
 <?php
 
-require __DIR__.'/../vendor/autoload.php';
+$autoload = [
+        realpath(__DIR__.'/../vendor/autoload.php'),
+        realpath(__DIR__.'/../../../vendor/autoload.php'),
+];
+
+foreach ($autoload as $item) {
+    if ($item !== false) {
+        require_once $item;
+        break;
+    }
+}
 
 $application = new \Symfony\Component\Console\Application();
 $commandList = new \Magium\Configuration\Console\Symfony\CommandList();
