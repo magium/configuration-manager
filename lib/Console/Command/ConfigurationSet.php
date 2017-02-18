@@ -27,7 +27,7 @@ class ConfigurationSet extends Command
         ;
 
         $this->addArgument('path', InputArgument::REQUIRED, 'Configuration Path');
-        $this->addArgument('value', InputArgument::REQUIRED, 'Value');
+        $this->addArgument('value', InputArgument::OPTIONAL, 'Value');
         $this->addArgument('context', InputArgument::OPTIONAL, 'Configuration Context', Config::CONTEXT_DEFAULT);
     }
 
@@ -54,6 +54,10 @@ class ConfigurationSet extends Command
         }
 
         $builderFactory->getPersistence()->setValue($path, $value, $context);
+
+        if (!$value) {
+            $value = '<empty>';
+        }
 
         $out = sprintf("Set %s to %s (context: %s)", $path, $value, $context);
 
