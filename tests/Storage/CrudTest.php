@@ -9,6 +9,9 @@ use Magium\Configuration\File\Context\AbstractContextConfigurationFile;
 use Magium\Configuration\File\Context\XmlFile;
 use PHPUnit\Framework\TestCase;
 use Zend\Db\Adapter\Adapter;
+use Zend\Db\Adapter\Driver\ResultInterface;
+use Zend\Db\Adapter\Driver\StatementInterface;
+use Zend\Db\Adapter\Platform\Sqlite;
 use Zend\Db\Sql\Insert;
 use Zend\Db\Sql\Sql;
 
@@ -31,6 +34,51 @@ class CrudTest extends TestCase
         $db = $this->createDatabase();
         $db->setValue('path', 'value', 'boogers');
     }
+
+    public function testMakeSureUpdateAndInsertAreCalledAppropriately()
+    {
+        $adapter = $this->getMockBuilder(Adapter::class)->setConstructorArgs(
+            [['driver' => 'pdo_sqlite', 'database' => ':memory:']]
+        )->getMock();
+        $adapter->expects(self::any())->method('getPlatform')->willReturn(
+            new Sqlite(new \PDO('sqlite::memory:'))
+        );
+        $me = $this;
+        $adapter->expects(self::exactly(4))->method('query')->willReturnCallback(function($param) use ($me) {
+            static $state = -1;
+            $state++;
+            $result = $me->createMock(ResultInterface::class);
+            switch ($state) {
+                case 0:
+                    TestCase::assertContains('SELECT', $param);
+                    $result->expects(self::once())->method('current')->willReturn(['cnt' => 0]);
+                    $mock = $me->createMock(StatementInterface::class);
+                    $mock->expects(TestCase::once())->method('execute')->willReturn($result);
+                    return $mock;
+                case 1:
+                    TestCase::assertContains('INSERT', $param);
+                    $mock = $me->createMock(StatementInterface::class);
+                    $mock->expects(TestCase::once())->method('execute');
+                    return $mock;
+                case 2:
+                    TestCase::assertContains('SELECT', $param);
+                    $result->expects(self::once())->method('current')->willReturn(['cnt' => 1]);
+                    $mock = $me->createMock(StatementInterface::class);
+                    $mock->expects(TestCase::once())->method('execute')->willReturn($result);
+                    return $mock;
+                case 3:
+                    TestCase::assertContains('UPDATE', $param);
+                    $mock = $me->createMock(StatementInterface::class);
+                    $mock->expects(TestCase::once())->method('execute');
+                    return $mock;
+            }
+        });
+
+        $relational = new RelationalDatabase($adapter);
+        $relational->setValue('path', 'value', Config::CONTEXT_DEFAULT);
+        $relational->setValue('path', 'value', Config::CONTEXT_DEFAULT);
+    }
+
 
     public function testNullReturnedForNonExistentPath()
     {
