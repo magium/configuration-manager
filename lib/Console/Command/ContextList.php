@@ -41,7 +41,7 @@ class ContextList extends Command
     protected function formatNode($id, $name = null)
     {
         if ($name == null) {
-            $name = $id;
+            return $id;
         }
         return sprintf('%s (%s)', $id, $name);
     }
