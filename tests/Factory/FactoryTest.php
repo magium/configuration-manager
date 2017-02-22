@@ -3,9 +3,11 @@
 namespace Magium\Configuration\Tests\Factory;
 
 use Magium\Configuration\Config\Builder;
+use Magium\Configuration\Config\Config;
 use Magium\Configuration\Config\InvalidConfigurationLocationException;
 use Magium\Configuration\Config\MissingConfigurationException;
 use Magium\Configuration\File\Context\AbstractContextConfigurationFile;
+use Magium\Configuration\File\Context\XmlFile;
 use Magium\Configuration\InvalidConfigurationException;
 use Magium\Configuration\InvalidConfigurationFileException;
 use Magium\Configuration\MagiumConfigurationFactory;
@@ -24,7 +26,6 @@ class FactoryTest extends TestCase
     {
         $this->configFile[$filename] = __DIR__ . '/../../' . $filename;
         file_put_contents($this->configFile[$filename], $contents);
-        parent::setUp();
     }
 
     protected function tearDown()
@@ -241,13 +242,26 @@ XML
     public function testGetManager()
     {
         $this->setValidFile();
+        $this->setContextFile();
         $factory = new MagiumConfigurationFactory();
         $manager = $factory->getManager();
         self::assertInstanceOf(Manager::class, $manager);
     }
 
+    protected function setContextFile()
+    {
+        $this->setFile(<<<XML
+<?xml version="1.0" encoding="utf-8">
+<defaultContext xmlns="http://www.magiumlib.com/ConfigurationContext"/>
+XML
+,
+    'contexts.xml'
+    );
+    }
+
     public function testGetNotManagerAndMakeSureSettersAreCalled()
     {
+        $this->setContextFile();
         $this->setFile(<<<XML
 <?xml version="1.0" encoding="utf-8"?>
 <magium xmlns="http://www.magiumlib.com/BaseConfiguration"
@@ -261,7 +275,8 @@ XML
 
 XML
         );
-        $factory = new MagiumConfigurationFactory();
+        $factory = $this->getMockBuilder(MagiumConfigurationFactory::class)->setMethods(['getContextFile'])->getMock();
+        $factory->expects(self::once())->method('getContextFile')->willReturn(new XmlFile($this->configFile['contexts.xml']));
         $manager = $factory->getManager();
         self::assertInstanceOf(NotManagerManager::class, $manager);
         /* @var $manager NotManagerManager */
@@ -270,10 +285,31 @@ XML
         self::assertInstanceOf(StorageInterface::class, $manager->getRemoteCache());
     }
 
+    public function testInvalidManagerThrowsException()
+    {
+        $this->setFile(<<<XML
+<?xml version="1.0" encoding="utf-8"?>
+<magium xmlns="http://www.magiumlib.com/BaseConfiguration"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.magiumlib.com/BaseConfiguration">
+          <persistenceConfiguration><driver>pdo_sqlite</driver><database>:memory:</database></persistenceConfiguration>
+      <manager class="ArrayObject" />
+      <cache><adapter>filesystem</adapter></cache>
+      <localCache><adapter>filesystem</adapter></localCache>
+</magium>
+
+XML
+        );
+        $this->expectException(InvalidConfigurationException::class);
+        $factory = new MagiumConfigurationFactory();
+        $factory->getManager();
+    }
+
     public function testInvalidBaseDirectoryThrowsException()
     {
         $base = $tmp = sys_get_temp_dir();
         $base .= DIRECTORY_SEPARATOR . 'remove-me'; // Won't exist
+        $this->setContextFile();
         $this->setFile(<<<XML
 <?xml version="1.0" encoding="utf-8"?>
 <magium xmlns="http://www.magiumlib.com/BaseConfiguration"

@@ -15,6 +15,7 @@ use Magium\Configuration\File\Configuration\ConfigurationFileRepository;
 use Magium\Configuration\File\Configuration\UnsupportedFileTypeException;
 use Magium\Configuration\File\InvalidFileException;
 use Magium\Configuration\File\Configuration\XmlFile;
+use Magium\Configuration\InvalidConfigurationException;
 use PHPUnit\Framework\TestCase;
 use Zend\EventManager\Exception\InvalidCallbackException;
 
@@ -32,6 +33,16 @@ class BuilderTest extends TestCase
         $paths = $base->xpath('/*/s:section[@id="sectionId"]/s:group[@id="groupId"]/s:element[@id="elementId2"]');
         self::assertCount(1, $paths);
         self::assertEquals('Test Value 2', (string)$paths[0]->value);
+    }
+
+    public function testInvalidConfigurationFileThrowsException()
+    {
+        $this->expectException(InvalidConfigurationException::class);
+        $builder = $this->getMockBuilder(Builder::class)->disableOriginalConstructor()->setMethods(
+            ['getMergedStructure']
+        )->getMock();
+        $builder->expects(self::once())->method('getMergedStructure')->willReturn(null);
+        $builder->build();
     }
 
     public function testBuildConfigurationNewChildren()

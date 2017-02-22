@@ -22,7 +22,7 @@ class CrudTest extends TestCase
 
     public function testRelationalCreate()
     {
-        $db = $this->createDatabase();
+        $db = $this->createDatabase($this->createMock(XmlFile::class));
         $db->setValue('path', 'value');
         $value = $db->getValue('path');
         self::assertEquals('value', $value);
@@ -31,7 +31,9 @@ class CrudTest extends TestCase
     public function testRelationalCreateOnInvalidContextWithoutConfigThrowsException()
     {
         $this->expectException(InvalidContextException::class);
-        $db = $this->createDatabase();
+        $mock = $this->createMock(XmlFile::class);
+        $mock->expects(self::once())->method('getContexts')->willReturn([Config::CONTEXT_DEFAULT]);
+        $db = $this->createDatabase($mock);
         $db->setValue('path', 'value', 'boogers');
     }
 
@@ -74,7 +76,7 @@ class CrudTest extends TestCase
             }
         });
 
-        $relational = new RelationalDatabase($adapter);
+        $relational = new RelationalDatabase($adapter, $this->createMock(XmlFile::class));
         $relational->setValue('path', 'value', Config::CONTEXT_DEFAULT);
         $relational->setValue('path', 'value', Config::CONTEXT_DEFAULT);
     }
@@ -82,7 +84,9 @@ class CrudTest extends TestCase
 
     public function testNullReturnedForNonExistentPath()
     {
-        $db = $this->createDatabase();
+        $mock = $this->createMock(XmlFile::class);
+        $mock->expects(self::once())->method('getContexts')->willReturn([Config::CONTEXT_DEFAULT]);
+        $db = $this->createDatabase($mock);
         $result = $db->getValue('no-existe');
         self::assertNull($result);
     }
@@ -170,7 +174,7 @@ class CrudTest extends TestCase
         return $this->sqlite;
     }
 
-    protected function createDatabase(AbstractContextConfigurationFile $contextConfigurationFile = null)
+    protected function createDatabase(AbstractContextConfigurationFile $contextConfigurationFile)
     {
         $sqlite = $this->getAdapter();
         $db = new RelationalDatabase($sqlite, $contextConfigurationFile);
