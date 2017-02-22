@@ -52,14 +52,18 @@ class BuilderFactory implements BuilderFactoryInterface
         return $persistence;
     }
 
-    protected function getSecureBaseDirectories()
+    public function getSecureBaseDirectories()
     {
         chdir($this->baseDirectory->getPath());
-        $config = json_encode($this->configuration->configurationDirectories);
+        $config = $this->configuration->configurationDirectories;
+        $config = json_encode($config);
         $config = json_decode($config, true);
         $baseDirs = [];
         if (is_array($config)) {
             // This code depends on chdir() having been called in MagiumConfigurationFactory
+            if (isset($config['directory'])) {
+                $config = $config['directory'];
+            }
             foreach ($config as $dir) {
                 $path = realpath($dir);
                 if (!is_dir($path)) {
@@ -71,7 +75,7 @@ class BuilderFactory implements BuilderFactoryInterface
         return $baseDirs;
     }
 
-    protected function getConfigurationFiles(array $secureBaseDirectories = [])
+    public function getConfigurationFiles(array $secureBaseDirectories = [])
     {
         $config = json_encode($this->configuration->configurationFiles);
         $config = json_decode($config, true);
