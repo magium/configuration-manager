@@ -58,8 +58,8 @@ class ManagerTest extends TestCase
 
         $expectedKey = hash_hmac('sha1', $xml, '');
         $cache->expects(self::never())->method('removeItem');
-        $cache->expects(self::exactly(1))->method('addItem')->with(self::equalTo($expectedKey));
-        $cache->expects(self::exactly(1))->method('setItem')->with(self::equalTo($expectedCacheKey), self::equalTo($xml));
+        $cache->expects(self::exactly(1))->method('addItem')->with(self::equalTo($expectedKey), self::equalTo($xml));
+        $cache->expects(self::exactly(1))->method('setItem')->with(self::equalTo($expectedCacheKey), self::equalTo($expectedKey));
         $manager->storeConfigurationObject(new Config('<config />'), 'test');
     }
 
@@ -83,8 +83,8 @@ class ManagerTest extends TestCase
 
         $expectedKey = hash_hmac('sha1', $xml, '');
         $cache->expects(self::exactly(1))->method('removeItem')->with(self::equalTo('delete-me'));
-        $cache->expects(self::exactly(1))->method('addItem')->with(self::equalTo($expectedKey));
-        $cache->expects(self::exactly(1))->method('setItem')->with(self::equalTo($expectedCacheKey), self::equalTo($xml));
+        $cache->expects(self::exactly(1))->method('addItem')->with(self::equalTo($expectedKey), self::equalTo($xml));
+        $cache->expects(self::exactly(1))->method('setItem')->with(self::equalTo($expectedCacheKey), self::equalTo($expectedKey));
         $manager->storeConfigurationObject(new Config('<config />'), 'test');
     }
 

@@ -27,7 +27,7 @@ class RelationalDatabase implements StorageInterface
         AbstractContextConfigurationFile $context
     )
     {
-        $adapter->driver->getConnection()->connect(); // Force a consistent connect point
+        $adapter->getDriver()->getConnection()->connect(); // Force a consistent connect point
         $this->adapter = $adapter;
         $this->configurationFile = $context;
 
