@@ -122,7 +122,7 @@ class Manager implements ManagerInterface
         $xml = $config->asXML();
         $configKey = hash_hmac($this->hashAlgo, $xml, '');
         $this->cache->addItem($configKey, $xml);
-        $this->cache->setItem($contextCacheKey, $xml);
+        $this->cache->setItem($contextCacheKey, $configKey);
 
         if ($previousConfigKey) {
             $this->cache->removeItem($previousConfigKey);
