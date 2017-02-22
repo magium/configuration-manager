@@ -55,7 +55,8 @@ class BuilderFactory implements BuilderFactoryInterface
     public function getSecureBaseDirectories()
     {
         $cwd = getcwd();
-        chdir($this->baseDirectory->getPath());
+        $path = $this->baseDirectory->getRealPath();
+        chdir($path);
         $config = $this->configuration->configurationDirectories;
         $config = json_encode($config);
         $config = json_decode($config, true);
