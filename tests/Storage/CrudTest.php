@@ -9,6 +9,8 @@ use Magium\Configuration\File\Context\AbstractContextConfigurationFile;
 use Magium\Configuration\File\Context\XmlFile;
 use PHPUnit\Framework\TestCase;
 use Zend\Db\Adapter\Adapter;
+use Zend\Db\Adapter\Driver\ConnectionInterface;
+use Zend\Db\Adapter\Driver\DriverInterface;
 use Zend\Db\Adapter\Driver\ResultInterface;
 use Zend\Db\Adapter\Driver\StatementInterface;
 use Zend\Db\Adapter\Platform\Sqlite;
@@ -45,6 +47,13 @@ class CrudTest extends TestCase
         $adapter->expects(self::any())->method('getPlatform')->willReturn(
             new Sqlite(new \PDO('sqlite::memory:'))
         );
+
+        $connection = $this->createMock(ConnectionInterface::class);
+
+        $driver = $this->createMock(DriverInterface::class);
+        $driver->expects(self::once())->method('getConnection')->willReturn($connection);
+
+        $adapter->expects(self::once())->method('getDriver')->willReturn($driver);
         $me = $this;
         $adapter->expects(self::exactly(4))->method('query')->willReturnCallback(function($param) use ($me) {
             static $state = -1;
