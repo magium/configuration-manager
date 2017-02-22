@@ -48,7 +48,7 @@ class BuilderFactory implements BuilderFactoryInterface
 
     public function getPersistence()
     {
-        $persistence = new RelationalDatabase($this->getAdapter(), $this->contextFile );
+        $persistence = new RelationalDatabase($this->getAdapter(), $this->contextFile);
         return $persistence;
     }
 

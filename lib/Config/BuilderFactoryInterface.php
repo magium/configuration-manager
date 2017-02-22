@@ -17,7 +17,7 @@ interface BuilderFactoryInterface
      * @param AbstractContextConfigurationFile $contextConfigurationFile
      */
 
-    public function __construct(\SplFileInfo $baseDirectory, \SimpleXMLElement $config,AbstractContextConfigurationFile $contextConfigurationFile);
+    public function __construct(\SplFileInfo $baseDirectory, \SimpleXMLElement $config, AbstractContextConfigurationFile $contextConfigurationFile);
 
     /**
      * @return Builder
