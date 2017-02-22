@@ -85,7 +85,16 @@
                 <xs:element name="configurationFiles" minOccurs="0" maxOccurs="1">
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element name="file" minOccurs="1" maxOccurs="unbounded" />
+                            <xs:element name="file" minOccurs="1" maxOccurs="unbounded">
+                            <xs:annotation>
+                                <xs:documentation>
+                                    This is the fully qualified or configurationDirectories-related path for a
+                                    specific configuration file.  If you are building a module that will be included
+                                    via something like Composer do not use this.  Get the ConfigurationRepository
+                                    object from the Builder and add them there.
+                                </xs:documentation>
+                            </xs:annotation>
+                            </xs:element>
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>

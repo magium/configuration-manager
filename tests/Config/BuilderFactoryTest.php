@@ -131,7 +131,7 @@ XML
     protected function getFactory(\SimpleXMLElement $config)
     {
         $factory = new BuilderFactory(
-            new \SplFileInfo(__DIR__ . '../../'),
+            new \SplFileInfo(__DIR__),
             $config,
             $this->createMock(AbstractContextConfigurationFile::class)
         );
