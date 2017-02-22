@@ -114,7 +114,7 @@ class MagiumConfigurationFactory implements MagiumConfigurationFactoryInterface
             if (!$reflection->implementsInterface(BuilderFactoryInterface::class)) {
                 throw new InvalidConfigurationException($class . ' must implement ' . BuilderFactoryInterface::class);
             }
-            $this->builderFactory = $reflection->newInstance($this->xml);
+            $this->builderFactory = $reflection->newInstance(new \SplFileInfo($this->baseDir), $this->xml, $this->getContextFile());
         }
         return $this->builderFactory;
     }

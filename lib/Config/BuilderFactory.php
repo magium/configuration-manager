@@ -4,6 +4,8 @@ namespace Magium\Configuration\Config;
 
 use Magium\Configuration\Config\Storage\RelationalDatabase;
 use Magium\Configuration\File\Configuration\ConfigurationFileRepository;
+use Magium\Configuration\File\Context\AbstractContextConfigurationFile;
+use Magium\Configuration\InvalidConfigurationException;
 use Magium\Configuration\Manager\CacheFactory;
 use Zend\Db\Adapter\Adapter;
 
@@ -11,10 +13,21 @@ class BuilderFactory implements BuilderFactoryInterface
 {
     protected $configuration;
     protected $adapter;
+    protected $contextFile;
+    protected $baseDirectory;
 
-    public function __construct(\SimpleXMLElement $configuration)
+    public function __construct(
+        \SplFileInfo $baseDirectory,
+        \SimpleXMLElement $configuration,
+        AbstractContextConfigurationFile $contextConfigurationFile
+    )
     {
         $this->configuration = $configuration;
+        $this->contextFile = $contextConfigurationFile;
+        if (!$baseDirectory->isDir()) {
+            throw new InvalidConfigurationException('Base directory must be a directory');
+        }
+        $this->baseDirectory = $baseDirectory;
     }
 
     protected function getCache(\SimpleXMLElement $element)
@@ -35,12 +48,13 @@ class BuilderFactory implements BuilderFactoryInterface
 
     public function getPersistence()
     {
-        $persistence = new RelationalDatabase($this->getAdapter());
+        $persistence = new RelationalDatabase($this->getAdapter(), $this->contextFile );
         return $persistence;
     }
 
     protected function getSecureBaseDirectories()
     {
+        chdir($this->baseDirectory->getPath());
         $config = json_encode($this->configuration->configurationDirectories);
         $config = json_decode($config, true);
         $baseDirs = [];

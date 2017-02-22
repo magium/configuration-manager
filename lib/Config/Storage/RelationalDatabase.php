@@ -24,28 +24,17 @@ class RelationalDatabase implements StorageInterface
 
     public function __construct(
         Adapter $adapter,
-        AbstractContextConfigurationFile $context = null
+        AbstractContextConfigurationFile $context
     )
     {
         $this->adapter = $adapter;
         $this->configurationFile = $context;
-        if ($context instanceof AbstractContextConfigurationFile) {
-            $this->configurationFile = $context->toXml();
-            $this->configurationFile->registerXPathNamespace('s', 'http://www.magiumlib.com/ConfigurationContext');
 
-        }
     }
 
     public function getContexts()
     {
-        $contexts = [Config::CONTEXT_DEFAULT];
-        if ($this->configurationFile instanceof \SimpleXMLElement) {
-            $configuredContexts = $this->configurationFile->xpath('//s:context');
-            foreach ($configuredContexts as $context) {
-                $contexts[] = (string)$context['id'];
-            }
-        }
-        return $contexts;
+        return $this->configurationFile->getContexts();
     }
 
     /**
@@ -58,13 +47,15 @@ class RelationalDatabase implements StorageInterface
     {
         $names = [];
 
-        if ($requestedContext !== Config::CONTEXT_DEFAULT
-            && $this->configurationFile instanceof \SimpleXMLElement) {
-            $xpath = sprintf('//s:context[@id="%s"]', $requestedContext);
-            $contexts = $this->configurationFile->xpath($xpath);
-            if (!$contexts) {
+        if ($requestedContext !== Config::CONTEXT_DEFAULT) {
+            $contexts = $this->getContexts();
+            $xml = $this->configurationFile->toXml();
+            if (!in_array($requestedContext, $contexts)) {
                 throw new InvalidContextException('Unable to find context: ' . $requestedContext);
             }
+
+            $xml->registerXPathNamespace('s', 'http://www.magiumlib.com/ConfigurationContext');
+            $contexts = $xml->xpath(sprintf('//s:context[@id="%s"]', $requestedContext));
 
             $context = array_shift($contexts);
             do {
@@ -135,7 +126,7 @@ class RelationalDatabase implements StorageInterface
         $select->where(['path' => $path, 'context' => $context]);
         $select = $select->getSqlString($this->adapter->getPlatform());
 
-        $result = $this->adapter->query($select)->execute();
+        $result = $this->adapter->query($select)->execute(  );
         $check = $result->current();
         return $check && $check['cnt'] > 0;
     }
