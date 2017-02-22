@@ -54,17 +54,17 @@ class BuilderFactory implements BuilderFactoryInterface
 
     public function getSecureBaseDirectories()
     {
+        $cwd = getcwd();
         chdir($this->baseDirectory->getPath());
         $config = $this->configuration->configurationDirectories;
         $config = json_encode($config);
         $config = json_decode($config, true);
         $baseDirs = [];
-        if (is_array($config)) {
-            // This code depends on chdir() having been called in MagiumConfigurationFactory
-            if (isset($config['directory'])) {
-                $config = $config['directory'];
+        if (is_array($config) && isset($config['directory'])) {
+            if (!is_array($config['directory'])) {
+                $config['directory'] = [$config['directory']];
             }
-            foreach ($config as $dir) {
+            foreach ($config['directory'] as $dir) {
                 $path = realpath($dir);
                 if (!is_dir($path)) {
                     throw new InvalidConfigurationLocationException('A secure configuration path cannot be determined for the directory: ' . $dir);
@@ -72,6 +72,7 @@ class BuilderFactory implements BuilderFactoryInterface
                 $baseDirs[] = $path;
             }
         }
+        chdir($cwd);
         return $baseDirs;
     }
 
@@ -80,18 +81,23 @@ class BuilderFactory implements BuilderFactoryInterface
         $config = json_encode($this->configuration->configurationFiles);
         $config = json_decode($config, true);
         $files = [];
-        foreach ($config as $file) {
-            $found = false;
-            foreach ($secureBaseDirectories as $base) {
-                chdir($base);
-                $path = realpath($file);
-                if ($path) {
-                    $found = true;
-                    $files[] = $path;
-                }
+        if (isset($config['file'])) {
+            if (!is_array($config['file'])) {
+                $config['file'] = [$config['file']];
             }
-            if (!$found) {
-                throw new InvalidConfigurationLocationException('Could not find file: ' . $file);
+            foreach ($config['file'] as $file) {
+                $found = false;
+                foreach ($secureBaseDirectories as $base) {
+                    chdir($base);
+                    $path = realpath($file);
+                    if ($path) {
+                        $found = true;
+                        $files[] = $path;
+                    }
+                }
+                if (!$found) {
+                    throw new InvalidConfigurationLocationException('Could not find file: ' . $file);
+                }
             }
         }
         return $files;
