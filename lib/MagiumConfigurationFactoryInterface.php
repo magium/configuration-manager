@@ -17,13 +17,6 @@ interface MagiumConfigurationFactoryInterface
 
     public function getContextFile();
 
-    public function validateConfigurationFile();
-    /**
-     * @return BuilderFactoryInterface
-     */
-
-    public function getBuilderFactory();
-
     /**
      * @return BuilderInterface
      */
