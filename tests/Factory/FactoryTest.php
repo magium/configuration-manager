@@ -4,6 +4,7 @@ namespace Magium\Configuration\Tests\Factory;
 
 use Magium\Configuration\Config\Builder;
 use Magium\Configuration\Config\Config;
+use Magium\Configuration\Config\Context;
 use Magium\Configuration\Config\InvalidConfigurationLocationException;
 use Magium\Configuration\Config\MissingConfigurationException;
 use Magium\Configuration\File\Context\AbstractContextConfigurationFile;
@@ -36,6 +37,14 @@ class FactoryTest extends TestCase
             }
         }
         parent::tearDown();
+    }
+
+    public function testContextIsReferencedCorrectly()
+    {
+        $context = $this->createMock(Context::class);
+        $context->expects(self::once())->method('getContext')->willReturn('blah');
+        chdir(__DIR__);
+        new MagiumConfigurationFactory(realpath('magium-configuration.xml'), $context);
     }
 
     public function testExistingConfigFile()
