@@ -85,7 +85,7 @@ class ConfigurationGetTest extends CommandTestCase
 
     protected function getConfig($path, $returnValue, $useFlag = false)
     {
-        $config = $this->getMockBuilder(ConfigInterface::class)->setMethods(['getValue' ,'getValueFlag'])->getMock();
+        $config = $this->getMockBuilder(ConfigInterface::class)->setMethods(['getValue' ,'getValueFlag', 'hasValue'])->getMock();
         if ($useFlag) {
             $config->expects(self::once())->method('getValueFlag')->with(self::equalTo($path))->willReturn($returnValue);
             $config->expects(self::never())->method('getValue');
