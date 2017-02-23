@@ -43,7 +43,7 @@ class ConfigurationListKeys extends Command
             $sectionId = (string)$parent[0]['id'];
             $description = '';
             if (isset($element->description)) {
-                $description = sprintf(' (%s)', (string)$element->description);
+                $description = sprintf('\n        (%s)', (string)$element->description);
             }
 
             $out = sprintf('%s/%s/%s%s', $sectionId, $groupId, $elementId, $description);
