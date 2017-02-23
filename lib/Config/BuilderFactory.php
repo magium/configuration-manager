@@ -111,7 +111,7 @@ class BuilderFactory implements BuilderFactoryInterface
         $persistence = $this->getPersistence();
         $secureBases = $this->getSecureBaseDirectories();
         $configurationFiles = $this->getConfigurationFiles($secureBases);
-        $repository = new ConfigurationFileRepository($secureBases, $configurationFiles);
+        $repository = ConfigurationFileRepository::getInstance($secureBases, $configurationFiles);
 
         /*
          * We only populate up to the secureBases because adding a DIC or service manager by configuration starts

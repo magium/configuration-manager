@@ -22,6 +22,12 @@ use Zend\EventManager\Exception\InvalidCallbackException;
 class BuilderTest extends TestCase
 {
 
+    protected function tearDown()
+    {
+        ConfigurationFileRepository::reset();
+        parent::tearDown();
+    }
+
     public function testBuildConfigurationStructureMerges()
     {
         $base = $this->getStructureXml();
@@ -87,7 +93,7 @@ class BuilderTest extends TestCase
 
     public function testConfigurationFilesPassedIntoConstructor()
     {
-        $repository = new ConfigurationFileRepository([__DIR__], [realpath(__DIR__ . '/xml/config-merge-2.xml')]);
+        $repository = ConfigurationFileRepository::getInstance([__DIR__], [realpath(__DIR__ . '/xml/config-merge-2.xml')]);
         $builder = new Builder(
             $this->getCacheStorageMock(),
             $this->getPersistenceStorageMock(),
@@ -101,7 +107,7 @@ class BuilderTest extends TestCase
     public function testInvalidConfigurationFilesPassedIntoConstructorThrowsException()
     {
         $this->expectException(InvalidFileException::class);
-        $repository = new ConfigurationFileRepository([__DIR__], [__DIR__  . '/no-location/config-merge-2.xml']);
+        $repository = ConfigurationFileRepository::getInstance([__DIR__], [__DIR__  . '/no-location/config-merge-2.xml']);
         new Builder(
             $this->getCacheStorageMock(),
             $this->getPersistenceStorageMock(),
@@ -112,7 +118,7 @@ class BuilderTest extends TestCase
     public function testUnsupportedConfigurationFilesPassedIntoConstructorThrowsException()
     {
         $this->expectException(UnsupportedFileTypeException::class);
-        $repository = new ConfigurationFileRepository([__DIR__], [realpath('.') . '/not-supported/test.unsupported']);
+        $repository = ConfigurationFileRepository::getInstance([__DIR__], [realpath('.') . '/not-supported/test.unsupported']);
         new Builder(
             $this->getCacheStorageMock(),
             $this->getPersistenceStorageMock(),
@@ -195,7 +201,7 @@ class BuilderTest extends TestCase
 
     public function testAddingSecureBaseViaConstructor()
     {
-        $repository = new ConfigurationFileRepository([__DIR__]);
+        $repository = ConfigurationFileRepository::getInstance([__DIR__]);
         self::assertArraySubset([__DIR__], $repository->getSecureBases());
     }
 
@@ -204,7 +210,7 @@ class BuilderTest extends TestCase
         $this->expectException(InvalidDirectoryException::class);
         $cacheStorage = $this->getCacheStorageMock();
         $persistenceStorage = $this->getPersistenceStorageMock();
-        $repository = new ConfigurationFileRepository(['boogers']);
+        $repository = ConfigurationFileRepository::getInstance(['boogers']);
 
         new Builder(
             $cacheStorage,
@@ -279,7 +285,7 @@ class BuilderTest extends TestCase
         $builder = new Builder(
             $cacheStorage,
             $storage,
-            new ConfigurationFileRepository(),
+            ConfigurationFileRepository::getInstance(),
             $container
         );
         return $builder;
