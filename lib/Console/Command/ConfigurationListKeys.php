@@ -46,7 +46,7 @@ class ConfigurationListKeys extends Command
                 $description = sprintf("\n        (%s)", (string)$element->description);
             }
 
-            $out = sprintf('%s/%s/%s%s', $sectionId, $groupId, $elementId, $description);
+            $out = sprintf("%s/%s/%s%s\n", $sectionId, $groupId, $elementId, $description);
             $output->writeln($out);
 
         }
