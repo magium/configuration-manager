@@ -6,5 +6,7 @@ interface ConfigInterface
 {
     public function getValue($path);
 
+    public function hasValue($path);
+
     public function getValueFlag($path);
 }

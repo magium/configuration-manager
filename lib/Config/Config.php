@@ -11,6 +11,17 @@ class Config extends \SimpleXMLElement implements ConfigInterface
         true, 'true', 1, '1', 'on', 'yes'
     ];
 
+    public function hasValue($path)
+    {
+        list($section, $group, $element) = explode('/', $path);
+        $xpath = sprintf('/*/%s/%s/%s', $section, $group, $element);
+        $element = $this->xpath($xpath);
+        if ($element) {
+            return true;
+        }
+        return false;
+    }
+
     public function getValue($path)
     {
         list($section, $group, $element) = explode('/', $path);
