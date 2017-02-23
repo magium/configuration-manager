@@ -41,12 +41,17 @@ class ConfigurationListKeys extends Command
             $groupId = (string)$parent[0]['id'];
             $parent = $parent[0]->xpath('..');
             $sectionId = (string)$parent[0]['id'];
-            $description = '';
+            $default = '';
+            if (isset($element->value)) {
+                $default = sprintf(' (default: %s) ', (string)$element->value);
+            }
             if (isset($element->description)) {
-                $description = sprintf("\n        (%s)", (string)$element->description);
+                $description = sprintf("%s\n        (%s)", $default, (string)$element->description);
+            } else {
+                $description = $default;
             }
 
-            $out = sprintf('%s/%s/%s%s', $sectionId, $groupId, $elementId, $description);
+            $out = sprintf("%s/%s/%s%s\n", $sectionId, $groupId, $elementId, $description);
             $output->writeln($out);
 
         }
