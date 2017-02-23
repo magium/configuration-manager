@@ -50,7 +50,10 @@ XML
 <configuration xmlns="http://www.magiumlib.com/Configuration">
     <section id="section">
         <group id="group">
-            <element id="element2" />
+            <element id="element2">
+                <description>The description</description>
+                <value>default value</value>
+            </element>
         </group>
     </section>
 </configuration>
