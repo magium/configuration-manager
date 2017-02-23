@@ -5,6 +5,8 @@ namespace Magium\Configuration;
 use Magium\Configuration\Config\BuilderFactory;
 use Magium\Configuration\Config\BuilderFactoryInterface;
 use Magium\Configuration\Config\BuilderInterface;
+use Magium\Configuration\Config\Config;
+use Magium\Configuration\Config\Context;
 use Magium\Configuration\Config\MissingConfigurationException;
 use Magium\Configuration\File\Context\AbstractContextConfigurationFile;
 use Magium\Configuration\Manager\CacheFactory;
@@ -21,9 +23,14 @@ class MagiumConfigurationFactory implements MagiumConfigurationFactoryInterface
     protected $baseDir;
     protected $contextFile;
     protected $builderFactory;
+    protected $context = Config::CONTEXT_DEFAULT;
 
-    public function __construct($magiumConfigurationFile = null)
+    public function __construct($magiumConfigurationFile = null, $context = Config::CONTEXT_DEFAULT)
     {
+        if ($context instanceof Context) {
+            $context = $context->getContext();
+        }
+        $this->context = $context;
         if (!$magiumConfigurationFile) {
             $cwd = __DIR__;
             $baseDir = realpath(DIRECTORY_SEPARATOR);
@@ -46,6 +53,11 @@ class MagiumConfigurationFactory implements MagiumConfigurationFactoryInterface
         $this->baseDir = dirname($this->file);
         chdir($this->baseDir);
         $this->xml = simplexml_load_file($magiumConfigurationFile);
+    }
+
+    public function setContext($context)
+    {
+        $this->context = $context;
     }
 
     protected function buildContextFile()
