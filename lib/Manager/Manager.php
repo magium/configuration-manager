@@ -18,23 +18,31 @@ class Manager implements ManagerInterface
     protected $builder;
     protected $configurationLocation;
     protected $hashAlgo;
+    protected $context;
 
     public function __construct(
         StorageInterface $cache = null,
         BuilderInterface $builder = null,
         StorageInterface $localCache = null,
+        $context = Config::CONTEXT_DEFAULT,
         $hashAlgo = 'sha1'
     )
     {
         $this->cache = $cache;
         $this->builder = $builder;
         $this->localCache = $localCache;
+        $this->context = $context;
         $this->hashAlgo = $hashAlgo;
     }
 
     public function getBuilder()
     {
         return $this->builder;
+    }
+
+    public function setContext($context)
+    {
+        $this->context = $context;
     }
 
     public function setLocalCache(StorageInterface $storage = null)
@@ -64,8 +72,11 @@ class Manager implements ManagerInterface
      * @throws NoConfigurationException
      */
 
-    public function getConfiguration($context = Config::CONTEXT_DEFAULT, $storeScopeLocally = false)
+    public function getConfiguration($context = null, $storeScopeLocally = false)
     {
+        if ($context === null) {
+            $context = $this->context;
+        }
         $key = $this->getContextCacheKey($context);
         if (isset($this->config[$key]) && $this->config[$key] instanceof Config) {
             return $this->config[$key];

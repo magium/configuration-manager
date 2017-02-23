@@ -11,16 +11,30 @@ class ConfigurationFileRepository implements \ArrayAccess, \Iterator, \Countable
 {
     protected $files = [];
     protected $secureBases = [];
+    protected $supportedTypes = [];
 
-    public function __construct(array $secureBases = [], array $configurationFiles = [])
+    protected static $me;
+
+    protected function __construct() {}
+
+    public static function getInstance(array $secureBases = [], array $configurationFiles = [])
     {
-        foreach ($secureBases as $base) {
-            $this->addSecureBase($base);
+        if (!self::$me instanceof self) {
+            self::$me = new self();
         }
+        foreach ($secureBases as $base) {
+            self::$me->addSecureBase($base);
+        }
+        if ($configurationFiles) {
+            $supportedTypes = self::$me->getSupportedTypes($configurationFiles);
+            self::$me->buildConfigurationFileList($configurationFiles, $supportedTypes);
+        }
+        return self::$me;
+    }
 
-        $supportedTypes = $this->getSupportedTypes($configurationFiles);
-        $this->buildConfigurationFileList($configurationFiles, $supportedTypes);
-
+    public static function reset()
+    {
+        self::$me = null;
     }
 
     protected function buildConfigurationFileList(array $configurationFiles, array $supportedTypes)
@@ -50,20 +64,22 @@ class ConfigurationFileRepository implements \ArrayAccess, \Iterator, \Countable
 
     protected function getSupportedTypes(array $configurationFiles)
     {
-        $supportedTypes = [];
-        if (!empty($configurationFiles)) {
-            $checkSupportedTypes = glob(__DIR__ . '/*File.php');
-            foreach ($checkSupportedTypes as $file) {
-                $file = basename($file);
-                if ($file != 'AbstractConfigurationFile.php') {
-                    $match = null;
-                    if (preg_match('/^([a-zA-Z]+)File.php$/', $file, $match)) {
-                        $supportedTypes[] = strtolower($match[1]);
+        if (!count($this->supportedTypes)) {
+
+            if (!empty($configurationFiles)) {
+                $checkSupportedTypes = glob(__DIR__ . '/*File.php');
+                foreach ($checkSupportedTypes as $file) {
+                    $file = basename($file);
+                    if ($file != 'AbstractConfigurationFile.php') {
+                        $match = null;
+                        if (preg_match('/^([a-zA-Z]+)File.php$/', $file, $match)) {
+                            $this->supportedTypes[] = strtolower($match[1]);
+                        }
                     }
                 }
             }
         }
-        return $supportedTypes;
+        return $this->supportedTypes;
     }
 
     public function count()
@@ -85,7 +101,9 @@ class ConfigurationFileRepository implements \ArrayAccess, \Iterator, \Countable
         if (!is_dir($path)) {
             throw new InvalidDirectoryException('Unable to determine real path for directory: ' . $base);
         }
-        $this->secureBases[] = $path;
+        if (!in_array($path, $this->secureBases)) {
+            $this->secureBases[] = $path;
+        }
     }
 
     protected function checkFileLocation(AdapterInterface $file)
