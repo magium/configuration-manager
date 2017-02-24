@@ -15,6 +15,10 @@ In order for it to work for you it needs 3 things
 2. A database adapter to store persistent configuration values
 3. A cache adapter to store the processed configuration objects
 
+If you want to see it in action, instead of reading about it, check out the introductory YouTube video.
+
+[![Magium Configuration Manager ](http://img.youtube.com/vi/76MLD9Kl2Lk/0.jpg)](http://www.youtube.com/watch?v=76MLD9Kl2Lk "Magium Configuration Manager ")
+
 ## Getting Started
 ### Wiring Configuration
 
@@ -133,7 +137,7 @@ Also, you can provide default values and descriptions:
 <configuration xmlns="http://www.magiumlib.com/Configuration">
     <section id="section">
         <group id="group">
-            <element id="element">
+            <element id="element1">
                 <description>Just some silly value</description>
                 <value>Test Value</value>
             </element>
@@ -161,7 +165,29 @@ More examples, both raw and for various frameworks, will be found at the [Config
 
 ### Setting Configuration Values
 
-writing tomorrow
+Configuration values are set via the command line using the `vendor/bin/magium-configuration` script using the `magium:configuration:set` command.
+
+For example, considering the previous configuration file, you can set the value by calling:
+
+```
+php vendor/bin/magium-configuration magium:configuration:set section/group/element1 "some value"
+```
+
+Then when you call 
+
+```
+$config->getValue('web/items/element1')
+```
+
+You will get the configured value.
+
+Additionally, if you want to set the value for a particular context you append it to the end of the `set` command:
+
+```
+php vendor/bin/magium-configuration magium:configuration:set section/group/element1 "some value" website1
+```
+
+And that's about it.
 
 ### Third Party Integration
 
