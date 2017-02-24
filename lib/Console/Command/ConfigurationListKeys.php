@@ -2,7 +2,7 @@
 
 namespace Magium\Configuration\Console\Command;
 
-use Magium\Configuration\Config\Config;
+use Magium\Configuration\Config\ConfigurationRepository;
 use Magium\Configuration\MagiumConfigurationFactory;
 use Magium\Configuration\MagiumConfigurationFactoryInterface;
 use Symfony\Component\Console\Command\Command;

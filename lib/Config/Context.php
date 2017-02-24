@@ -7,7 +7,7 @@ class Context
 
     protected $context;
 
-    public function __construct($context = Config::CONTEXT_DEFAULT)
+    public function __construct($context = ConfigurationRepository::CONTEXT_DEFAULT)
     {
         $this->context = $context;
     }

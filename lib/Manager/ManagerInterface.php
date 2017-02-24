@@ -3,7 +3,7 @@
 namespace Magium\Configuration\Manager;
 
 use Magium\Configuration\Config\BuilderInterface;
-use Magium\Configuration\Config\Config;
+use Magium\Configuration\Config\ConfigurationRepository;
 use Magium\Configuration\Config\ConfigInterface;
 use Zend\Cache\Storage\StorageInterface;
 
@@ -15,7 +15,7 @@ interface ManagerInterface
      * @return ConfigInterface
      */
 
-    public function getConfiguration($context = Config::CONTEXT_DEFAULT);
+    public function getConfiguration($context = ConfigurationRepository::CONTEXT_DEFAULT);
 
     public function setLocalCache(StorageInterface $storage = null);
 

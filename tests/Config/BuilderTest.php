@@ -4,7 +4,8 @@ namespace Magium\Configuration\Tests\Config;
 
 use Interop\Container\ContainerInterface;
 use Magium\Configuration\Config\Builder;
-use Magium\Configuration\Config\Config;
+use Magium\Configuration\Config\ConfigurationRepository;
+use Magium\Configuration\Config\InvalidArgumentException;
 use Magium\Configuration\Config\InvalidConfigurationLocationException;
 use Magium\Configuration\Config\InvalidDirectoryException;
 use Magium\Configuration\Config\MissingConfigurationException;
@@ -72,7 +73,7 @@ class BuilderTest extends TestCase
     public function testValuesInjectedOnNullData()
     {
         $structure = $this->getStructureXml();
-        $config = new Config('<config />');
+        $config = new ConfigurationRepository('<config />');
 
         $builder = $this->getMockConfigurationBuilder();
         $builder->buildConfigurationObject($structure, $config);
@@ -83,7 +84,7 @@ class BuilderTest extends TestCase
     public function testStorageValuesInjectedOnNotNullData()
     {
         $structure = $this->getStructureXml();
-        $config = new Config('<config />');
+        $config = new ConfigurationRepository('<config />');
 
         $builder = $this->getMockConfigurationBuilder('Storage Value');
         $builder->buildConfigurationObject($structure, $config);
@@ -129,7 +130,7 @@ class BuilderTest extends TestCase
     public function testConfigurationObjectResolution()
     {
         $structure = $this->getStructureXml();
-        $config = new Config('<config />');
+        $config = new ConfigurationRepository('<config />');
 
         $builder = $this->getMockConfigurationBuilder();
         $builder->buildConfigurationObject($structure, $config);
@@ -141,7 +142,7 @@ class BuilderTest extends TestCase
     public function testConfigurationReturnsNullForNoValue()
     {
         $structure = $this->getStructureXml();
-        $config = new Config('<config />');
+        $config = new ConfigurationRepository('<config />');
 
         $builder = $this->getMockConfigurationBuilder();
         $builder->buildConfigurationObject($structure, $config);
@@ -153,7 +154,7 @@ class BuilderTest extends TestCase
     public function testConfigurationObjectFlagResolution()
     {
         $structure = $this->getStructureXml();
-        $config = new Config('<config />');
+        $config = new ConfigurationRepository('<config />');
 
         $builder = $this->getMockConfigurationBuilder();
         $builder->buildConfigurationObject($structure, $config);
@@ -222,7 +223,7 @@ class BuilderTest extends TestCase
     public function testFunctionCallback()
     {
         $builder = $this->getMockConfigurationBuilder('some lowercase value');
-        $config = new Config('<config />');
+        $config = new ConfigurationRepository('<config />');
         $builder->buildConfigurationObject($this->getFunctionCallbackStructureXml(), $config);
         $value = $config->getValue('section/group/element');
         self::assertNotNull($value);
@@ -233,7 +234,7 @@ class BuilderTest extends TestCase
     {
         $this->expectException(UncallableCallbackException::class);
         $builder = $this->getMockConfigurationBuilder('some lowercase value');
-        $config = new Config('<config />');
+        $config = new ConfigurationRepository('<config />');
         $builder->buildConfigurationObject($this->getFunctionCallbackStructureXml('notexistingfunction'), $config);
     }
 
@@ -241,7 +242,7 @@ class BuilderTest extends TestCase
     {
         $this->expectException(MissingContainerException::class);
         $builder = $this->getMockConfigurationBuilder('some lowercase value');
-        $config = new Config('<config />');
+        $config = new ConfigurationRepository('<config />');
         $builder->buildConfigurationObject($this->getMethodCallbackStructureXml(), $config);
     }
 
@@ -250,11 +251,57 @@ class BuilderTest extends TestCase
         $container = $this->getMockBuilder(ContainerInterface::class)->setMethods(['get', 'has'])->getMock();
         $container->expects(self::atLeast(1))->method('get')->willReturn(new Callback());
         $builder = $this->getMockConfigurationBuilder('some lowercase value', 1, $container);
-        $config = new Config('<config />');
+        $config = new ConfigurationRepository('<config />');
         $builder->buildConfigurationObject($this->getMethodCallbackStructureXml(), $config);
         $value = $config->getValue('section/group/element');
         self::assertNotNull($value);
         self::assertEquals(strtoupper($value), $value); // strtoupper() is what we're expecting
+    }
+
+    public function testSetValueWithRestrictionWorks()
+    {
+        $config = $this->getStructureXml();
+        $builder = $this->getMockBuilder(Builder::class)->disableOriginalConstructor()->setMethods([
+            'getMergedStructure', 'getStorage'
+        ])->getMock();
+        $builder->expects(self::once())->method('getMergedStructure')->willReturn($config);
+        $builder->expects(self::once())->method('getStorage')->willReturn($this->createMock(StorageInterface::class));
+
+        $builder->setValue('sectionId/groupId/elementId', 'to blave');
+    }
+
+    public function testSetInvalidValueWithRestrictionThrowsException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $config = $this->getStructureXml();
+        $builder = $this->getMockBuilder(Builder::class)->disableOriginalConstructor()->setMethods([
+            'getMergedStructure', 'getStorage'
+        ])->getMock();
+        $builder->expects(self::once())->method('getMergedStructure')->willReturn($config);
+        $builder->expects(self::never())->method('getStorage');
+
+        $builder->setValue('sectionId/groupId/elementId', 'true love');
+    }
+
+    public function testSetValueWithOnePathThrowsException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $builder = $this->getMockBuilder(Builder::class)->disableOriginalConstructor()->setMethods(null)->getMock();
+        $builder->setValue('path', 'value');
+    }
+
+    public function testSetValueWithTwoPathsThrowsException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $builder = $this->getMockBuilder(Builder::class)->disableOriginalConstructor()->setMethods(null)->getMock();
+        $builder->setValue('path/subpath', 'value');
+    }
+
+    public function testSetValueWithFourPathsThrowsException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $builder = $this->getMockBuilder(Builder::class)->disableOriginalConstructor()->setMethods(null)->getMock();
+        $builder->setValue('path/subpath/deet/deedee', 'value');
     }
 
     protected function getCacheStorageMock()
@@ -302,6 +349,10 @@ class BuilderTest extends TestCase
       <group id="groupId">
           <element id="elementId">
               <value>Test Value</value>
+              <permittedValues>
+                <value>Test Value</value>
+                <value>to blave</value>
+            </permittedValues>
           </element>
           <element id="elementFlagId">
               <value>1</value>

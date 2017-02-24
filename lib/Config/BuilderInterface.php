@@ -8,10 +8,10 @@ interface BuilderInterface
     /**
      * @param string $context
      * @param ConfigInterface|null $config
-     * @return Config
+     * @return ConfigurationRepository
      */
 
-    public function build($context = Config::CONTEXT_DEFAULT, ConfigInterface $config = null);
+    public function build($context = ConfigurationRepository::CONTEXT_DEFAULT, ConfigInterface $config = null);
 
     /**
      * @return \SimpleXMLElement

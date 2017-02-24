@@ -2,7 +2,7 @@
 
 namespace Magium\Configuration\Config\Storage;
 
-use Magium\Configuration\Config\Config;
+use Magium\Configuration\Config\ConfigurationRepository;
 use Magium\Configuration\Config\InvalidContextException;
 use Magium\Configuration\File\Context\AbstractContextConfigurationFile;
 use Zend\Db\Adapter\Adapter;
@@ -48,7 +48,7 @@ class RelationalDatabase implements StorageInterface
     {
         $names = [];
 
-        if ($requestedContext !== Config::CONTEXT_DEFAULT) {
+        if ($requestedContext !== ConfigurationRepository::CONTEXT_DEFAULT) {
             $contexts = $this->getContexts();
             $xml = $this->configurationFile->toXml();
             if (!in_array($requestedContext, $contexts)) {
@@ -67,12 +67,12 @@ class RelationalDatabase implements StorageInterface
                 $names[] = (string)$context['id'];
             } while ($context = $context->xpath('..'));
         }
-        $names[] = Config::CONTEXT_DEFAULT;
+        $names[] = ConfigurationRepository::CONTEXT_DEFAULT;
 
         return $names;
     }
 
-    public function getValue($path, $requestedContext = Config::CONTEXT_DEFAULT)
+    public function getValue($path, $requestedContext = ConfigurationRepository::CONTEXT_DEFAULT)
     {
         if (empty($this->data)) {
             $contexts = $this->getContexts();
@@ -97,7 +97,7 @@ class RelationalDatabase implements StorageInterface
         return null;
     }
 
-    public function setValue($path, $value, $requestedContext = Config::CONTEXT_DEFAULT)
+    public function setValue($path, $value, $requestedContext = ConfigurationRepository::CONTEXT_DEFAULT)
     {
         $contexts = $this->getPathForContext($requestedContext);
         if (!in_array($requestedContext, $contexts)) {

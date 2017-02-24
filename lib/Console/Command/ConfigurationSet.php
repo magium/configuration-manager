@@ -2,7 +2,7 @@
 
 namespace Magium\Configuration\Console\Command;
 
-use Magium\Configuration\Config\Config;
+use Magium\Configuration\Config\ConfigurationRepository;
 use Magium\Configuration\Config\ConfigInterface;
 use Magium\Configuration\MagiumConfigurationFactory;
 use Magium\Configuration\MagiumConfigurationFactoryInterface;
@@ -28,7 +28,7 @@ class ConfigurationSet extends Command
 
         $this->addArgument('path', InputArgument::REQUIRED, 'Configuration Path');
         $this->addArgument('value', InputArgument::OPTIONAL, 'Value');
-        $this->addArgument('context', InputArgument::OPTIONAL, 'Configuration Context', Config::CONTEXT_DEFAULT);
+        $this->addArgument('context', InputArgument::OPTIONAL, 'Configuration Context', ConfigurationRepository::CONTEXT_DEFAULT);
     }
 
 
@@ -53,7 +53,7 @@ class ConfigurationSet extends Command
             throw new UnconfiguredPathException(sprintf('Path (%s) is not configured.  Do you need to create a configuration file?', $path));
         }
 
-        $builderFactory->getPersistence()->setValue($path, $value, $context);
+        $builderFactory->getBuilder()->setValue($path, $value, $context);
 
         if (!$value) {
             $value = '<empty>';

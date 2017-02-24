@@ -16,6 +16,13 @@
                                             <xs:complexType mixed="true">
                                                 <xs:sequence>
                                                     <xs:element type="xs:string" name="description" minOccurs="0"/>
+                                                    <xs:element name="permittedValues" minOccurs="0">
+                                                        <xs:complexType>
+                                                            <xs:sequence>
+                                                                <xs:element minOccurs="1" maxOccurs="unbounded" name="value" />
+                                                            </xs:sequence>
+                                                        </xs:complexType>
+                                                    </xs:element>
                                                     <xs:element name="value" minOccurs="0" maxOccurs="unbounded">
                                                         <xs:complexType>
                                                             <xs:simpleContent>

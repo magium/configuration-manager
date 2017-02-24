@@ -2,7 +2,7 @@
 
 namespace Magium\Configuration\Tests\Config;
 
-use Magium\Configuration\Config\Config;
+use Magium\Configuration\Config\ConfigurationRepository;
 use PHPUnit\Framework\TestCase;
 
 class ConfigTest extends TestCase
@@ -34,7 +34,7 @@ class ConfigTest extends TestCase
 
     protected function getConfig()
     {
-        return new Config(<<<XML
+        return new ConfigurationRepository(<<<XML
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
     <section>

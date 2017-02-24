@@ -3,7 +3,7 @@
 namespace Magium\Configuration\Tests\Manager;
 
 use Magium\Configuration\Config\Builder;
-use Magium\Configuration\Config\Config;
+use Magium\Configuration\Config\ConfigurationRepository;
 use Magium\Configuration\Manager\Manager;
 use PHPUnit\Framework\TestCase;
 use Zend\Cache\Storage\StorageInterface;
@@ -46,7 +46,7 @@ class ManagerTest extends TestCase
             [$cache, $builder]
         )->getMock();
 
-        $xml = (new Config('<config />'))->asXML();
+        $xml = (new ConfigurationRepository('<config />'))->asXML();
 
         //  Called once to get the value for the test comparison, and again
         $contextKeyMethod = $manager->expects(self::exactly(1))->method('getContextCacheKey');
@@ -60,7 +60,7 @@ class ManagerTest extends TestCase
         $cache->expects(self::never())->method('removeItem');
         $cache->expects(self::exactly(1))->method('addItem')->with(self::equalTo($expectedKey), self::equalTo($xml));
         $cache->expects(self::exactly(1))->method('setItem')->with(self::equalTo($expectedCacheKey), self::equalTo($expectedKey));
-        $manager->storeConfigurationObject(new Config('<config />'), 'test');
+        $manager->storeConfigurationObject(new ConfigurationRepository('<config />'), 'test');
     }
 
     public function testObsoleteCachedItemIsRemoved()
@@ -71,7 +71,7 @@ class ManagerTest extends TestCase
             [$cache, $builder]
         )->getMock();
 
-        $xml = (new Config('<config />'))->asXML();
+        $xml = (new ConfigurationRepository('<config />'))->asXML();
 
         //  Called once to get the value for the test comparison, and again
         $contextKeyMethod = $manager->expects(self::exactly(1))->method('getContextCacheKey');
@@ -85,7 +85,7 @@ class ManagerTest extends TestCase
         $cache->expects(self::exactly(1))->method('removeItem')->with(self::equalTo('delete-me'));
         $cache->expects(self::exactly(1))->method('addItem')->with(self::equalTo($expectedKey), self::equalTo($xml));
         $cache->expects(self::exactly(1))->method('setItem')->with(self::equalTo($expectedCacheKey), self::equalTo($expectedKey));
-        $manager->storeConfigurationObject(new Config('<config />'), 'test');
+        $manager->storeConfigurationObject(new ConfigurationRepository('<config />'), 'test');
     }
 
     public function testCacheIsCalledFirstForCacheLocationSecondForData()
@@ -120,7 +120,7 @@ class ManagerTest extends TestCase
             // strtoupper is there to normalize the values
             switch ($call) {
                 case 0:
-                    TestCase::assertContains(strtoupper(Config::CONTEXT_DEFAULT), strtoupper($param));
+                    TestCase::assertContains(strtoupper(ConfigurationRepository::CONTEXT_DEFAULT), strtoupper($param));
                     $call++;
                     return 'test1';
                 case 1:
@@ -161,7 +161,7 @@ XML
 );
         $manager = new Manager($cache, $builder);
         $config = $manager->getConfiguration();
-        self::assertInstanceOf(Config::class, $config);
+        self::assertInstanceOf(ConfigurationRepository::class, $config);
         $value = $config->getValue('section/group/element');
         self::assertEquals('test', $value);
     }
@@ -175,7 +175,7 @@ XML
         $localCache->expects(self::exactly(2))->method('getItem')->willReturnOnConsecutiveCalls('testme', '<a />');
         $localCache->expects(self::never())->method('setItem');
         $manager = new Manager($remoteCache, $builder, $localCache);
-        $manager->getConfiguration(Config::CONTEXT_DEFAULT, true);
+        $manager->getConfiguration(ConfigurationRepository::CONTEXT_DEFAULT, true);
     }
 
     public function testScopeStoredLocallyButRetrievedRemotelyIsCalledLocallyTheSecondTime()
@@ -187,8 +187,8 @@ XML
         $localCache->expects(self::exactly(2))->method('getItem')->willReturnOnConsecutiveCalls(null, null);
         $localCache->expects(self::exactly(2))->method('setItem');
         $manager = new Manager($remoteCache, $builder, $localCache);
-        $manager->getConfiguration(Config::CONTEXT_DEFAULT, true);
-        $manager->getConfiguration(Config::CONTEXT_DEFAULT, true);
+        $manager->getConfiguration(ConfigurationRepository::CONTEXT_DEFAULT, true);
+        $manager->getConfiguration(ConfigurationRepository::CONTEXT_DEFAULT, true);
     }
 
     public function testScopeNotStoredLocally()
@@ -200,7 +200,7 @@ XML
         $localCache->expects(self::exactly(1))->method('getItem')->willReturn(null);
         $localCache->expects(self::exactly(1))->method('setItem');
         $manager = new Manager($remoteCache, $builder, $localCache);
-        $manager->getConfiguration(Config::CONTEXT_DEFAULT);
+        $manager->getConfiguration(ConfigurationRepository::CONTEXT_DEFAULT);
     }
     public function testDataRetrievedRemotelyStoredLocally()
     {
@@ -211,13 +211,13 @@ XML
         $localCache->expects(self::exactly(1))->method('getItem')->willReturn(null);
         $localCache->expects(self::exactly(1))->method('setItem');
         $manager = new Manager($remoteCache, $builder, $localCache);
-        $manager->getConfiguration(Config::CONTEXT_DEFAULT);
+        $manager->getConfiguration(ConfigurationRepository::CONTEXT_DEFAULT);
     }
 
     protected function getBuilderMock($buildCalls = 1)
     {
         $builder = $this->getMockBuilder(Builder::class)->disableOriginalConstructor()->setMethods(['build'])->getMock();
-        $builder->expects(self::exactly($buildCalls))->method('build')->willReturn(new Config('<config />'));
+        $builder->expects(self::exactly($buildCalls))->method('build')->willReturn(new ConfigurationRepository('<config />'));
         /* @var $builder Builder */
         return $builder;
     }
