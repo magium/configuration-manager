@@ -2,20 +2,20 @@
 <configuration xmlns="http://www.magiumlib.com/Configuration"
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                xsi:schemaLocation="http://www.magiumlib.com/Configuration ../../../../assets/configuration.xsd">
-    <section id="general" name="General">
-        <group id="website" name="Website">
-            <element id="title" name="Title">
+    <section identifier="general" name="General">
+        <group identifier="website" name="Website">
+            <element identifier="title" name="Title">
                 <value>My Homepage</value>
             </element>
-            <element id="languages" name="Languages" source="Namespace\MySource" type="multi"/>
+            <element identifier="languages" name="Languages" source="Namespace\MySource" type="multi"/>
         </group>
-        <group id="design" name="Design">
-            <element id="theme" name="Theme"/>
+        <group identifier="design" name="Design">
+            <element identifier="theme" name="Theme"/>
         </group>
     </section>
-    <section id="security" name="Security">
-        <group id="authentication" name="Authentication">
-            <element id="require" name="Require Authentication" type="select" source="Magium\Configuration\Source\YesNo"/>
+    <section identifier="security" name="Security">
+        <group identifier="authentication" name="Authentication">
+            <element identifier="require" name="Require Authentication" type="select" source="Magium\Configuration\Source\YesNo"/>
         </group>
     </section>
 </configuration>

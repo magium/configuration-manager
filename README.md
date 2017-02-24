@@ -96,9 +96,9 @@ For example, take two configuration files:
 
 ```
 <configuration xmlns="http://www.magiumlib.com/Configuration">
-    <section id="web">
-        <group id="items">
-            <element id="element1" />
+    <section identifier="web">
+        <group identifier="items">
+            <element identifier="element1" />
         </group>
     </section>
 </configuration>
@@ -108,9 +108,9 @@ and
 
 ```
 <configuration xmlns="http://www.magiumlib.com/Configuration">
-    <section id="web">
-        <group id="items">
-            <element id="element2" />
+    <section identifier="web">
+        <group identifier="items">
+            <element identifier="element2" />
         </group>
     </section>
 </configuration>
@@ -120,10 +120,10 @@ They will merge together to create:
 
 ```
 <configuration xmlns="http://www.magiumlib.com/Configuration">
-    <section id="web">
-        <group id="items">
-            <element id="element1" />
-            <element id="element2" />
+    <section identifier="web">
+        <group identifier="items">
+            <element identifier="element1" />
+            <element identifier="element2" />
         </group>
     </section>
 </configuration>
@@ -135,9 +135,9 @@ Also, you can provide default values and descriptions:
 
 ```
 <configuration xmlns="http://www.magiumlib.com/Configuration">
-    <section id="section">
-        <group id="group">
-            <element id="element1">
+    <section identifier="section">
+        <group identifier="group">
+            <element identifier="element1">
                 <description>Just some silly value</description>
                 <value>Test Value</value>
             </element>

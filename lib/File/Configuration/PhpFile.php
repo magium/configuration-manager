@@ -12,7 +12,7 @@ class PhpFile extends AbstractConfigurationFile
         $config = new \SimpleXMLElement('<configuration />');
         foreach ($results as $section => $sectionData) {
             $sectionObj = $config->addChild('section');
-            $sectionObj['id'] = $section;
+            $sectionObj['identifier'] = $section;
             if (isset($sectionData['name'])) {
                 $sectionObj['name'] = $sectionData['name'];
             }
@@ -34,7 +34,7 @@ class PhpFile extends AbstractConfigurationFile
     {
         foreach ($groups as $groupId => $groupData) {
             $group = $section->addChild('group');
-            $group['id'] = $groupId;
+            $group['identifier'] = $groupId;
             if (isset($groupData['name'])) {
                 $group['name'] = $groupData['name'];
             }
@@ -48,7 +48,7 @@ class PhpFile extends AbstractConfigurationFile
     {
         foreach ($elements as $id => $data) {
             $element = $group->addChild('element');
-            $element['id'] = $id;
+            $element['identifier'] = $id;
             if (isset($data['name'])) {
                 $element['name'] = $data['name'];
             }

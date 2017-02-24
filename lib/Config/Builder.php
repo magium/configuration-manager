@@ -55,7 +55,7 @@ class Builder implements BuilderInterface
         $merged = $this->getMergedStructure();
         $merged->registerXPathNamespace('s', 'http://www.magiumlib.com/Configuration');
 
-        $xpath = sprintf('//s:section[@id="%s"]/s:group[@id="%s"]/s:element[@id="%s"]/s:permittedValues/s:value',
+        $xpath = sprintf('//s:section[@identifier="%s"]/s:group[@identifier="%s"]/s:element[@identifier="%s"]/s:permittedValues/s:value',
             $parts[0],
             $parts[1],
             $parts[2]
@@ -169,11 +169,11 @@ class Builder implements BuilderInterface
         $elements = $structure->xpath('/*/s:section/s:group/s:element');
         foreach ($elements as $element) {
             if ($element instanceof \SimpleXMLElement) {
-                $elementId = $element['id'];
+                $elementId = $element['identifier'];
                 $group = $element->xpath('..')[0];
-                $groupId = $group['id'];
+                $groupId = $group['identifier'];
                 $section = $group->xpath('..')[0];
-                $sectionId = $section['id'];
+                $sectionId = $section['identifier'];
                 $configPath = sprintf('%s/%s/%s', $sectionId, $groupId, $elementId);
                 $value = $this->storage->getValue($configPath, $context);
                 if ($value) {
@@ -191,7 +191,7 @@ class Builder implements BuilderInterface
                         $value = call_user_func($callback, $value);
                     }
                 } else {
-                    $xpath = sprintf('/*/s:section[@id="%s"]/s:group[@id="%s"]/s:element[@id="%s"]/s:value',
+                    $xpath = sprintf('/*/s:section[@identifier="%s"]/s:group[@identifier="%s"]/s:element[@identifier="%s"]/s:value',
                         $sectionId,
                         $groupId,
                         $elementId
@@ -214,7 +214,7 @@ class Builder implements BuilderInterface
         $base->registerXPathNamespace('s', 'http://www.magiumlib.com/Configuration');
         foreach ($new as $item) {
             if ($item instanceof \SimpleXMLElement) {
-                $xpath = sprintf('/*/s:section[@id="%s"]', $item['id']);
+                $xpath = sprintf('/*/s:section[@identifier="%s"]', $item['identifier']);
                 $sectionExists = $base->xpath($xpath);
 
                 if (!empty($sectionExists) && $sectionExists[0] instanceof \SimpleXMLElement) {
@@ -238,7 +238,7 @@ class Builder implements BuilderInterface
         $section->registerXPathNamespace('s', 'http://www.magiumlib.com/Configuration');
         foreach ($newGroups as $newGroup) {
             if ($newGroup instanceof \SimpleXMLElement) {
-                $xpath = sprintf('./s:group[@id="%s"]', $newGroup['id']);
+                $xpath = sprintf('./s:group[@identifier="%s"]', $newGroup['identifier']);
                 $groupExists = $section->xpath($xpath);
 
                 if (!empty($groupExists) && $groupExists[0] instanceof \SimpleXMLElement) {
@@ -259,7 +259,7 @@ class Builder implements BuilderInterface
         $group->registerXPathNamespace('s', 'http://www.magiumlib.com/Configuration');
         foreach ($newElements as $newElement) {
             if ($newElement instanceof \SimpleXMLElement) {
-                $xpath = sprintf('./s:element[@id="%s"]', $newElement['id']);
+                $xpath = sprintf('./s:element[@identifier="%s"]', $newElement['identifier']);
                 $elementExists = $group->xpath($xpath);
 
                 if (!empty($elementExists) && $elementExists[0] instanceof \SimpleXMLElement) {
