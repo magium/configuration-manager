@@ -3,7 +3,7 @@
 namespace Magium\Configuration\Tests\Factory;
 
 use Magium\Configuration\Config\Builder;
-use Magium\Configuration\Config\Config;
+use Magium\Configuration\Config\ConfigurationRepository;
 use Magium\Configuration\Config\Context;
 use Magium\Configuration\Config\InvalidConfigurationLocationException;
 use Magium\Configuration\Config\MissingConfigurationException;

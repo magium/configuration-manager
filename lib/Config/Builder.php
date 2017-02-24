@@ -40,6 +40,41 @@ class Builder implements BuilderInterface
         return $this->repository;
     }
 
+    public function getStorage()
+    {
+        return $this->storage;
+    }
+
+    public function setValue($path, $value, $requestedContext = ConfigurationRepository::CONTEXT_DEFAULT)
+    {
+        $parts = explode('/', $path);
+        if (count($parts) != 3) {
+            throw new InvalidArgumentException('Path must be in the structure of section/group/element');
+        }
+
+        $merged = $this->getMergedStructure();
+        $merged->registerXPathNamespace('s', 'http://www.magiumlib.com/Configuration');
+
+        $xpath = sprintf('//s:section[@id="%s"]/s:group[@id="%s"]/s:element[@id="%s"]/s:permittedValues/s:value',
+            $parts[0],
+            $parts[1],
+            $parts[2]
+        );
+
+        $elements = $merged->xpath($xpath);
+        if ($elements) {
+            $check = [];
+            foreach ($elements as $element) {
+                $check[] = (string)$element;
+            }
+            if (!in_array($value, $check)) {
+                throw new InvalidArgumentException('The value must be one of: ' . implode(', ', $check));
+            }
+        }
+
+        return $this->getStorage()->setValue($path, $value, $requestedContext);
+    }
+
     public function getContainer()
     {
         if (!$this->container instanceof ContainerInterface) {
@@ -63,18 +98,18 @@ class Builder implements BuilderInterface
     }
 
     /**
-     * @param Config|null $config
-     * @return Config
+     * @param ConfigurationRepository|null $config
+     * @return ConfigurationRepository
      * @throws InvalidConfigurationLocationException
      * @throws InvalidFileException
      * @throws
      */
 
-    public function build($context = Config::CONTEXT_DEFAULT, ConfigInterface $config = null)
+    public function build($context = ConfigurationRepository::CONTEXT_DEFAULT, ConfigInterface $config = null)
     {
 
-        if (!$config instanceof Config) {
-            $config = new Config('<config />');
+        if (!$config instanceof ConfigurationRepository) {
+            $config = new ConfigurationRepository('<config />');
         }
 
         $structure = $this->getMergedStructure();
@@ -87,6 +122,12 @@ class Builder implements BuilderInterface
 
         return $config;
     }
+
+    /**
+     * @return \SimpleXMLElement
+     * @throws InvalidFileException
+     * @throws MissingConfigurationException
+     */
 
     public function getMergedStructure()
     {
@@ -115,13 +156,13 @@ class Builder implements BuilderInterface
     /**
      * @param \SimpleXMLElement $structure The object representing the merged configuration structure
      * @param \SimpleXmlElement $config An empty config object to be populated
-     * @return Config The resulting configuration object
+     * @return ConfigurationRepository The resulting configuration object
      */
 
     public function buildConfigurationObject(
         \SimpleXMLElement $structure,
         ConfigInterface $config,
-        $context = Config::CONTEXT_DEFAULT
+        $context = ConfigurationRepository::CONTEXT_DEFAULT
     )
     {
         $structure->registerXPathNamespace('s', 'http://www.magiumlib.com/Configuration');

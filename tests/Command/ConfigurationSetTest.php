@@ -5,7 +5,8 @@ namespace Magium\Configuration\Tests\Command;
 use Magium\Configuration\Config\Builder;
 use Magium\Configuration\Config\BuilderFactory;
 use Magium\Configuration\Config\BuilderFactoryInterface;
-use Magium\Configuration\Config\Config;
+use Magium\Configuration\Config\BuilderInterface;
+use Magium\Configuration\Config\ConfigurationRepository;
 use Magium\Configuration\Config\Storage\StorageInterface;
 use Magium\Configuration\Console\Command\ConfigurationSet;
 use Magium\Configuration\Console\Command\UnconfiguredPathException;
@@ -23,7 +24,7 @@ class ConfigurationSetTest extends TestCase
         $input->expects(self::exactly(3))->method('getArgument')->willReturnCallback(function($param) {
             $values = [
                 'path'  => 'section/group/element',
-                'value' => 'string value',
+                'value' => 'to blave',
                 'context'   => 'context name'
             ];
             TestCase::assertContains($param, array_keys($values));
@@ -32,7 +33,7 @@ class ConfigurationSetTest extends TestCase
         $persistence = $this->getPersistence();
         $persistence->expects(self::once())->method('setValue')->with(
             self::equalTo('section/group/element'),
-            self::equalTo('string value'),
+            self::equalTo('to blave'),
             self::equalTo('context name')
         );
 
@@ -56,15 +57,15 @@ class ConfigurationSetTest extends TestCase
 
     protected function execute(InputInterface $input, StorageInterface $persistence = null)
     {
-        $builderFactory = $this->getBuilderFactory();
+        $builder = $this->getBuilder();
         if ($persistence instanceof StorageInterface) {
-            $builderFactory->expects(self::once())->method('getPersistence')->willReturn($persistence);
+            $builder->expects(self::once())->method('getStorage')->willReturn($persistence);
         } else {
-            $builderFactory->expects(self::never())->method('getPersistence');
+            $builder->expects(self::never())->method('getStorage');
         }
-        /* @var $builderFactory BuilderFactoryInterface */
+        /* @var $builder BuilderInterface */
         /* @var $input InputInterface */
-        $factory = $this->getFactory($builderFactory);
+        $factory = $this->getFactory($this->getBuilderFactory($builder), $builder);
         $command = new ConfigurationSet();
         $command->setConfigurationFactory($factory);
         $command->run(
@@ -81,38 +82,58 @@ class ConfigurationSetTest extends TestCase
         return $persistence;
     }
 
-    protected function getBuilderFactory()
+    protected function getBuilderFactory(BuilderInterface $builder = null)
     {
         $factory = $this->getMockBuilder(BuilderFactory::class)->disableOriginalConstructor()->setMethods(
-            ['getPersistence']
+            ['getPersistence', 'getBuilder']
         )->getMock();
+        if ($builder instanceof BuilderInterface) {
+            $factory->expects(self::any())->method('getBuilder')->willReturn($builder);
+        }
         return $factory;
     }
 
-    protected function getBuilder()
+    protected function getBuilder(StorageInterface $persistence = null)
     {
         $builder = $this->getMockBuilder(Builder::class)->disableOriginalConstructor()->setMethods([
-            'getMergedStructure'
+            'getMergedStructure', 'getStorage'
         ])->getMock();
-        $builder->expects(self::once())->method('getMergedStructure')->willReturn(new \SimpleXMLElement(
+        if ($persistence instanceof StorageInterface) {
+            $builder->expects(self::once())->method('getStorage')->willReturn($persistence);
+        }
+        $builder->expects(self::atLeast(1))->method('getMergedStructure')->willReturn(new \SimpleXMLElement(
             <<<XML
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration xmlns="http://www.magiumlib.com/Configuration">
     <section id="section">
         <group id="group">
-            <element id="element"></element></group></section></configuration>
+            <element id="element">
+                <permittedValues>
+                    <value>to blave</value>
+                </permittedValues>
+            </element>
+        </group>
+    </section>
+</configuration>
 XML
         ));
         return $builder;
     }
 
-    protected function getFactory(BuilderFactoryInterface $builderFactory)
+    protected function getFactory(BuilderFactoryInterface $builderFactory = null, BuilderInterface $builder = null)
     {
         $factory = $this->getMockBuilder(MagiumConfigurationFactory::class)->disableOriginalConstructor()->setMethods(
             ['getBuilderFactory', 'getBuilder']
         )->getMock();
-        $factory->expects(self::once())->method('getBuilderFactory')->willReturn($builderFactory);
-        $factory->expects(self::once())->method('getBuilder')->willReturn($this->getBuilder());
+        if ($builderFactory instanceof BuilderFactoryInterface) {
+            $factory->expects(self::any())->method('getBuilderFactory')->willReturn($builderFactory);
+        }
+
+        if ($builder instanceof BuilderInterface) {
+            $factory->expects(self::any())->method('getBuilder')->willReturn($builder);
+        } else {
+            $factory->expects(self::any())->method('getBuilder')->willReturn($this->getBuilder());
+        }
         return $factory;
     }
 

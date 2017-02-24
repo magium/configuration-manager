@@ -2,7 +2,7 @@
 
 namespace Magium\Configuration\File\Context;
 
-use Magium\Configuration\Config\Config;
+use Magium\Configuration\Config\ConfigurationRepository;
 use Magium\Configuration\File\AbstractAdapter;
 
 abstract class AbstractContextConfigurationFile extends AbstractAdapter
@@ -17,7 +17,7 @@ abstract class AbstractContextConfigurationFile extends AbstractAdapter
 
     public function getContexts()
     {
-        $contexts = [Config::CONTEXT_DEFAULT];
+        $contexts = [ConfigurationRepository::CONTEXT_DEFAULT];
         $xml = $this->toXml();
         $xml->registerXPathNamespace('s', 'http://www.magiumlib.com/ConfigurationContext');
         $configuredContexts = $xml->xpath('//s:context');

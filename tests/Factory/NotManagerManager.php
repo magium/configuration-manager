@@ -3,7 +3,7 @@
 namespace Magium\Configuration\Tests\Factory;
 
 use Magium\Configuration\Config\BuilderInterface;
-use Magium\Configuration\Config\Config;
+use Magium\Configuration\Config\ConfigurationRepository;
 use Magium\Configuration\Manager\ManagerInterface;
 use Zend\Cache\Storage\StorageInterface;
 
@@ -47,7 +47,7 @@ class NotManagerManager implements ManagerInterface
         $this->configuration = $configuration;
     }
 
-    public function getConfiguration($context = Config::CONTEXT_DEFAULT)
+    public function getConfiguration($context = ConfigurationRepository::CONTEXT_DEFAULT)
     {
         return $this->configuration;
     }

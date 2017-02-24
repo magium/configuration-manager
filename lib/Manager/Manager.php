@@ -4,7 +4,7 @@ namespace Magium\Configuration\Manager;
 
 use Magium\Configuration\Config\Builder;
 use Magium\Configuration\Config\BuilderInterface;
-use Magium\Configuration\Config\Config;
+use Magium\Configuration\Config\ConfigurationRepository;
 use Magium\Configuration\Config\ConfigInterface;
 use Zend\Cache\Storage\StorageInterface;
 
@@ -24,7 +24,7 @@ class Manager implements ManagerInterface
         StorageInterface $cache = null,
         BuilderInterface $builder = null,
         StorageInterface $localCache = null,
-        $context = Config::CONTEXT_DEFAULT,
+        $context = ConfigurationRepository::CONTEXT_DEFAULT,
         $hashAlgo = 'sha1'
     )
     {
@@ -61,14 +61,14 @@ class Manager implements ManagerInterface
     }
 
 
-    public function getContextCacheKey($context = Config::CONTEXT_DEFAULT)
+    public function getContextCacheKey($context = ConfigurationRepository::CONTEXT_DEFAULT)
     {
         return strtoupper('current_cache_object_' . $context);
     }
 
     /**
      * @param string $context The (configurable) context for the needed configuration object
-     * @return Config
+     * @return ConfigurationRepository
      * @throws NoConfigurationException
      */
 
@@ -78,7 +78,7 @@ class Manager implements ManagerInterface
             $context = $this->context;
         }
         $key = $this->getContextCacheKey($context);
-        if (isset($this->config[$key]) && $this->config[$key] instanceof Config) {
+        if (isset($this->config[$key]) && $this->config[$key] instanceof ConfigurationRepository) {
             return $this->config[$key];
         }
 
@@ -116,7 +116,7 @@ class Manager implements ManagerInterface
         }
 
         if ($config) {
-            $config = new Config($config);
+            $config = new ConfigurationRepository($config);
             $this->config[$key] = $config;
             return $this->config[$key];
         }
@@ -126,7 +126,7 @@ class Manager implements ManagerInterface
         return $config;
     }
 
-    public function storeConfigurationObject(ConfigInterface $config, $context = Config::CONTEXT_DEFAULT)
+    public function storeConfigurationObject(ConfigInterface $config, $context = ConfigurationRepository::CONTEXT_DEFAULT)
     {
         $contextCacheKey = $this->getContextCacheKey($context);
         $previousConfigKey = $this->cache->getItem($contextCacheKey);
