@@ -105,9 +105,9 @@ class ConfigurationSetTest extends TestCase
             <<<XML
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration xmlns="http://www.magiumlib.com/Configuration">
-    <section id="section">
-        <group id="group">
-            <element id="element">
+    <section identifier="section">
+        <group identifier="group">
+            <element identifier="element">
                 <permittedValues>
                     <value>to blave</value>
                 </permittedValues>

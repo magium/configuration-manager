@@ -41,11 +41,13 @@ class ConfigurationSet extends Command
         $context = $input->getArgument('context');
 
         $structure = $factory->getBuilder()->getMergedStructure();
+        $xml = $structure->asXML();
+
         $structure->registerXPathNamespace('s', 'http://www.magiumlib.com/Configuration');
         $paths = explode('/', $path);
         $xpath = '/';
         foreach ($paths as $pathName) {
-            $xpath .= sprintf('/s:*[@id="%s"]', $pathName);
+            $xpath .= sprintf('/s:*[@identifier="%s"]', $pathName);
         }
 
         $results = $structure->xpath($xpath);

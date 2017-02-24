@@ -37,7 +37,7 @@ class BuilderTest extends TestCase
 
         $builder->mergeStructure($base, $merge);
         $base->registerXPathNamespace('s', 'http://www.magiumlib.com/Configuration');
-        $paths = $base->xpath('/*/s:section[@id="sectionId"]/s:group[@id="groupId"]/s:element[@id="elementId2"]');
+        $paths = $base->xpath('/*/s:section[@identifier="sectionId"]/s:group[@identifier="groupId"]/s:element[@identifier="elementId2"]');
         self::assertCount(1, $paths);
         self::assertEquals('Test Value 2', (string)$paths[0]->value);
     }
@@ -65,7 +65,7 @@ class BuilderTest extends TestCase
 
         $builder->mergeStructure($base, $merge);
         $base->registerXPathNamespace('s', 'http://www.magiumlib.com/Configuration');
-        $paths = $base->xpath('/*/s:section[@id="sectionId2"]/s:group[@id="groupId2"]/s:element[@id="elementId2"]');
+        $paths = $base->xpath('/*/s:section[@identifier="sectionId2"]/s:group[@identifier="groupId2"]/s:element[@identifier="elementId2"]');
         self::assertCount(1, $paths);
         self::assertEquals('Test Value 2', (string)$paths[0]->value);
     }
@@ -345,16 +345,16 @@ class BuilderTest extends TestCase
 <configuration xmlns="http://www.magiumlib.com/Configuration"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.magiumlib.com/Configuration $schemaFile">
-    <section id="sectionId">
-      <group id="groupId">
-          <element id="elementId">
+    <section identifier="sectionId">
+      <group identifier="groupId">
+          <element identifier="elementId">
               <value>Test Value</value>
               <permittedValues>
                 <value>Test Value</value>
                 <value>to blave</value>
             </permittedValues>
           </element>
-          <element id="elementFlagId">
+          <element identifier="elementFlagId">
               <value>1</value>
           </element>
       </group>
@@ -371,9 +371,9 @@ XML
 <configuration xmlns="http://www.magiumlib.com/Configuration"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.magiumlib.com/Configuration $schemaFile">
-    <section id="sectionId">
-      <group id="groupId">
-          <element id="elementId2">
+    <section identifier="sectionId">
+      <group identifier="groupId">
+          <element identifier="elementId2">
               <value>Test Value 2</value>
           </element>
       </group>
@@ -391,9 +391,9 @@ XML
 <configuration xmlns="http://www.magiumlib.com/Configuration"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.magiumlib.com/Configuration $schemaFile">
-    <section id="sectionId2">
-      <group id="groupId2">
-          <element id="elementId2">
+    <section identifier="sectionId2">
+      <group identifier="groupId2">
+          <element identifier="elementId2">
               <value>Test Value 2</value>
           </element>
       </group>
@@ -410,9 +410,9 @@ XML
 <configuration xmlns="http://www.magiumlib.com/Configuration"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.magiumlib.com/Configuration $schemaFile">
-    <section id="section">
-      <group id="group">
-          <element id="element" callbackFromStorage="$callback"/>
+    <section identifier="section">
+      <group identifier="group">
+          <element identifier="element" callbackFromStorage="$callback"/>
       </group>
     </section>
 </configuration>
@@ -428,9 +428,9 @@ XML
 <configuration xmlns="http://www.magiumlib.com/Configuration"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.magiumlib.com/Configuration $schemaFile">
-    <section id="section">
-      <group id="group">
-          <element id="element" callbackFromStorage="$class::strtoupper" />
+    <section identifier="section">
+      <group identifier="group">
+          <element identifier="element" callbackFromStorage="$class::strtoupper" />
       </group>
     </section>
 </configuration>
