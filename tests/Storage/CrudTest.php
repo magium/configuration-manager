@@ -2,7 +2,7 @@
 
 namespace Magium\Configuration\Tests\Storage;
 
-use Magium\Configuration\Config\Config;
+use Magium\Configuration\Config\ConfigurationRepository;
 use Magium\Configuration\Config\InvalidContextException;
 use Magium\Configuration\Config\Storage\RelationalDatabase;
 use Magium\Configuration\File\Context\AbstractContextConfigurationFile;
@@ -34,7 +34,7 @@ class CrudTest extends TestCase
     {
         $this->expectException(InvalidContextException::class);
         $mock = $this->createMock(XmlFile::class);
-        $mock->expects(self::once())->method('getContexts')->willReturn([Config::CONTEXT_DEFAULT]);
+        $mock->expects(self::once())->method('getContexts')->willReturn([ConfigurationRepository::CONTEXT_DEFAULT]);
         $db = $this->createDatabase($mock);
         $db->setValue('path', 'value', 'boogers');
     }
@@ -86,15 +86,15 @@ class CrudTest extends TestCase
         });
 
         $relational = new RelationalDatabase($adapter, $this->createMock(XmlFile::class));
-        $relational->setValue('path', 'value', Config::CONTEXT_DEFAULT);
-        $relational->setValue('path', 'value', Config::CONTEXT_DEFAULT);
+        $relational->setValue('path', 'value', ConfigurationRepository::CONTEXT_DEFAULT);
+        $relational->setValue('path', 'value', ConfigurationRepository::CONTEXT_DEFAULT);
     }
 
 
     public function testNullReturnedForNonExistentPath()
     {
         $mock = $this->createMock(XmlFile::class);
-        $mock->expects(self::once())->method('getContexts')->willReturn([Config::CONTEXT_DEFAULT]);
+        $mock->expects(self::once())->method('getContexts')->willReturn([ConfigurationRepository::CONTEXT_DEFAULT]);
         $db = $this->createDatabase($mock);
         $result = $db->getValue('no-existe');
         self::assertNull($result);
@@ -112,7 +112,7 @@ class CrudTest extends TestCase
         $contextFile = new XmlFile(__DIR__ . '/xml/context.xml');
         $db = $this->createDatabase($contextFile);
         $contexts = $db->getContexts();
-        self::assertContains(Config::CONTEXT_DEFAULT, $contexts);
+        self::assertContains(ConfigurationRepository::CONTEXT_DEFAULT, $contexts);
         self::assertContains('primary', $contexts);
         self::assertContains('secondary', $contexts);
     }
@@ -153,7 +153,7 @@ class CrudTest extends TestCase
         $values = [
             'path'       => 'path',
             'value'      => 'value',
-            'context'   => Config::CONTEXT_DEFAULT
+            'context'   => ConfigurationRepository::CONTEXT_DEFAULT
         ];
         $insert->columns(array_keys($values));
         $insert->values($values);

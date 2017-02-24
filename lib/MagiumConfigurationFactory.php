@@ -5,7 +5,7 @@ namespace Magium\Configuration;
 use Magium\Configuration\Config\BuilderFactory;
 use Magium\Configuration\Config\BuilderFactoryInterface;
 use Magium\Configuration\Config\BuilderInterface;
-use Magium\Configuration\Config\Config;
+use Magium\Configuration\Config\ConfigurationRepository;
 use Magium\Configuration\Config\Context;
 use Magium\Configuration\Config\MissingConfigurationException;
 use Magium\Configuration\File\Context\AbstractContextConfigurationFile;
@@ -23,9 +23,9 @@ class MagiumConfigurationFactory implements MagiumConfigurationFactoryInterface
     protected $baseDir;
     protected $contextFile;
     protected $builderFactory;
-    protected $context = Config::CONTEXT_DEFAULT;
+    protected $context = ConfigurationRepository::CONTEXT_DEFAULT;
 
-    public function __construct($magiumConfigurationFile = null, $context = Config::CONTEXT_DEFAULT)
+    public function __construct($magiumConfigurationFile = null, $context = ConfigurationRepository::CONTEXT_DEFAULT)
     {
         if ($context instanceof Context) {
             $context = $context->getContext();

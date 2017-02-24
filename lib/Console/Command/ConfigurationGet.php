@@ -2,7 +2,7 @@
 
 namespace Magium\Configuration\Console\Command;
 
-use Magium\Configuration\Config\Config;
+use Magium\Configuration\Config\ConfigurationRepository;
 use Magium\Configuration\Config\ConfigInterface;
 use Magium\Configuration\MagiumConfigurationFactory;
 use Magium\Configuration\MagiumConfigurationFactoryInterface;
@@ -28,7 +28,7 @@ class ConfigurationGet extends Command
         ;
         $this->addOption('use-flag', 'f', InputOption::VALUE_NONE, 'Get value as flag');
         $this->addArgument('path', InputArgument::REQUIRED, 'Configuration Path');
-        $this->addArgument('context', InputArgument::OPTIONAL, 'Configuration Context', Config::CONTEXT_DEFAULT);
+        $this->addArgument('context', InputArgument::OPTIONAL, 'Configuration Context', ConfigurationRepository::CONTEXT_DEFAULT);
     }
 
     protected function getValueFlag(ConfigInterface $config, $path)

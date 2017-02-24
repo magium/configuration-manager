@@ -4,7 +4,7 @@ namespace Magium\Configuration\Tests\Command;
 
 use Magium\Configuration\Config\Builder;
 use Magium\Configuration\Config\BuilderInterface;
-use Magium\Configuration\Config\Config;
+use Magium\Configuration\Config\ConfigurationRepository;
 use Magium\Configuration\Config\InvalidContextException;
 use Magium\Configuration\Console\Command\ConfigurationBuild;
 use Magium\Configuration\File\Context\AbstractContextConfigurationFile;
@@ -43,7 +43,7 @@ class ConfigurationBuilderTest extends CommandTestCase
                 $options = [
                     'context1', 'context2'
                 ];
-                TestCase::assertInstanceOf(Config::class, $config);
+                TestCase::assertInstanceOf(ConfigurationRepository::class, $config);
                 self::assertEquals($options[$key++], $context);
             }
         );
@@ -67,7 +67,7 @@ class ConfigurationBuilderTest extends CommandTestCase
 
         $manager = $this->getManager();
         $manager->expects(self::once())->method('storeConfigurationObject')->with(
-            self::isInstanceOf(Config::class),
+            self::isInstanceOf(ConfigurationRepository::class),
             self::equalTo('context')
         );
 
@@ -145,7 +145,7 @@ class ConfigurationBuilderTest extends CommandTestCase
         $builder = $this->getMockBuilder(Builder::class)->disableOriginalConstructor()->setMethods(
             ['build']
         )->getMock();
-        $builder->expects(self::exactly($count))->method('build')->willReturn(new Config('<config />'));
+        $builder->expects(self::exactly($count))->method('build')->willReturn(new ConfigurationRepository('<config />'));
         return $builder;
     }
 
