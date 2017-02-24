@@ -33,9 +33,9 @@ class ConfigurationListKeysTest extends TestCase
         $xml1->expects(self::once())->method('toXml')->willReturn(
             new \SimpleXMLElement(<<<XML
 <configuration xmlns="http://www.magiumlib.com/Configuration">
-    <section id="section">
-        <group id="group">
-            <element id="element1">
+    <section identifier="section">
+        <group identifier="group">
+            <element identifier="element1">
                 <description>This is element 1</description>
             </element>
         </group>
@@ -48,9 +48,9 @@ XML
         $xml2->expects(self::once())->method('toXml')->willReturn(
             new \SimpleXMLElement(<<<XML
 <configuration xmlns="http://www.magiumlib.com/Configuration">
-    <section id="section">
-        <group id="group">
-            <element id="element2">
+    <section identifier="section">
+        <group identifier="group">
+            <element identifier="element2">
                 <description>The description</description>
                 <value>default value</value>
             </element>

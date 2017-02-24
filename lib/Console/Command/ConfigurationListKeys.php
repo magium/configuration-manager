@@ -36,11 +36,11 @@ class ConfigurationListKeys extends Command
         $elements = $merged->xpath('//s:element');
         $output->writeln(self::INITIAL_MESSAGE);
         foreach ($elements as $element) {
-            $elementId = (string)$element['id'];
+            $elementId = (string)$element['identifier'];
             $parent = $element->xpath('..');
-            $groupId = (string)$parent[0]['id'];
+            $groupId = (string)$parent[0]['identifier'];
             $parent = $parent[0]->xpath('..');
-            $sectionId = (string)$parent[0]['id'];
+            $sectionId = (string)$parent[0]['identifier'];
             $default = '';
             if (isset($element->value)) {
                 $default = sprintf(' (default: %s) ', (string)$element->value);
