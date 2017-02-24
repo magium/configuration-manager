@@ -89,10 +89,10 @@ class ConfigurationFileRepository implements \ArrayAccess, \Iterator, \Countable
 
     public function registerConfigurationFile(AdapterInterface $file)
     {
-        if (isset($this->files[$file->getFile()])) {
-            throw new InvalidFileException('The file has been added already: ' . $file->getFile());
+        if (!isset($this->files[$file->getFile()])) {
+            $this->files[$file->getFile()] = $file;
         }
-        $this->files[$file->getFile()] = $file;
+
     }
 
     public function addSecureBase($base)
