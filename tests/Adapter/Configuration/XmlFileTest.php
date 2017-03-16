@@ -28,7 +28,7 @@ class XmlFileTest extends TestCase
         $file = new XmlFile(__DIR__ . '/xml/config.xml');
         $config = $file->toXml();
         self::assertInstanceOf(\SimpleXMLElement::class, $config->section);
-        self::assertEquals('General', $config->section[0]['name']);
+        self::assertEquals('General', $config->section[0]['label']);
     }
 
     public function testValidInclusionNoSchemaStillPasses()

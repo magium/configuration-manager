@@ -67,7 +67,7 @@ class FactoryTest extends TestCase
     {
         $this->setFile(<<<XML
 <?xml version="1.0" encoding="utf-8"?>
-<magium xmlns="http://www.magiumlib.com/BaseConfiguration"
+<magiumBase xmlns="http://www.magiumlib.com/BaseConfiguration"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.magiumlib.com/BaseConfiguration">
     <cache>
@@ -76,7 +76,7 @@ class FactoryTest extends TestCase
     <localCache>
         <adapter>filesystem</adapter>
     </localCache>
-</magium>
+</magiumBase>
 
 XML
         );
@@ -101,13 +101,13 @@ XML
     {
         $this->setFile(<<<XML
 <?xml version="1.0" encoding="utf-8"?>
-<magium xmlns="http://www.magiumlib.com/BaseConfiguration"
+<magiumBase xmlns="http://www.magiumlib.com/BaseConfiguration"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.magiumlib.com/BaseConfiguration">
     <cache>
         <adapter>filesystem</adapter>
     </cache>
-</magium>
+</magiumBase>
 
 XML
         );
@@ -132,22 +132,22 @@ XML
     {
         $this->setFile(<<<XML
 <?xml version="1.0" encoding="utf-8"?>
-<magium xmlns="http://www.magiumlib.com/BaseConfiguration"
+<magiumBase xmlns="http://www.magiumlib.com/BaseConfiguration"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.magiumlib.com/BaseConfiguration">
     <contextConfigurationFile file="contexts.xml" type="xml"/>
-</magium>
+</magiumBase>
 
 XML
         );
         $this->setFile(<<<XML
 <?xml version="1.0" encoding="utf-8"?>
-<defaultContext xmlns="http://www.magiumlib.com/ConfigurationContext">
+<magiumDefaultContext xmlns="http://www.magiumlib.com/ConfigurationContext">
     <context id="production" title="Production">
         <context id="store1" title="Store 1" />
     </context>
     <context id="development" title="Development" />
-</defaultContext>
+</magiumDefaultContext>
 
 XML
             ,'contexts.xml');
@@ -167,11 +167,11 @@ XML
         $this->expectException(MissingConfigurationException::class);
         $this->setFile(<<<XML
 <?xml version="1.0" encoding="utf-8"?>
-<magium xmlns="http://www.magiumlib.com/BaseConfiguration"
+<magiumBase xmlns="http://www.magiumlib.com/BaseConfiguration"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.magiumlib.com/BaseConfiguration">
     <contextConfigurationFile file="contexts.xml" type="xml"/>
-</magium>
+</magiumBase>
 
 XML
         );
@@ -193,9 +193,9 @@ XML
         );
         $this->setFile(<<<XML
 <?xml version="1.0" encoding="utf-8"?>
-<defaultContext>
+<magiumDefaultContext xmlns="http://www.magiumlib.com/ConfigurationContext">
     
-</defaultContext>
+</magium>
 XML
             ,'contexts.xml');
         $path = realpath($this->configFile[self::CONFIG]);
@@ -207,10 +207,10 @@ XML
     {
         $this->setFile(<<<XML
 <?xml version="1.0" encoding="utf-8"?>
-<configuration>
+<magiumConfiguration>
     <contextConfigurationFile file="contexts.xml" />
     <cached />
-</configuration>
+</magiumConfiguration>
 
 XML
 );
@@ -236,11 +236,11 @@ XML
         $this->expectException(InvalidConfigurationException::class);
         $this->setFile(<<<XML
 <?xml version="1.0" encoding="utf-8"?>
-<magium xmlns="http://www.magiumlib.com/BaseConfiguration"
+<magiumBase xmlns="http://www.magiumlib.com/BaseConfiguration"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.magiumlib.com/BaseConfiguration">
     <builderFactory class="ArrayObject" />
-</magium>
+</magiumBase>
 
 XML
         );
@@ -261,7 +261,7 @@ XML
     {
         $this->setFile(<<<XML
 <?xml version="1.0" encoding="utf-8">
-<defaultContext xmlns="http://www.magiumlib.com/ConfigurationContext"/>
+<magiumDefaultContext xmlns="http://www.magiumlib.com/ConfigurationContext"/>
 XML
 ,
     'contexts.xml'
@@ -273,14 +273,14 @@ XML
         $this->setContextFile();
         $this->setFile(<<<XML
 <?xml version="1.0" encoding="utf-8"?>
-<magium xmlns="http://www.magiumlib.com/BaseConfiguration"
+<magiumBase xmlns="http://www.magiumlib.com/BaseConfiguration"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.magiumlib.com/BaseConfiguration">
           <persistenceConfiguration><driver>pdo_sqlite</driver><database>:memory:</database></persistenceConfiguration>
       <manager class="Magium\Configuration\Tests\Factory\NotManagerManager" />
       <cache><adapter>filesystem</adapter></cache>
       <localCache><adapter>filesystem</adapter></localCache>
-</magium>
+</magiumBase>
 
 XML
         );
@@ -298,14 +298,14 @@ XML
     {
         $this->setFile(<<<XML
 <?xml version="1.0" encoding="utf-8"?>
-<magium xmlns="http://www.magiumlib.com/BaseConfiguration"
+<magiumBase xmlns="http://www.magiumlib.com/BaseConfiguration"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.magiumlib.com/BaseConfiguration">
           <persistenceConfiguration><driver>pdo_sqlite</driver><database>:memory:</database></persistenceConfiguration>
       <manager class="ArrayObject" />
       <cache><adapter>filesystem</adapter></cache>
       <localCache><adapter>filesystem</adapter></localCache>
-</magium>
+</magiumBase>
 
 XML
         );
@@ -321,7 +321,7 @@ XML
         $this->setContextFile();
         $this->setFile(<<<XML
 <?xml version="1.0" encoding="utf-8"?>
-<magium xmlns="http://www.magiumlib.com/BaseConfiguration"
+<magiumBase xmlns="http://www.magiumlib.com/BaseConfiguration"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.magiumlib.com/BaseConfiguration">
       <persistenceConfiguration>
@@ -336,7 +336,7 @@ XML
             <cache_dir>$tmp</cache_dir>
         </options>
     </cache>
-</magium>
+</magiumBase>
 
 XML
         );
@@ -350,7 +350,7 @@ XML
         $tmp = sys_get_temp_dir();
         $this->setFile(<<<XML
 <?xml version="1.0" encoding="utf-8"?>
-<magium xmlns="http://www.magiumlib.com/BaseConfiguration"
+<magiumBase xmlns="http://www.magiumlib.com/BaseConfiguration"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.magiumlib.com/BaseConfiguration">
       <persistenceConfiguration>
@@ -364,7 +364,7 @@ XML
             <cache_dir>$tmp</cache_dir>
         </options>
     </cache>
-</magium>
+</magiumBase>
 
 XML
         );

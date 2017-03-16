@@ -10,7 +10,7 @@
         <xs:attribute name="id" type="xs:ID"/>
         <xs:attribute name="title" use="optional"/>
     </xs:complexType>
-    <xs:element name="defaultContext">
+    <xs:element name="magiumDefaultContext">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="context" minOccurs="0" maxOccurs="unbounded" type="contextType" />
