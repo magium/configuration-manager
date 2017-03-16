@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
            targetNamespace="http://www.magiumlib.com/Configuration" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:element name="configuration">
+    <xs:element name="magiumConfiguration">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="section" maxOccurs="unbounded" minOccurs="1">
@@ -36,7 +36,7 @@
                                                 <xs:attribute type="xs:string" name="callbackFromStorage"
                                                               use="optional"/>
                                                 <xs:attribute name="identifier" type="xs:string" use="required"/>
-                                                <xs:attribute type="xs:string" name="name" use="optional"/>
+                                                <xs:attribute type="xs:string" name="label" use="optional"/>
                                                 <xs:attribute name="hidden" use="optional">
                                                     <xs:simpleType>
                                                         <xs:restriction base="xs:string">
@@ -63,7 +63,7 @@
                                         </xs:element>
                                     </xs:sequence>
                                     <xs:attribute name="identifier" type="xs:string" use="required"/>
-                                    <xs:attribute type="xs:string" name="name" use="optional"/>
+                                    <xs:attribute type="xs:string" name="label" use="optional"/>
 
                                     <xs:attribute name="hidden" use="optional">
                                         <xs:simpleType>
@@ -77,7 +77,7 @@
                             </xs:element>
                         </xs:sequence>
                         <xs:attribute name="identifier" type="xs:string" use="required"/>
-                        <xs:attribute type="xs:string" name="name" use="optional"/>
+                        <xs:attribute type="xs:string" name="label" use="optional"/>
                         <xs:attribute name="hidden" use="optional">
                             <xs:simpleType>
                                 <xs:restriction base="xs:string">

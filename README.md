@@ -77,16 +77,16 @@ The `contexts.xml` file does not need to be called that; that's just what the CL
 
 ```
 <?xml version="1.0" encoding="UTF-8" ?>
-<defaultContext xmlns="http://www.magiumlib.com/ConfigurationContext">
+<magiumDefaultContext xmlns="http://www.magiumlib.com/ConfigurationContext">
     <context id="production" title="Production">
         <context id="website1" title="Website 1"/>
         <context id="website2" title="Website 2"/>
     </context>
     <context id="development" title="Development" />
-</defaultContext>
+</magiumDefaultContext>
 ```
 
-There is always a default context that all contexts inherit from.  If you don't want contexts, just have the `<defaultContext />` node alone in there.
+There is always a default context that all contexts inherit from.  If you don't want contexts, just have the `<magiumDefaultContext />` node alone in there.
 
 The structure allows for an overriding hierarchy.  That means that if there are two different values specified for `website1` and `website2` they will have two different values in the resulting config object.  However, if there is a value provided for the context `production` it will exist in both `website1` and `website2` unless overridden in those contexts.  Nice and easy.
  
@@ -95,38 +95,38 @@ The structure allows for an overriding hierarchy.  That means that if there are 
 For example, take two configuration files:
 
 ```
-<configuration xmlns="http://www.magiumlib.com/Configuration">
+<magiumConfiguration xmlns="http://www.magiumlib.com/Configuration">
     <section identifier="web">
         <group identifier="items">
             <element identifier="element1" />
         </group>
     </section>
-</configuration>
+</magiumConfiguration>
 ```
 
 and 
 
 ```
-<configuration xmlns="http://www.magiumlib.com/Configuration">
+<magiumConfiguration xmlns="http://www.magiumlib.com/Configuration">
     <section identifier="web">
         <group identifier="items">
             <element identifier="element2" />
         </group>
     </section>
-</configuration>
+</magiumConfiguration>
 ```
 
 They will merge together to create:
 
 ```
-<configuration xmlns="http://www.magiumlib.com/Configuration">
+<magiumConfiguration xmlns="http://www.magiumlib.com/Configuration">
     <section identifier="web">
         <group identifier="items">
             <element identifier="element1" />
             <element identifier="element2" />
         </group>
     </section>
-</configuration>
+</magiumConfiguration>
 ```
 
 The ID attributes are used to denote the actual paths that will be queried.  So, for this configuration, you can ask `Config` object for the values for `web/items/element1` and `web/items/element2`.
@@ -134,7 +134,7 @@ The ID attributes are used to denote the actual paths that will be queried.  So,
 Also, you can provide default values and descriptions:
 
 ```
-<configuration xmlns="http://www.magiumlib.com/Configuration">
+<magiumConfiguration xmlns="http://www.magiumlib.com/Configuration">
     <section identifier="section">
         <group identifier="group">
             <element identifier="element1">
@@ -143,7 +143,7 @@ Also, you can provide default values and descriptions:
             </element>
         </group>
     </section>
-</configuration>
+</magiumConfiguration>
 ```
 
 #### Configuring Your Application

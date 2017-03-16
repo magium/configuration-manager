@@ -20,7 +20,7 @@ class PhpFileTest extends TestCase
         $file = new PhpFile(__DIR__ . '/php/config.php');
         $config = $file->toXml();
         self::assertInstanceOf(\SimpleXMLElement::class, $config->section);
-        self::assertEquals('General', $config->section[0]['name']);
+        self::assertEquals('General', $config->section[0]['label']);
     }
 
 }

@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<configuration xmlns="http://www.magiumlib.com/Configuration"
+<magiumConfiguration xmlns="http://www.magiumlib.com/Configuration"
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                xsi:schemaLocation="http://www.magiumlib.com/Configuration ../../../../assets/configuration.xsd">
-    <section identifier="general" name="General">
-        <group identifier="website" name="Website">
-            <element identifier="title" name="Title">
+    <section identifier="general" label="General">
+        <group identifier="website" label="Website">
+            <element identifier="title" label="Title">
                 <value>My Homepage</value>
             </element>
-            <element identifier="languages" name="Languages" source="Namespace\MySource" type="multi"/>
+            <element identifier="languages" label="Languages" source="Namespace\MySource" type="multi"/>
         </group>
-        <group identifier="design" name="Design">
-            <element identifier="theme" name="Theme"/>
-        </group>
-    </section>
-    <section identifier="security" name="Security">
-        <group identifier="authentication" name="Authentication">
-            <element identifier="require" name="Require Authentication" type="select" source="Magium\Configuration\Source\YesNo"/>
+        <group identifier="design" label="Design">
+            <element identifier="theme" label="Theme"/>
         </group>
     </section>
-</configuration>
+    <section identifier="security" label="Security">
+        <group identifier="authentication" label="Authentication">
+            <element identifier="require" label="Require Authentication" type="select" source="Magium\Configuration\Source\YesNo"/>
+        </group>
+    </section>
+</magiumConfiguration>

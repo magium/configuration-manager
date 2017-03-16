@@ -2,16 +2,16 @@
 
 return [
     'general'   => [
-        'name'  => 'General',
+        'label'  => 'General',
         'groups'  => [
             'website' => [
-                'name' => 'Website',
+                'label' => 'Website',
                 'elements'  => [
                     'title' => [
-                        'name'  => 'Title'
+                        'label'  => 'Title'
                     ],
                     'languages'=> [
-                        'name' => 'Languages',
+                        'label' => 'Languages',
                         'source' => 'Namespace\MySource',
                         'type' => 'multi'
                     ]
