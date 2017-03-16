@@ -9,12 +9,12 @@ class PhpFile extends AbstractConfigurationFile
     {
         $file = $this->getFile();
         $results = include $file;
-        $config = new \SimpleXMLElement('<configuration />');
+        $config = new \SimpleXMLElement('<magiumConfiguration />');
         foreach ($results as $section => $sectionData) {
             $sectionObj = $config->addChild('section');
             $sectionObj['identifier'] = $section;
-            if (isset($sectionData['name'])) {
-                $sectionObj['name'] = $sectionData['name'];
+            if (isset($sectionData['label'])) {
+                $sectionObj['label'] = $sectionData['label'];
             }
             if (isset($sectionData['groups'])) {
                 $this->processGroups($sectionObj, $sectionData['groups']);
@@ -35,8 +35,8 @@ class PhpFile extends AbstractConfigurationFile
         foreach ($groups as $groupId => $groupData) {
             $group = $section->addChild('group');
             $group['identifier'] = $groupId;
-            if (isset($groupData['name'])) {
-                $group['name'] = $groupData['name'];
+            if (isset($groupData['label'])) {
+                $group['label'] = $groupData['label'];
             }
             if (isset($groupData['elements'])) {
                 $this->processElements($group, $groupData['elements']);
@@ -49,8 +49,8 @@ class PhpFile extends AbstractConfigurationFile
         foreach ($elements as $id => $data) {
             $element = $group->addChild('element');
             $element['identifier'] = $id;
-            if (isset($data['name'])) {
-                $element['name'] = $data['name'];
+            if (isset($data['label'])) {
+                $element['label'] = $data['label'];
             }
             if (isset($data['source'])) {
                 $element['source'] = $data['source'];

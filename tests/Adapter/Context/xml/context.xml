@@ -1,4 +1,4 @@
-<defaultContext  xmlns="http://www.magiumlib.com/ConfigurationContext"
+<magiumDefaultContext  xmlns="http://www.magiumlib.com/ConfigurationContext"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xsi:schemaLocation="http://www.magiumlib.com/ConfigurationContext ../../../../assets/context.xsd">
     <context id="production">
@@ -7,4 +7,4 @@
         </context>
     </context>
     <context id="development"/>
-</defaultContext>
+</magiumDefaultContext>

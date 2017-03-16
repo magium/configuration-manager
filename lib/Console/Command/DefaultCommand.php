@@ -56,7 +56,7 @@ class DefaultCommand extends Command
     {
         file_put_contents($file, <<<XML
 <?xml version="1.0" encoding="UTF-8" ?>
-<magium xmlns="http://www.magiumlib.com/BaseConfiguration">
+<magiumBase xmlns="http://www.magiumlib.com/BaseConfiguration">
     <persistenceConfiguration>
         <driver></driver>
         <database></database>
@@ -68,7 +68,7 @@ class DefaultCommand extends Command
             <cache_dir>/tmp</cache_dir>
         </options>
     </cache>
-</magium>
+</magiumBase>
 XML
         );
     }
@@ -90,10 +90,10 @@ XML
     {
         file_put_contents($contextPath, <<<XML
 <?xml version="1.0" encoding="UTF-8" ?>
-<defaultContext xmlns="http://www.magiumlib.com/ConfigurationContext">
+<magiumDefaultContext xmlns="http://www.magiumlib.com/ConfigurationContext">
     <context id="production" title="Production" />
     <context id="development" title="Development" />
-</defaultContext>
+</magiumDefaultContext>
 XML
         );
     }

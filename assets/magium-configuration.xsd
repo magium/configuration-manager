@@ -46,7 +46,7 @@
             <xs:enumeration value="php" />
         </xs:restriction>
     </xs:simpleType>
-    <xs:element name="magium">
+    <xs:element name="magiumBase">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="persistenceConfiguration" type="cc:dbConfiguration" minOccurs="1" maxOccurs="1" />
