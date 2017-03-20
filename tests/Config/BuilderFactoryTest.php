@@ -3,6 +3,7 @@
 namespace Magium\Configuration\Tests\Config;
 
 use Magium\Configuration\Config\BuilderFactory;
+use Magium\Configuration\Config\MergedStructure;
 use Magium\Configuration\File\Context\AbstractContextConfigurationFile;
 use PHPUnit\Framework\TestCase;
 
@@ -13,12 +14,12 @@ class BuilderFactoryTest extends TestCase
     {
         $config = new \SimpleXMLElement(<<<XML
 <?xml version="1.0" encoding="UTF-8" ?>
-<magium xmlns="http://www.magiumlib.com/BaseConfiguration">
+<magiumBase xmlns="http://www.magiumlib.com/BaseConfiguration">
     <persistenceConfiguration>
         <driver>
 </driver><database></database></persistenceConfiguration><contextConfigurationFile file="" type="xml"/>
 <configurationDirectories><directory>xml</directory></configurationDirectories>
-</magium>
+</magiumBase>
 XML
 );
 
@@ -31,12 +32,12 @@ XML
     {
         $config = new \SimpleXMLElement(<<<XML
 <?xml version="1.0" encoding="UTF-8" ?>
-<magium xmlns="http://www.magiumlib.com/BaseConfiguration">
+<magiumBase xmlns="http://www.magiumlib.com/BaseConfiguration">
     <persistenceConfiguration>
         <driver>
 </driver><database></database></persistenceConfiguration><contextConfigurationFile file="" type="xml"/>
 <configurationDirectories><directory>..</directory></configurationDirectories>
-</magium>
+</magiumBase>
 XML
 );
 
@@ -49,12 +50,12 @@ XML
     {
         $config = new \SimpleXMLElement(<<<XML
 <?xml version="1.0" encoding="UTF-8" ?>
-<magium xmlns="http://www.magiumlib.com/BaseConfiguration">
+<magiumBase xmlns="http://www.magiumlib.com/BaseConfiguration">
     <persistenceConfiguration>
         <driver>
 </driver><database></database></persistenceConfiguration><contextConfigurationFile file="" type="xml"/>
 <configurationDirectories><directory>not-supported</directory><directory>xml</directory></configurationDirectories>
-</magium>
+</magiumBase>
 XML
 );
 
@@ -68,12 +69,12 @@ XML
     {
         $config = new \SimpleXMLElement(<<<XML
 <?xml version="1.0" encoding="UTF-8" ?>
-<magium xmlns="http://www.magiumlib.com/BaseConfiguration">
+<magiumBase xmlns="http://www.magiumlib.com/BaseConfiguration">
     <persistenceConfiguration>
         <driver>
 </driver><database></database></persistenceConfiguration><contextConfigurationFile file="" type="xml"/>
 <configurationFiles><file>config-merge-1.xml</file></configurationFiles>
-</magium>
+</magiumBase>
 XML
         );
         $dirs = [realpath(__DIR__ . '/xml')];
@@ -86,12 +87,12 @@ XML
     {
         $config = new \SimpleXMLElement(<<<XML
 <?xml version="1.0" encoding="UTF-8" ?>
-<magium xmlns="http://www.magiumlib.com/BaseConfiguration">
+<magiumBase xmlns="http://www.magiumlib.com/BaseConfiguration">
     <persistenceConfiguration>
         <driver>
 </driver><database></database></persistenceConfiguration><contextConfigurationFile file="" type="xml"/>
 <configurationFiles><file>config-merge-1.xml</file><file>config-merge-2.xml</file></configurationFiles>
-</magium>
+</magiumBase>
 XML
         );
         $dirs = [realpath(__DIR__ . '/xml')];
@@ -104,12 +105,12 @@ XML
     {
         $config = new \SimpleXMLElement(<<<XML
 <?xml version="1.0" encoding="UTF-8" ?>
-<magium xmlns="http://www.magiumlib.com/BaseConfiguration">
+<magiumBase xmlns="http://www.magiumlib.com/BaseConfiguration">
     <persistenceConfiguration>
         <driver>
 </driver><database></database></persistenceConfiguration><contextConfigurationFile file="" type="xml"/>
 <configurationFiles><file>config-merge-1.xml</file><file>test.unsupported</file></configurationFiles>
-</magium>
+</magiumBase>
 XML
         );
         $dirs = [

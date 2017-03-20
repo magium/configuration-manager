@@ -39,12 +39,12 @@ class ContextListTest extends TestCase
         $config->expects(self::once())->method('toXml')->willReturn(
             new \SimpleXMLElement(<<<XML
 <?xml version="1.0" encoding="UTF-8" ?>
-<defaultContext xmlns="http://www.magiumlib.com/ConfigurationContext">
+<magiumDefaultContext xmlns="http://www.magiumlib.com/ConfigurationContext">
     <context id="test" title="Test">
         <context title="SubTest" id="subtest" />
     </context>
     <context id="base"/>
-</defaultContext>
+</magiumDefaultContext>
 XML
             )
         );

@@ -8,6 +8,7 @@ use Magium\Configuration\Config\ConfigurationRepository;
 use Magium\Configuration\Config\InvalidArgumentException;
 use Magium\Configuration\Config\InvalidConfigurationLocationException;
 use Magium\Configuration\Config\InvalidDirectoryException;
+use Magium\Configuration\Config\MergedStructure;
 use Magium\Configuration\Config\MissingConfigurationException;
 use Magium\Configuration\Config\MissingContainerException;
 use Magium\Configuration\Config\Storage\StorageInterface;
@@ -341,8 +342,8 @@ class BuilderTest extends TestCase
     protected function getStructureXml()
     {
         $schemaFile = realpath(__DIR__ . '/../../assets/configuration-element.xsd');
-        return new \SimpleXMLElement(<<<XML
-<configuration xmlns="http://www.magiumlib.com/Configuration"
+        return new MergedStructure(<<<XML
+<magiumConfiguration xmlns="http://www.magiumlib.com/Configuration"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.magiumlib.com/Configuration $schemaFile">
     <section identifier="sectionId">
@@ -359,7 +360,7 @@ class BuilderTest extends TestCase
           </element>
       </group>
     </section>
-</configuration>
+</magiumConfiguration>
 XML
         );
     }
@@ -367,8 +368,8 @@ XML
     protected function getMergedStructureXml()
     {
         $schemaFile = realpath(__DIR__ . '/../../assets/configuration-element.xsd');
-        return new \SimpleXMLElement(<<<XML
-<configuration xmlns="http://www.magiumlib.com/Configuration"
+        return new MergedStructure(<<<XML
+<magiumConfiguration xmlns="http://www.magiumlib.com/Configuration"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.magiumlib.com/Configuration $schemaFile">
     <section identifier="sectionId">
@@ -378,7 +379,7 @@ XML
           </element>
       </group>
     </section>
-</configuration>
+</magiumConfiguration>
 XML
         );
     }
@@ -387,8 +388,8 @@ XML
     protected function getUniqueStructureXml()
     {
         $schemaFile = realpath(__DIR__ . '/../../assets/configuration-element.xsd');
-        return new \SimpleXMLElement(<<<XML
-<configuration xmlns="http://www.magiumlib.com/Configuration"
+        return new MergedStructure(<<<XML
+<magiumConfiguration xmlns="http://www.magiumlib.com/Configuration"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.magiumlib.com/Configuration $schemaFile">
     <section identifier="sectionId2">
@@ -398,7 +399,7 @@ XML
           </element>
       </group>
     </section>
-</configuration>
+</magiumConfiguration>
 XML
         );
     }
@@ -406,8 +407,8 @@ XML
     protected function getFunctionCallbackStructureXml($callback = 'strtoupper')
     {
         $schemaFile = realpath(__DIR__ . '/../../assets/configuration-element.xsd');
-        return new \SimpleXMLElement(<<<XML
-<configuration xmlns="http://www.magiumlib.com/Configuration"
+        return new MergedStructure(<<<XML
+<magiumConfiguration xmlns="http://www.magiumlib.com/Configuration"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.magiumlib.com/Configuration $schemaFile">
     <section identifier="section">
@@ -415,7 +416,7 @@ XML
           <element identifier="element" callbackFromStorage="$callback"/>
       </group>
     </section>
-</configuration>
+</magiumConfiguration>
 XML
         );
     }
@@ -424,8 +425,8 @@ XML
     {
         $class = Callback::class;
         $schemaFile = realpath(__DIR__ . '/../../assets/configuration-element.xsd');
-        return new \SimpleXMLElement(<<<XML
-<configuration xmlns="http://www.magiumlib.com/Configuration"
+        return new MergedStructure(<<<XML
+<magiumConfiguration xmlns="http://www.magiumlib.com/Configuration"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.magiumlib.com/Configuration $schemaFile">
     <section identifier="section">
@@ -433,7 +434,7 @@ XML
           <element identifier="element" callbackFromStorage="$class::strtoupper" />
       </group>
     </section>
-</configuration>
+</magiumConfiguration>
 XML
         );
     }
