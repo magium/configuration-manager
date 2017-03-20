@@ -14,7 +14,7 @@ interface BuilderInterface
     public function build($context = ConfigurationRepository::CONTEXT_DEFAULT, ConfigInterface $config = null);
 
     /**
-     * @return \SimpleXMLElement
+     * @return MergedStructure
      */
 
     public function getMergedStructure();

@@ -3,6 +3,7 @@
 namespace Magium\Configuration\Tests\Command;
 
 use Magium\Configuration\Config\Builder;
+use Magium\Configuration\Config\MergedStructure;
 use Magium\Configuration\Console\Command\ConfigurationList;
 use Magium\Configuration\Console\Command\ConfigurationListKeys;
 use Magium\Configuration\File\Configuration\AbstractConfigurationFile;
@@ -31,8 +32,8 @@ class ConfigurationListKeysTest extends TestCase
     {
         $xml1 = $this->createMock(AbstractConfigurationFile::class);
         $xml1->expects(self::once())->method('toXml')->willReturn(
-            new \SimpleXMLElement(<<<XML
-<configuration xmlns="http://www.magiumlib.com/Configuration">
+            new MergedStructure(<<<XML
+<magiumConfiguration xmlns="http://www.magiumlib.com/Configuration">
     <section identifier="section">
         <group identifier="group">
             <element identifier="element1">
@@ -40,14 +41,14 @@ class ConfigurationListKeysTest extends TestCase
             </element>
         </group>
     </section>
-</configuration>
+</magiumConfiguration>
 XML
 )
         );
         $xml2 = $this->createMock(AbstractConfigurationFile::class);
         $xml2->expects(self::once())->method('toXml')->willReturn(
-            new \SimpleXMLElement(<<<XML
-<configuration xmlns="http://www.magiumlib.com/Configuration">
+            new MergedStructure(<<<XML
+<magiumConfiguration xmlns="http://www.magiumlib.com/Configuration">
     <section identifier="section">
         <group identifier="group">
             <element identifier="element2">
@@ -56,7 +57,7 @@ XML
             </element>
         </group>
     </section>
-</configuration>
+</magiumConfiguration>
 XML
             )
         );

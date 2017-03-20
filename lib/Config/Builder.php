@@ -114,7 +114,7 @@ class Builder implements BuilderInterface
 
         $structure = $this->getMergedStructure();
 
-        if (!$structure instanceof \SimpleXMLElement) {
+        if (!$structure instanceof MergedStructure) {
             throw new InvalidConfigurationException('No configuration files provided');
         }
 
@@ -143,7 +143,7 @@ class Builder implements BuilderInterface
             }
 
             $simpleXml = $file->toXml();
-            if (!$structure instanceof \SimpleXMLElement) {
+            if (!$structure instanceof MergedStructure) {
                 $structure = $simpleXml;
             } else {
                 $this->mergeStructure($structure, $simpleXml);
@@ -160,7 +160,7 @@ class Builder implements BuilderInterface
      */
 
     public function buildConfigurationObject(
-        \SimpleXMLElement $structure,
+        MergedStructure $structure,
         ConfigInterface $config,
         $context = ConfigurationRepository::CONTEXT_DEFAULT
     )
@@ -168,7 +168,7 @@ class Builder implements BuilderInterface
         $structure->registerXPathNamespace('s', 'http://www.magiumlib.com/Configuration');
         $elements = $structure->xpath('/*/s:section/s:group/s:element');
         foreach ($elements as $element) {
-            if ($element instanceof \SimpleXMLElement) {
+            if ($element instanceof MergedStructure) {
                 $elementId = $element['identifier'];
                 $group = $element->xpath('..')[0];
                 $groupId = $group['identifier'];
@@ -209,7 +209,7 @@ class Builder implements BuilderInterface
         }
     }
 
-    public function mergeStructure(\SimpleXMLElement $base, \SimpleXMLElement $new)
+    public function mergeStructure(MergedStructure $base, \SimpleXMLElement $new)
     {
         $base->registerXPathNamespace('s', 'http://www.magiumlib.com/Configuration');
         foreach ($new as $item) {
@@ -224,7 +224,7 @@ class Builder implements BuilderInterface
                 }
 
                 foreach ($item->attributes() as $name => $value) {
-                    $section[$name] = $value;
+                    $section[$name] = (string)$value;
                 }
                 if ($item->group) {
                     $this->mergeGroup($section, $item->group);
@@ -247,7 +247,7 @@ class Builder implements BuilderInterface
                     $group = $section->addChild('group');
                 }
                 foreach ($newGroup->attributes() as $name => $value) {
-                    $group[$name] = $value;
+                    $group[$name] = (string)$value;
                 }
                 $this->mergeElements($group, $newGroup->element);
             }
@@ -268,10 +268,10 @@ class Builder implements BuilderInterface
                     $element = $group->addChild('element');
                 }
                 foreach ($newElement->attributes() as $name => $value) {
-                    $element[$name] = $value;
+                    $element[$name] = (string)$value;
                 }
                 foreach ($newElement->children() as $key => $item) {
-                    $element->$key = $item;
+                    $element->$key = (string)$item;
                 }
             }
         }

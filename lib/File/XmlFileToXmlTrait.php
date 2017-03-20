@@ -2,6 +2,8 @@
 
 namespace Magium\Configuration\File;
 
+use Magium\Configuration\Config\MergedStructure;
+
 trait XmlFileToXmlTrait
 {
 
@@ -13,13 +15,13 @@ trait XmlFileToXmlTrait
 
     public function toXml()
     {
-        if (!$this->xml instanceof \SimpleXMLElement) {
+        if (!$this->xml instanceof MergedStructure) {
             $file = $this->getFile();
             $content = file_get_contents($file);
             $doc = new \DOMDocument();
             $doc->loadXML($content);
             $this->validateSchema($doc);
-            $this->xml = new \SimpleXMLElement($content);
+            $this->xml = new MergedStructure($content);
         }
         return $this->xml;
     }

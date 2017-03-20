@@ -104,7 +104,7 @@ class ConfigurationSetTest extends TestCase
         $builder->expects(self::atLeast(1))->method('getMergedStructure')->willReturn(new \SimpleXMLElement(
             <<<XML
 <?xml version="1.0" encoding="UTF-8" ?>
-<configuration xmlns="http://www.magiumlib.com/Configuration">
+<magiumConfiguration xmlns="http://www.magiumlib.com/Configuration">
     <section identifier="section">
         <group identifier="group">
             <element identifier="element">
@@ -114,7 +114,7 @@ class ConfigurationSetTest extends TestCase
             </element>
         </group>
     </section>
-</configuration>
+</magiumConfiguration>
 XML
         ));
         return $builder;
