@@ -44,4 +44,5 @@ class ConfigurationRepository extends \SimpleXMLElement implements ConfigInterfa
         }
         return false;
     }
+
 }

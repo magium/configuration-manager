@@ -20,7 +20,10 @@
     "zendframework/zend-cache": "^2.7",
     "psr/container": "^1.0@dev",
     "zendframework/zend-db": "^2.8",
-    "symfony/console": "^3.2"
+    "symfony/console": "^3.2",
+    "psr/http-message": "^1.0",
+    "zendframework/zend-view": "^2.8",
+    "zendframework/zend-psr7bridge": "^0.2.2"
   },
   "bin": ["bin/magium-configuration"]
 }
