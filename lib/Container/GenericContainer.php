@@ -23,9 +23,14 @@ class GenericContainer implements ContainerInterface
         $class = new \ReflectionClass($value);
         $interfaces = $class->getInterfaces();
         foreach ($interfaces as $interface) {
-            $this->container[$interface->getName()] = $value;
+            if (!$interface->isInternal()) {
+                $this->container[$interface->getName()] = $value;
+            }
         }
         do {
+            if ($class->isInternal()) {
+                return; // Our work is done here.
+            }
             $this->container[$class->getName()] = $value;
         } while (($class = $class->getParentClass()) instanceof \ReflectionClass);
     }

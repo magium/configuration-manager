@@ -24,14 +24,21 @@ class ContainerTest extends TestCase
 
     public function testGetBasicObject()
     {
-        $result = $this->container->get(\ArrayObject::class);
-        self::assertInstanceOf(\ArrayObject::class, $result);
+        $result = $this->container->get(ModelInjected::class);
+        self::assertInstanceOf(ModelInjected::class, $result);
     }
 
     public function testObjectInterfaceIsRegistered()
     {
         $this->container->get(Model::class);
         self::assertInstanceOf(Model::class, $this->container->get(ModelInterface::class));
+    }
+
+    public function testInternalClassesNotRegistered()
+    {
+        $this->container->get(Model::class);
+        self::assertFalse($this->container->has(\ArrayObject::class));
+        self::assertFalse($this->container->has(\Countable::class));
     }
 
     public function testContainerRegistersItself()
@@ -42,8 +49,8 @@ class ContainerTest extends TestCase
 
     public function testHasBasicObject()
     {
-        $this->container->get(\ArrayObject::class);
-        self::assertTrue($this->container->has(\ArrayObject::class));
+        $this->container->get(ModelInjected::class);
+        self::assertTrue($this->container->has(ModelInjected::class));
     }
 
     public function testSetNonObjectThrowsException()
