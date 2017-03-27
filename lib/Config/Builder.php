@@ -3,7 +3,9 @@
 namespace Magium\Configuration\Config;
 
 use Interop\Container\ContainerInterface;
+use Magium\Configuration\Config\Storage\CallbackInterface;
 use Magium\Configuration\Config\Storage\StorageInterface as ConfigurationStorageInterface;
+use Magium\Configuration\Container\GenericContainer;
 use Magium\Configuration\File\AdapterInterface;
 use Magium\Configuration\File\Configuration\ConfigurationFileRepository;
 use Magium\Configuration\File\Configuration\UnsupportedFileTypeException;
@@ -78,10 +80,7 @@ class Builder implements BuilderInterface
     public function getContainer()
     {
         if (!$this->container instanceof ContainerInterface) {
-            throw new MissingContainerException(
-                'You are using functionality that requires either a DI Container or Service Locator.  '
-                . 'The container, or container adapter, must implement Interop\Container\ContainerInterface'
-            );
+            $this->container = new GenericContainer();
         }
         return $this->container;
     }
@@ -152,6 +151,43 @@ class Builder implements BuilderInterface
         return $structure;
     }
 
+    protected function executeCallback($callbackString, $value)
+    {
+        if (function_exists($callbackString)) {
+            $execute = $callbackString;
+        } else {
+            $container = $this->getContainer();
+            try {
+                $callbackObject = $this->getContainer()->get($callbackString);
+                if (!$callbackObject instanceof CallbackInterface) {
+                    throw new UncallableCallbackException('Callback must implement ' . CallbackInterface::class);
+                }
+                $execute = [
+                    $callbackObject,
+                    'filter'
+                ];
+
+                if (!is_callable($execute)) {
+                    throw new UncallableCallbackException('Unable to execute callback: ' . $callbackString);
+                }
+            } catch (\Exception $e) {
+                /*
+                 * This is slightly a hack but the purpose is to throw the insufficient exception if it's an actual
+                 * problem with the generic container we provide.
+                 */
+                if ($container instanceof GenericContainer && !$e instanceof UncallableCallbackException) {
+                    throw new InsufficientContainerException(
+                        'You are using functionality that requires either a fully functional DI Container or Service Locator.  '
+                        . 'The container, or container adapter, must implement Interop\Container\ContainerInterface.'
+                    );
+                }
+                throw $e;
+            }
+        }
+
+        return call_user_func($execute, $value);
+    }
+
 
     /**
      * @param \SimpleXMLElement $structure The object representing the merged configuration structure
@@ -176,21 +212,7 @@ class Builder implements BuilderInterface
                 $sectionId = $section['identifier'];
                 $configPath = sprintf('%s/%s/%s', $sectionId, $groupId, $elementId);
                 $value = $this->storage->getValue($configPath, $context);
-                if ($value) {
-                    if (isset($element['callbackFromStorage'])) {
-                        $callbackString = (string)$element['callbackFromStorage'];
-                        $callback = explode('::', $callbackString);
-                        if (count($callback) == 2) {
-                            $callback[0] = $this->getContainer()->get($element['callbackFromStorage']);
-                        } else {
-                            $callback = array_shift($callback);
-                        }
-                        if (!is_callable($callback)) {
-                            throw new UncallableCallbackException('Unable to execute callback: ' . $callbackString);
-                        }
-                        $value = call_user_func($callback, $value);
-                    }
-                } else {
+                if (!$value) {
                     $xpath = sprintf('/*/s:section[@identifier="%s"]/s:group[@identifier="%s"]/s:element[@identifier="%s"]/s:value',
                         $sectionId,
                         $groupId,
@@ -200,6 +222,11 @@ class Builder implements BuilderInterface
                     if (!empty($result)) {
                         $value = trim((string)$result[0]);
                     }
+                }
+                if (isset($element['callbackFromStorage'])) {
+                    $callbackString = (string)$element['callbackFromStorage'];
+
+                    $value = $this->executeCallback($callbackString, $value);
                 }
 
                 if ($value) {
