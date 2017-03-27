@@ -38,7 +38,6 @@ class GenericContainer implements ContainerInterface
         return $this->container[$id];
     }
 
-
     public function newInstance($type)
     {
         $reflection = new \ReflectionClass($type);
