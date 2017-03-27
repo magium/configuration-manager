@@ -2,7 +2,7 @@
 
 namespace Magium\Configuration\Tests\Container;
 
-class Model
+class Model implements ModelInterface
 {
 
     public $model;
