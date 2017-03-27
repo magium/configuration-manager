@@ -4,6 +4,8 @@ namespace Magium\Configuration\Tests\Config;
 
 use Interop\Container\ContainerInterface;
 use Magium\Configuration\Config\Builder;
+use Magium\Configuration\Config\BuilderInterface;
+use Magium\Configuration\Config\ConfigInterface;
 use Magium\Configuration\Config\ConfigurationRepository;
 use Magium\Configuration\Config\InsufficientContainerException;
 use Magium\Configuration\Config\InvalidArgumentException;
@@ -19,6 +21,7 @@ use Magium\Configuration\File\Configuration\UnsupportedFileTypeException;
 use Magium\Configuration\File\InvalidFileException;
 use Magium\Configuration\File\Configuration\XmlFile;
 use Magium\Configuration\InvalidConfigurationException;
+use Magium\Configuration\Tests\Container\ModelInjected;
 use PHPUnit\Framework\TestCase;
 use Zend\EventManager\Exception\InvalidCallbackException;
 
@@ -245,7 +248,7 @@ class BuilderTest extends TestCase
         $this->expectException(UncallableCallbackException::class);
         $builder = $this->getMockConfigurationBuilder('some lowercase value');
         $config = new ConfigurationRepository('<config />');
-        $builder->buildConfigurationObject($this->getFunctionCallbackStructureXml(\ArrayObject::class), $config);
+        $builder->buildConfigurationObject($this->getFunctionCallbackStructureXml(ModelInjected::class), $config);
     }
 
     public function testFunctionalityRequiringObjectContainerThrowsExceptionWhenInsufficient()
@@ -254,6 +257,25 @@ class BuilderTest extends TestCase
         $builder = $this->getMockConfigurationBuilder('some lowercase value');
         $config = new ConfigurationRepository('<config />');
         $builder->buildConfigurationObject($this->getMethodCallbackStructureXml(InsufficientCallback::class), $config);
+    }
+
+    public function testBuilderAddsNecessaryDefaultsToContainer()
+    {
+        $builder = $this->getMockConfigurationBuilder('some value', 0);
+        $container = $builder->getContainer();
+        self::assertTrue($container->has(BuilderInterface::class), 'Missing ' . BuilderInterface::class);
+        self::assertTrue($container->has(StorageInterface::class), 'Missing ' . StorageInterface::class);
+        self::assertTrue(
+            $container->has(ConfigurationFileRepository::class),
+            'Missing ' . ConfigurationFileRepository::class
+        );
+
+        $file = new XmlFile(realpath(__DIR__ . '/xml/config-merge-1.xml'));
+        $builder->getConfigurationRepository()->addSecureBase(__DIR__);
+        $builder->getConfigurationRepository()->registerConfigurationFile($file);
+        $builder->build();
+        self::assertTrue($container->has(ConfigInterface::class), 'Missing ' . ConfigInterface::class);
+        self::assertTrue($container->has(MergedStructure::class), 'Missing ' . MergedStructure::class);
     }
 
     public function testObjectCallback()

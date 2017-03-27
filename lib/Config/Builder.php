@@ -81,6 +81,10 @@ class Builder implements BuilderInterface
     {
         if (!$this->container instanceof ContainerInterface) {
             $this->container = new GenericContainer();
+            $this->container->set($this);
+            $this->container->set($this->cache);
+            $this->container->set($this->repository);
+            $this->container->set($this->storage);
         }
         return $this->container;
     }
@@ -116,6 +120,9 @@ class Builder implements BuilderInterface
         if (!$structure instanceof MergedStructure) {
             throw new InvalidConfigurationException('No configuration files provided');
         }
+
+        $this->getContainer()->set($config);
+        $this->getContainer()->set($structure);
 
         $this->buildConfigurationObject($structure, $config, $context);
 

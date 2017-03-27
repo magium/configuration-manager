@@ -2,7 +2,7 @@
 
 namespace Magium\Configuration\Tests\Container;
 
-class Model implements ModelInterface
+class Model extends \ArrayObject implements ModelInterface, \Countable
 {
 
     public $model;
