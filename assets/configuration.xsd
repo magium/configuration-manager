@@ -52,7 +52,10 @@
                                                             <xs:enumeration value="multi"/>
                                                             <xs:enumeration value="select"/>
                                                             <xs:enumeration value="text"/>
-                                                            <xs:enumeration value="textbox"/>
+                                                            <xs:enumeration value="textarea"/>
+                                                            <xs:enumeration value="url"/>
+                                                            <xs:enumeration value="tel"/>
+                                                            <xs:enumeration value="email"/>
                                                             <xs:enumeration value="date"/>
                                                             <xs:enumeration value="datetime"/>
                                                         </xs:restriction>

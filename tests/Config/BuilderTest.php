@@ -5,6 +5,7 @@ namespace Magium\Configuration\Tests\Config;
 use Interop\Container\ContainerInterface;
 use Magium\Configuration\Config\Builder;
 use Magium\Configuration\Config\ConfigurationRepository;
+use Magium\Configuration\Config\InsufficientContainerException;
 use Magium\Configuration\Config\InvalidArgumentException;
 use Magium\Configuration\Config\InvalidConfigurationLocationException;
 use Magium\Configuration\Config\InvalidDirectoryException;
@@ -233,30 +234,54 @@ class BuilderTest extends TestCase
 
     public function testInvalidFunctionCallbackThrowsException()
     {
-        $this->expectException(UncallableCallbackException::class);
+        $this->expectException(InsufficientContainerException::class);
         $builder = $this->getMockConfigurationBuilder('some lowercase value');
         $config = new ConfigurationRepository('<config />');
         $builder->buildConfigurationObject($this->getFunctionCallbackStructureXml('notexistingfunction'), $config);
     }
 
-    public function testFunctionalityRequiringObjectContainerThrowsExceptionWhenMissing()
+    public function testUncallableFunctionCallbackThrowsException()
     {
-        $this->expectException(MissingContainerException::class);
+        $this->expectException(UncallableCallbackException::class);
         $builder = $this->getMockConfigurationBuilder('some lowercase value');
         $config = new ConfigurationRepository('<config />');
-        $builder->buildConfigurationObject($this->getMethodCallbackStructureXml(), $config);
+        $builder->buildConfigurationObject($this->getFunctionCallbackStructureXml(\ArrayObject::class), $config);
+    }
+
+    public function testFunctionalityRequiringObjectContainerThrowsExceptionWhenInsufficient()
+    {
+        $this->expectException(InsufficientContainerException::class);
+        $builder = $this->getMockConfigurationBuilder('some lowercase value');
+        $config = new ConfigurationRepository('<config />');
+        $builder->buildConfigurationObject($this->getMethodCallbackStructureXml(InsufficientCallback::class), $config);
     }
 
     public function testObjectCallback()
     {
-        $container = $this->getMockBuilder(ContainerInterface::class)->setMethods(['get', 'has'])->getMock();
-        $container->expects(self::atLeast(1))->method('get')->willReturn(new Callback());
-        $builder = $this->getMockConfigurationBuilder('some lowercase value', 1, $container);
+        $builder = $this->getMockConfigurationBuilder('some lowercase value', 1);
         $config = new ConfigurationRepository('<config />');
         $builder->buildConfigurationObject($this->getMethodCallbackStructureXml(), $config);
         $value = $config->getValue('section/group/element');
         self::assertNotNull($value);
         self::assertEquals(strtoupper($value), $value); // strtoupper() is what we're expecting
+    }
+
+    public function testObjectCallbackWithDefaultValue()
+    {
+        $builder = $this->getMockConfigurationBuilder();
+        $config = new ConfigurationRepository('<config />');
+        $builder->buildConfigurationObject(
+            $this->getUniqueStructureXml(
+                sprintf(
+                    'callbackFromStorage="%s"',
+                    Callback::class
+                )
+            ),
+            $config
+        );
+        $value = $config->getValue('sectionId2/groupId2/elementId2');
+        self::assertNotNull($value);
+        self::assertEquals(strtoupper('Test Value 2'), $value); // strtoupper() is what we're expecting
     }
 
     public function testSetValueWithRestrictionWorks()
@@ -385,7 +410,7 @@ XML
     }
 
 
-    protected function getUniqueStructureXml()
+    protected function getUniqueStructureXml($option = '')
     {
         $schemaFile = realpath(__DIR__ . '/../../assets/configuration-element.xsd');
         return new MergedStructure(<<<XML
@@ -394,7 +419,7 @@ XML
           xsi:schemaLocation="http://www.magiumlib.com/Configuration $schemaFile">
     <section identifier="sectionId2">
       <group identifier="groupId2">
-          <element identifier="elementId2">
+          <element identifier="elementId2" $option>
               <value>Test Value 2</value>
           </element>
       </group>
@@ -421,9 +446,11 @@ XML
         );
     }
 
-    protected function getMethodCallbackStructureXml()
+    protected function getMethodCallbackStructureXml($class = null)
     {
-        $class = Callback::class;
+        if ($class == null) {
+            $class = Callback::class;
+        }
         $schemaFile = realpath(__DIR__ . '/../../assets/configuration-element.xsd');
         return new MergedStructure(<<<XML
 <magiumConfiguration xmlns="http://www.magiumlib.com/Configuration"
@@ -431,7 +458,7 @@ XML
           xsi:schemaLocation="http://www.magiumlib.com/Configuration $schemaFile">
     <section identifier="section">
       <group identifier="group">
-          <element identifier="element" callbackFromStorage="$class::strtoupper" />
+          <element identifier="element" callbackFromStorage="$class" />
       </group>
     </section>
 </magiumConfiguration>
