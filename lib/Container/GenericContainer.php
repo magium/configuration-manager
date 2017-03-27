@@ -62,7 +62,7 @@ class GenericContainer implements ContainerInterface
 
     public function has($id)
     {
-
+        return isset($this->container[$id]);
     }
 
 }
