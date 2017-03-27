@@ -2,6 +2,7 @@
 
 namespace Magium\Configuration\Tests\Container;
 
+use Interop\Container\ContainerInterface;
 use Magium\Configuration\Container\GenericContainer;
 use Magium\Configuration\Container\InvalidObjectException;
 use PHPUnit\Framework\TestCase;
@@ -25,6 +26,18 @@ class ContainerTest extends TestCase
     {
         $result = $this->container->get(\ArrayObject::class);
         self::assertInstanceOf(\ArrayObject::class, $result);
+    }
+
+    public function testObjectInterfaceIsRegistered()
+    {
+        $this->container->get(Model::class);
+        self::assertInstanceOf(Model::class, $this->container->get(ModelInterface::class));
+    }
+
+    public function testContainerRegistersItself()
+    {
+        $result = $this->container->get(ContainerInterface::class);
+        self::assertInstanceOf(GenericContainer::class, $result);
     }
 
     public function testHasBasicObject()

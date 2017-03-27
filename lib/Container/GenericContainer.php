@@ -9,13 +9,25 @@ class GenericContainer implements ContainerInterface
 
     protected $container = [];
 
+    public function __construct(array $defaults = [])
+    {
+        $this->container = $defaults;
+        $this->set($this);
+    }
+
     public function set($value)
     {
         if (!is_object($value)) {
             throw new InvalidObjectException('The GenericContainer can only accept objects');
         }
-        $class = get_class($value);
-        $this->container[$class] = $value;
+        $class = new \ReflectionClass($value);
+        $interfaces = $class->getInterfaces();
+        foreach ($interfaces as $interface) {
+            $this->container[$interface->getName()] = $value;
+        }
+        do {
+            $this->container[$class->getName()] = $value;
+        } while (($class = $class->getParentClass()) instanceof \ReflectionClass);
     }
 
     public function get($id)
@@ -25,6 +37,7 @@ class GenericContainer implements ContainerInterface
         }
         return $this->container[$id];
     }
+
 
     public function newInstance($type)
     {
