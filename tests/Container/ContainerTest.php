@@ -27,6 +27,12 @@ class ContainerTest extends TestCase
         self::assertInstanceOf(\ArrayObject::class, $result);
     }
 
+    public function testHasBasicObject()
+    {
+        $this->container->get(\ArrayObject::class);
+        self::assertTrue($this->container->has(\ArrayObject::class));
+    }
+
     public function testSetNonObjectThrowsException()
     {
         $this->expectException(InvalidObjectException::class);
