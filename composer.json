@@ -15,8 +15,10 @@
       "Magium\\Configuration\\Tests\\": "tests/"
     }
   },
+  "require-dev": {
+    "phpunit/phpunit": "~5.7"
+  },
   "require": {
-    "phpunit/phpunit": "~5.7",
     "zendframework/zend-cache": "^2.7",
     "psr/container": "^1.0@dev",
     "zendframework/zend-db": "^2.8",
