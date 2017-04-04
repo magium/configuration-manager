@@ -2,14 +2,10 @@
 
 namespace Magium\Configuration\Console\Command;
 
-use Magium\Configuration\Config\ConfigurationRepository;
-use Magium\Configuration\Config\ConfigInterface;
-use Magium\Configuration\MagiumConfigurationFactory;
-use Magium\Configuration\MagiumConfigurationFactoryInterface;
+use Magium\Configuration\Config\Repository\ConfigurationRepository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ConfigurationSet extends Command
@@ -41,7 +37,6 @@ class ConfigurationSet extends Command
         $context = $input->getArgument('context');
 
         $structure = $factory->getBuilder()->getMergedStructure();
-        $xml = $structure->asXML();
 
         $structure->registerXPathNamespace('s', 'http://www.magiumlib.com/Configuration');
         $paths = explode('/', $path);

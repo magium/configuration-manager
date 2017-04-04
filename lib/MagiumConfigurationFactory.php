@@ -5,7 +5,7 @@ namespace Magium\Configuration;
 use Magium\Configuration\Config\BuilderFactory;
 use Magium\Configuration\Config\BuilderFactoryInterface;
 use Magium\Configuration\Config\BuilderInterface;
-use Magium\Configuration\Config\ConfigurationRepository;
+use Magium\Configuration\Config\Repository\ConfigurationRepository;
 use Magium\Configuration\Config\Context;
 use Magium\Configuration\Config\MissingConfigurationException;
 use Magium\Configuration\File\Context\AbstractContextConfigurationFile;

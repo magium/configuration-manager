@@ -2,10 +2,9 @@
 
 namespace Magium\Configuration\Manager;
 
-use Magium\Configuration\Config\Builder;
 use Magium\Configuration\Config\BuilderInterface;
-use Magium\Configuration\Config\ConfigurationRepository;
-use Magium\Configuration\Config\ConfigInterface;
+use Magium\Configuration\Config\Repository\ConfigurationRepository;
+use Magium\Configuration\Config\Repository\ConfigInterface;
 use Zend\Cache\Storage\StorageInterface;
 
 class Manager implements ManagerInterface
@@ -106,13 +105,13 @@ class Manager implements ManagerInterface
         }
 
         // Either way, if the config is null we check the global cache
-        if ($config === null) {
+        if ($config === null && $currentConfigItem !== null) {
             $config = $this->cache->getItem($currentConfigItem);
             if ($config !== null) {
                 if ($this->localCache instanceof StorageInterface) {
                     $this->localCache->setItem($currentConfigItem, $config);
                 }
-                }
+            }
         }
 
         if ($config) {

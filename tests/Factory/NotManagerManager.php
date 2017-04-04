@@ -3,7 +3,7 @@
 namespace Magium\Configuration\Tests\Factory;
 
 use Magium\Configuration\Config\BuilderInterface;
-use Magium\Configuration\Config\ConfigurationRepository;
+use Magium\Configuration\Config\Repository\ConfigurationRepository;
 use Magium\Configuration\Manager\ManagerInterface;
 use Zend\Cache\Storage\StorageInterface;
 

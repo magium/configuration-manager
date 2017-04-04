@@ -3,12 +3,13 @@
 namespace Magium\Configuration\Config;
 
 use Interop\Container\ContainerInterface;
+use Magium\Configuration\Config\Repository\ConfigInterface;
+use Magium\Configuration\Config\Repository\ConfigurationRepository;
 use Magium\Configuration\Config\Storage\CallbackInterface;
 use Magium\Configuration\Config\Storage\StorageInterface as ConfigurationStorageInterface;
 use Magium\Configuration\Container\GenericContainer;
 use Magium\Configuration\File\AdapterInterface;
 use Magium\Configuration\File\Configuration\ConfigurationFileRepository;
-use Magium\Configuration\File\Configuration\UnsupportedFileTypeException;
 use Magium\Configuration\File\InvalidFileException;
 use Magium\Configuration\InvalidConfigurationException;
 use Zend\Cache\Storage\StorageInterface;
@@ -199,6 +200,7 @@ class Builder implements BuilderInterface
     /**
      * @param \SimpleXMLElement $structure The object representing the merged configuration structure
      * @param \SimpleXmlElement $config An empty config object to be populated
+     * @param string $context The name of the context
      * @return ConfigurationRepository The resulting configuration object
      */
 

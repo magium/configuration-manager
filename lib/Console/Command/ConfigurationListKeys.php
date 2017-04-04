@@ -2,11 +2,7 @@
 
 namespace Magium\Configuration\Console\Command;
 
-use Magium\Configuration\Config\ConfigurationRepository;
-use Magium\Configuration\MagiumConfigurationFactory;
-use Magium\Configuration\MagiumConfigurationFactoryInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 

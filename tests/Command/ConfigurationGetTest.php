@@ -2,22 +2,13 @@
 
 namespace Magium\Configuration\Tests\Command;
 
-use Magium\Configuration\Config\Builder;
-use Magium\Configuration\Config\BuilderInterface;
-use Magium\Configuration\Config\ConfigurationRepository;
-use Magium\Configuration\Config\ConfigInterface;
-use Magium\Configuration\Config\InvalidContextException;
-use Magium\Configuration\Console\Command\ConfigurationBuild;
+use Magium\Configuration\Config\Repository\ConfigInterface;
 use Magium\Configuration\Console\Command\ConfigurationGet;
-use Magium\Configuration\File\Context\AbstractContextConfigurationFile;
 use Magium\Configuration\MagiumConfigurationFactory;
 use Magium\Configuration\MagiumConfigurationFactoryInterface;
 use Magium\Configuration\Manager\Manager;
 use Magium\Configuration\Manager\ManagerInterface;
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\Console\Input\Input;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ConfigurationGetTest extends CommandTestCase
