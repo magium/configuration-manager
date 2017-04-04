@@ -21,6 +21,12 @@ class ArrayConfigurationRepositoryTest extends TestCase
         self::assertEquals('value', $obj->xpath('one/two/three'));
     }
 
+    public function testNonArrayConstructorArgumentThrowsException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $obj = new ArrayConfigurationRepository('');
+    }
+
     public function testOneNodeInvalidXpathThrowsException()
     {
         $this->expectException(InvalidArgumentException::class);
