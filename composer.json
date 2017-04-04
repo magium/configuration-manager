@@ -25,7 +25,8 @@
     "zendframework/zend-view": "^2.8",
     "zendframework/zend-psr7bridge": "^0.2.2",
     "zendframework/zend-form": "^2.10",
-    "zendframework/zend-i18n": "^2.7"
+    "zendframework/zend-i18n": "^2.7",
+    "symfony/yaml": "^3.2"
   },
   "bin": ["bin/magium-configuration"]
 }
