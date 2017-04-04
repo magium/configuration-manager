@@ -3,7 +3,7 @@
 namespace Magium\Configuration\Tests\Manager;
 
 use Magium\Configuration\Config\Builder;
-use Magium\Configuration\Config\ConfigurationRepository;
+use Magium\Configuration\Config\Repository\ConfigurationRepository;
 use Magium\Configuration\Manager\Manager;
 use PHPUnit\Framework\TestCase;
 use Zend\Cache\Storage\StorageInterface;

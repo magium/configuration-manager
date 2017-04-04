@@ -2,6 +2,8 @@
 
 namespace Magium\Configuration\Config;
 
+use Magium\Configuration\Config\Repository\ConfigurationRepository;
+
 class Context
 {
 

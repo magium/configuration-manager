@@ -2,7 +2,7 @@
 
 namespace Magium\Configuration\Tests\Storage;
 
-use Magium\Configuration\Config\ConfigurationRepository;
+use Magium\Configuration\Config\Repository\ConfigurationRepository;
 use Magium\Configuration\Config\InvalidContextException;
 use Magium\Configuration\Config\Storage\RelationalDatabase;
 use Magium\Configuration\File\Context\AbstractContextConfigurationFile;
@@ -14,7 +14,6 @@ use Zend\Db\Adapter\Driver\DriverInterface;
 use Zend\Db\Adapter\Driver\ResultInterface;
 use Zend\Db\Adapter\Driver\StatementInterface;
 use Zend\Db\Adapter\Platform\Sqlite;
-use Zend\Db\Sql\Insert;
 use Zend\Db\Sql\Sql;
 
 class CrudTest extends TestCase

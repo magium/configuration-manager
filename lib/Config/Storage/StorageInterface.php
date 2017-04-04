@@ -2,7 +2,7 @@
 
 namespace Magium\Configuration\Config\Storage;
 
-use Magium\Configuration\Config\ConfigurationRepository;
+use Magium\Configuration\Config\Repository\ConfigurationRepository;
 
 interface StorageInterface
 {

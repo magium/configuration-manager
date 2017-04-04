@@ -2,6 +2,9 @@
 
 namespace Magium\Configuration\Config;
 
+use Magium\Configuration\Config\Repository\ConfigInterface;
+use Magium\Configuration\Config\Repository\ConfigurationRepository;
+
 interface BuilderInterface
 {
 

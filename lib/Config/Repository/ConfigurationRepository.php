@@ -1,6 +1,6 @@
 <?php
 
-namespace Magium\Configuration\Config;
+namespace Magium\Configuration\Config\Repository;
 
 class ConfigurationRepository extends \SimpleXMLElement implements ConfigInterface
 {
