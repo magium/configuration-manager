@@ -9,8 +9,11 @@ class ArrayConfigurationRepository implements ConfigInterface
 
     protected $data;
 
-    public function __construct(array $data)
+    public function __construct($data)
     {
+        if (!is_array($data)) {
+            throw new InvalidArgumentException('Configuration data must be in an array format');
+        }
         $this->data = $data;
     }
 
