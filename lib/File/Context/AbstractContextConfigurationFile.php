@@ -2,7 +2,7 @@
 
 namespace Magium\Configuration\File\Context;
 
-use Magium\Configuration\Config\ConfigurationRepository;
+use Magium\Configuration\Config\Repository\ConfigurationRepository;
 use Magium\Configuration\File\AbstractAdapter;
 
 abstract class AbstractContextConfigurationFile extends AbstractAdapter

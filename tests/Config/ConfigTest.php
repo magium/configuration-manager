@@ -2,7 +2,7 @@
 
 namespace Magium\Configuration\Tests\Config;
 
-use Magium\Configuration\Config\ConfigurationRepository;
+use Magium\Configuration\Config\Repository\ConfigurationRepository;
 use PHPUnit\Framework\TestCase;
 
 class ConfigTest extends TestCase
@@ -43,7 +43,7 @@ class ConfigTest extends TestCase
             <true2>on</true2>
             <true3>yes</true3>
             <element>value</element>
-            <empty></empty>
+            <empty />
         </group>
     </section>
 </configuration>

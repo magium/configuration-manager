@@ -2,16 +2,8 @@
 
 namespace Magium\Configuration\Tests\Command;
 
-use Magium\Configuration\Config\Builder;
-use Magium\Configuration\Config\BuilderFactory;
-use Magium\Configuration\Config\BuilderFactoryInterface;
-use Magium\Configuration\Config\ConfigurationRepository;
-use Magium\Configuration\Config\Storage\StorageInterface;
-use Magium\Configuration\Console\Command\ConfigurationSet;
 use Magium\Configuration\Console\Command\ContextList;
-use Magium\Configuration\Console\Command\UnconfiguredPathException;
 use Magium\Configuration\File\Context\AbstractContextConfigurationFile;
-use Magium\Configuration\MagiumConfigurationFactory;
 use Magium\Configuration\MagiumConfigurationFactoryInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\InputInterface;

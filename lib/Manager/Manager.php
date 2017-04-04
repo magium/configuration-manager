@@ -2,10 +2,9 @@
 
 namespace Magium\Configuration\Manager;
 
-use Magium\Configuration\Config\Builder;
 use Magium\Configuration\Config\BuilderInterface;
-use Magium\Configuration\Config\ConfigurationRepository;
-use Magium\Configuration\Config\ConfigInterface;
+use Magium\Configuration\Config\Repository\ConfigurationRepository;
+use Magium\Configuration\Config\Repository\ConfigInterface;
 use Zend\Cache\Storage\StorageInterface;
 
 class Manager implements ManagerInterface
