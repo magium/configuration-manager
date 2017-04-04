@@ -7,10 +7,6 @@ class ConfigurationRepository extends \SimpleXMLElement implements ConfigInterfa
 
     const CONTEXT_DEFAULT = 'default';
 
-    protected static $allowedTrues = [
-        true, 'true', 1, '1', 'on', 'yes'
-    ];
-
     public function hasValue($path)
     {
         list($section, $group, $element) = explode('/', $path);
@@ -37,7 +33,7 @@ class ConfigurationRepository extends \SimpleXMLElement implements ConfigInterfa
     public function getValueFlag($path)
     {
         $value = $this->getValue($path);
-        foreach (self::$allowedTrues as $true) {
+        foreach (self::ALLOWED_TRUES as $true) {
             if ($value === $true) {
                 return true;
             }
