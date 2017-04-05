@@ -125,7 +125,7 @@ class Manager implements ManagerInterface
         return $config;
     }
 
-    public function storeConfigurationObject(ConfigInterface $config, $context = ConfigurationRepository::CONTEXT_DEFAULT)
+    public function storeConfigurationObject(ConfigurationRepository $config, $context = ConfigurationRepository::CONTEXT_DEFAULT)
     {
         $contextCacheKey = $this->getContextCacheKey($context);
         $previousConfigKey = $this->cache->getItem($contextCacheKey);
