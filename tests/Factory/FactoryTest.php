@@ -256,6 +256,22 @@ XML
         self::assertInstanceOf(Manager::class, $manager);
     }
 
+    public function testGetManagerStatic()
+    {
+        $this->setValidFile();
+        $this->setContextFile();
+        $manager = MagiumConfigurationFactory::managerFactory();
+        self::assertInstanceOf(Manager::class, $manager);
+    }
+
+    public function testGetBuilderStatic()
+    {
+        $this->setValidFile();
+        $this->setContextFile();
+        $builder = MagiumConfigurationFactory::builderFactory();
+        self::assertInstanceOf(Builder::class, $builder);
+    }
+
     protected function setContextFile()
     {
         $this->setFile(<<<XML
