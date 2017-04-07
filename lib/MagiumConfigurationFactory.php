@@ -15,6 +15,7 @@ use Magium\Configuration\Manager\ManagerInterface;
 
 class MagiumConfigurationFactory implements MagiumConfigurationFactoryInterface
 {
+
     protected $file;
     protected $xml;
 
@@ -25,8 +26,11 @@ class MagiumConfigurationFactory implements MagiumConfigurationFactoryInterface
     protected $builderFactory;
     protected $context = ConfigurationRepository::CONTEXT_DEFAULT;
 
+    protected static $me;
+
     public function __construct($magiumConfigurationFile = null, $context = ConfigurationRepository::CONTEXT_DEFAULT)
     {
+        self::$me = $this;
         if ($context instanceof Context) {
             $context = $context->getContext();
         }
@@ -53,6 +57,26 @@ class MagiumConfigurationFactory implements MagiumConfigurationFactoryInterface
         $this->baseDir = dirname($this->file);
         chdir($this->baseDir);
         $this->xml = simplexml_load_file($magiumConfigurationFile);
+    }
+
+    protected static function getInstance($magiumConfigurationFile = null, $context = ConfigurationRepository::CONTEXT_DEFAULT)
+    {
+        if (!self::$me instanceof self) {
+            new self($magiumConfigurationFile = null, $context = ConfigurationRepository::CONTEXT_DEFAULT);
+        }
+        return self::$me;
+    }
+
+    public static function builderFactory($magiumConfigurationFile = null, $context = ConfigurationRepository::CONTEXT_DEFAULT)
+    {
+        $me = self::getInstance($magiumConfigurationFile, $context);
+        return $me->getBuilder();
+    }
+
+    public static function managerFactory($magiumConfigurationFile = null, $context = ConfigurationRepository::CONTEXT_DEFAULT)
+    {
+        $me = self::getInstance($magiumConfigurationFile, $context);
+        return $me->getManager();
     }
 
     public function setContext($context)
