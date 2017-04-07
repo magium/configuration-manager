@@ -67,6 +67,12 @@ class MagiumConfigurationFactory implements MagiumConfigurationFactoryInterface
         return self::$me;
     }
 
+    public static function configurationFactory($magiumConfigurationFile = null, $context = ConfigurationRepository::CONTEXT_DEFAULT)
+    {
+        $me = self::getInstance($magiumConfigurationFile, $context);
+        return $me->getConfiguration($context);
+    }
+
     public static function builderFactory($magiumConfigurationFile = null, $context = ConfigurationRepository::CONTEXT_DEFAULT)
     {
         $me = self::getInstance($magiumConfigurationFile, $context);
@@ -77,6 +83,11 @@ class MagiumConfigurationFactory implements MagiumConfigurationFactoryInterface
     {
         $me = self::getInstance($magiumConfigurationFile, $context);
         return $me->getManager();
+    }
+
+    public function getConfiguration($context = ConfigurationRepository::CONTEXT_DEFAULT)
+    {
+        return $this->getManager()->getConfiguration($context);
     }
 
     public function setContext($context)

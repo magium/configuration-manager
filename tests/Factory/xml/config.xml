@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<magiumConfiguration xmlns="http://www.magiumlib.com/Configuration"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://www.magiumlib.com/Configuration ../../../assets/configuration.xsd">
+    <section identifier="general" label="General">
+        <group identifier="design" label="Design">
+            <element identifier="theme" label="Theme"/>
+        </group>
+    </section>
+    <section identifier="security" label="Security">
+        <group identifier="authentication" label="Authentication">
+            <element identifier="require" label="Require Authentication" type="select" source="Magium\Configuration\Source\YesNo"/>
+        </group>
+    </section>
+</magiumConfiguration>
