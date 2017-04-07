@@ -6,6 +6,8 @@ use Magium\Configuration\Config\Builder;
 use Magium\Configuration\Config\Context;
 use Magium\Configuration\Config\InvalidConfigurationLocationException;
 use Magium\Configuration\Config\MissingConfigurationException;
+use Magium\Configuration\Config\Repository\ConfigurationRepository;
+use Magium\Configuration\File\Configuration\ConfigurationFileRepository;
 use Magium\Configuration\File\Context\AbstractContextConfigurationFile;
 use Magium\Configuration\File\Context\XmlFile;
 use Magium\Configuration\InvalidConfigurationException;
@@ -275,7 +277,7 @@ XML
     protected function setContextFile()
     {
         $this->setFile(<<<XML
-<?xml version="1.0" encoding="utf-8">
+<?xml version="1.0" encoding="utf-8" ?>
 <magiumDefaultContext xmlns="http://www.magiumlib.com/ConfigurationContext"/>
 XML
 ,
