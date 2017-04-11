@@ -19,7 +19,7 @@
     "phpunit/phpunit": "~5.7"
   },
   "require": {
-    "zendframework/zend-cache": "^2.7",
+    "zendframework/zend-cache": "^2.0",
     "psr/container": "^1.0@dev",
     "zendframework/zend-db": "^2.0",
     "symfony/console": "^3.2",
