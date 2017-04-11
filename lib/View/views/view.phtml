@@ -1,0 +1,15 @@
+<div>
+    <?php foreach ($groups as $groupId => $group): ?>
+        <fieldset id="magium-configuration-group-<?php echo htmlspecialchars($groupId); ?>">
+            <h2 id="magium-configuration-group-title-<?php echo htmlspecialchars($groupId); ?>">
+                <a href="javascript:"><?php echo htmlspecialchars($group['label']); ?></a>
+            </h2>
+            <div id="magium-configuration-group-section-<?php echo htmlspecialchars($groupId); ?>">
+                <?php foreach ($group['children'] as $id => $child): ?>
+                    <label for="<?php echo htmlspecialchars($id); ?>"><?php echo htmlspecialchars($child['label']); ?></label>
+                    <?php echo $this->magiumRenderer($section, $groupId, $id, $child); ?>
+                <?php endforeach; ?>
+            </div>
+        </fieldset>
+    <?php endforeach; ?>
+</div>
