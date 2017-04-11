@@ -1,0 +1,35 @@
+<?php /* @var $this \Zend\View\View */ ?>
+<?php if ($provideHtmlWrapper): ?>
+<!DOCTYPE html >
+<html>
+    <head>
+        <title>Magium Configuration Manager</title>
+        <?php if ($jqueryUrl): ?>
+            <script type="text/javascript" src="<?php echo htmlspecialchars($jqueryUrl); ?>"></script>
+        <?php endif; ?>
+    </head>
+<body>
+<?php else: ?>
+    <?php if ($jqueryUrl): ?>
+        <script type="text/javascript" src="<?php echo htmlspecialchars($jqueryUrl); ?>"></script>
+    <?php endif; ?>
+<?php endif; ?>
+    <nav>
+        <?php if (isset($sections) && is_array($sections)): ?>
+            <?php foreach ($sections as $sectionId => $sectionLabel): ?>
+                <a href="javascript:selectMagiumSection()" data-section="<?php echo htmlspecialchars($sectionId); ?>"><?php echo htmlspecialchars($sectionLabel); ?></a>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </nav>
+<header>
+    <h1>Magium Configuration Manager</h1>
+    <button id="magium-rebuild-configuration">Rebuild Configuration</button>
+</header>
+    <main>
+
+    </main>
+
+<?php if ($provideHtmlWrapper): ?>
+</body>
+</html>
+<?php endif; ?>
