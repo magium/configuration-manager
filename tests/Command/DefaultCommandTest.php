@@ -48,6 +48,14 @@ class DefaultCommandTest extends CommandTestCase
         self::assertNotContains($path, $paths);
     }
 
+    public function testCwdDirectoryIsNIncludedInPossibleLocations()
+    {
+        $cwd = getcwd();
+        $paths = $this->getPaths();
+        self::assertNotFalse($paths);
+        self::assertContains($cwd, $paths);
+    }
+
     protected function getPaths()
     {
         $method = new \ReflectionMethod(DefaultCommand::class, 'getPossibleLocations');

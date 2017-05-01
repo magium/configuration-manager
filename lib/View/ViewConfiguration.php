@@ -35,7 +35,7 @@ class ViewConfiguration
         $layoutFile = 'layout.phtml',
         $viewFile = 'view.phtml',
         $provideWrapperHtml = true,
-        $jqueryUrl = true
+        $jqueryUrl = 'https://code.jquery.com/jquery-3.2.1.min.js'
     )
     {
         $this->setRequest($request);
