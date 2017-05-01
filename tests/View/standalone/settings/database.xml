@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<magiumConfiguration xmlns="http://www.magiumlib.com/Configuration">
+    <section identifier="database" label="Database">
+        <group identifier="zenddb" label="Zend Database Adapter">
+            <element identifier="driver" label="Driver" type="select" source="Magium\Configuration\Tests\View\Source\DbTypes">
+                <permittedValues>
+                    <value>mysqli</value>
+                    <value>sqlsrv</value>
+                    <value>oci8</value>
+                    <value>pgsql</value>
+                    <value>ibmdb2</value>
+                    <value>pdo_mysql</value>
+                    <value>pdo_pgsql</value>
+                    <value>pdo_oci</value>
+                    <value>pdo_dblib</value>
+                    <value>pdo_sqlsrv</value>
+                </permittedValues>
+            </element>
+            <element identifier="hostname" label="Hostname">
+                <description>A string containing a hostname or IP address of the database server. If the database is
+                    running on the same host as the PHP application, you may use 'localhost' or '127.0.0.1'.
+                </description>
+            </element>
+            <element identifier="username" label="Username">
+                <description>Account identifier for authenticating a connection to the RDBMS server.</description>
+            </element>
+            <element identifier="password" label="Password">
+                <description>Account password credential for authenticating a connection to the RDBMS server.
+                </description>
+            </element>
+            <element identifier="dbname" label="Database Name">
+                <description>Database instance name on the RDBMS server.
+                </description>
+            </element>
+            <element identifier="port" label="Database Port">
+                <description>Some RDBMS servers can accept network connections on a administrator-specified port number.
+                    The port parameter allow you to specify the port to which your PHP application connects, to match
+                    the port configured on the RDBMS server.
+                </description>
+            </element>
+            <element identifier="charset" label="Default Charset">
+                <description>Specify the charset used for the connection.
+                </description>
+            </element>
+        </group>
+    </section>
+</magiumConfiguration>

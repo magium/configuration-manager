@@ -29,6 +29,10 @@ class ViewManager
         $this->diContainer = $diContainer;
     }
 
+    /**
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+
     public function render()
     {
         $request = $this->viewConfiguration->getRequest();
@@ -39,7 +43,8 @@ class ViewManager
             $layout = new Layout(
                 $this->viewConfiguration,
                 $this->getConfiguration(),
-                $this->getContextFile()
+                $this->getContextFile(),
+                $this->magiumConfigurationFactory
             );
             $viewModel = $layout->execute($request);
         } else if ($request->getMethod() == 'GET' && isset($params['section'])) {
@@ -66,6 +71,7 @@ class ViewManager
         $renderer->setResolver(new TemplatePathStack(['script_paths' => [$this->viewConfiguration->getViewDirectory()]]));
         $content = $renderer->render($viewModel);
         $this->viewConfiguration->getResponse()->getBody()->write($content);
+        return $this->viewConfiguration->getResponse();
     }
 
     public function getBuilder()

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<magiumDefaultContext xmlns="http://www.magiumlib.com/ConfigurationContext">
+    <context id="english" title="English">
+        <context title="British English" id="brit-english" />
+        <context title="American English" id="american-english"/>
+    </context>
+    <context id="french" title="French" />
+    <context title="German" id="german" />
+</magiumDefaultContext>

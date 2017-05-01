@@ -6,8 +6,10 @@
             </h2>
             <div id="magium-configuration-group-section-<?php echo htmlspecialchars($groupId); ?>">
                 <?php foreach ($group['children'] as $id => $child): ?>
+                    <div class="form-group">
                     <label for="<?php echo htmlspecialchars($id); ?>"><?php echo htmlspecialchars($child['label']); ?></label>
                     <?php echo $this->magiumRenderer($section, $groupId, $id, $child); ?>
+                    </div>
                 <?php endforeach; ?>
             </div>
         </fieldset>
