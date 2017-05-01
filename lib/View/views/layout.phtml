@@ -1,35 +1,73 @@
 <?php /* @var $this \Zend\View\View */ ?>
 <?php if ($provideHtmlWrapper): ?>
-<!DOCTYPE html >
+    <!DOCTYPE html>
 <html>
-    <head>
-        <title>Magium Configuration Manager</title>
-        <?php if ($jqueryUrl): ?>
-            <script type="text/javascript" src="<?php echo htmlspecialchars($jqueryUrl); ?>"></script>
-        <?php endif; ?>
-    </head>
+<head>
+    <title>Magium Configuration Manager</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <?php if ($jqueryUrl): ?>
+        <script type="text/javascript" src="<?php echo htmlspecialchars($jqueryUrl); ?>"></script>
+    <?php endif; ?>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
 <body>
 <?php else: ?>
     <?php if ($jqueryUrl): ?>
         <script type="text/javascript" src="<?php echo htmlspecialchars($jqueryUrl); ?>"></script>
     <?php endif; ?>
 <?php endif; ?>
-    <nav>
-        <?php if (isset($sections) && is_array($sections)): ?>
-            <?php foreach ($sections as $sectionId => $sectionLabel): ?>
-                <a href="javascript:selectMagiumSection()" data-section="<?php echo htmlspecialchars($sectionId); ?>"><?php echo htmlspecialchars($sectionLabel); ?></a>
-            <?php endforeach; ?>
-        <?php endif; ?>
-    </nav>
 <header>
-    <h1>Magium Configuration Manager</h1>
-    <button id="magium-rebuild-configuration">Rebuild Configuration</button>
+    <h1 style="background-color: #830000; margin-top: 0; padding: 20px; color: white;">
+        Configuration Manager
+
+        <img src="https://magiumlib.com/images/magium.png" class="pull-right">
+    </h1>
 </header>
-    <main>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <button id="magium-save-configuration" class="btn">Save</button>
+            <button id="magium-rebuild-configuration" class="btn">Rebuild Configuration</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <nav>
+                <ul>
+                <?php $currentSection = null; ?>
+                <?php if (isset($sections) && is_array($sections)): ?>
+                    <?php foreach ($sections as $sectionId => $sectionLabel): ?>
+                        <?php if ($currentSection === null) { $currentSection = $sectionId; } ?>
+                        <li>
+                        <a href="#" class="magium-section"
+                           data-section="<?php echo htmlspecialchars($sectionId); ?>"><?php echo htmlspecialchars($sectionLabel); ?></a>
+                        </li>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+                </ul>
+            </nav>
+        </div>
+        <div class="col-md-8">
+            <main>
 
-    </main>
+            </main>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
 
-<?php if ($provideHtmlWrapper): ?>
+    $('.magium-section').click(selectMagiumSection);
+
+    function selectMagiumSection() {
+        $('main').load('?section=' + $(this).attr('data-section'));
+    }
+    <?php if ($currentSection): ?>
+    $('main').load('?section=<?php echo htmlspecialchars($currentSection); ?>');
+    <?php endif; ?>
+
+</script>
+    <?php if ($provideHtmlWrapper): ?>
 </body>
 </html>
 <?php endif; ?>

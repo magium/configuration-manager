@@ -9,8 +9,10 @@
 namespace Magium\Configuration\View;
 
 use Zend\Form\Element;
+use Zend\Form\ElementInterface;
 use Zend\Form\View\Helper\FormElement;
 use Zend\Form\View\Helper\FormInput;
+use Zend\Form\View\Helper\FormSelect;
 use Zend\View\Helper\AbstractHelper;
 
 class MagiumRenderer extends AbstractHelper
@@ -18,10 +20,11 @@ class MagiumRenderer extends AbstractHelper
     function __invoke($section, $group, $id, $options)
     {
         $type = 'text';
-        $options = ['value' => $options['value']];
         if (isset($options['type'])) {
             $type = $options['type'];
         }
+        $value = $options['value'];
+
         $viewClass = 'Zend\Form\View\Helper\Form' . ucfirst(strtolower($type));
         $formClass = 'Zend\Form\Element\\' . ucfirst(strtolower($type));
         $reflectionClass = new \ReflectionClass($viewClass);
@@ -30,18 +33,20 @@ class MagiumRenderer extends AbstractHelper
         }
 
         $instance = $reflectionClass->newInstance();
-        if ($instance instanceof FormInput) {
-            $instance->setView($this->getView());
-            $formInstance = new \ReflectionClass($formClass);
-            $name = sprintf('%s_%s_%s', $section, $group, $id);
-            $formElement = $formInstance->newInstance($name, $options);
-            /* @var $formElement Element */
-            $formElement->setValue($options['value']);
-            $formElement->setAttribute('id', $id);
-            $output = $instance->render($formElement);
-            return $output;
+        $formInstance = new \ReflectionClass($formClass);
+
+        $instance->setView($this->getView());
+        $name = sprintf('%s_%s_%s', $section, $group, $id);
+        $formElement = $formInstance->newInstance($name, $options);
+        /* @var $formElement Element */
+        if ($formElement instanceof Element\Select) {
+            $formElement->setOptions(['options' => $options['source']]);
         }
-        throw new InvalidViewConfigurationException('Invalid form input type');
+        $formElement->setAttribute('class', 'form-control');
+        $formElement->setValue($value);
+        $formElement->setAttribute('id', $id);
+        $output = $instance->render($formElement);
+        return $output;
     }
 
 
