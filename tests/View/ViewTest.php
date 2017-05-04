@@ -7,7 +7,7 @@ use Magium\Configuration\Config\BuilderInterface;
 use Magium\Configuration\Config\Repository\ConfigurationRepository;
 use Magium\Configuration\Config\MergedStructure;
 use Magium\Configuration\MagiumConfigurationFactoryInterface;
-use Magium\Configuration\View\ViewManager;
+use Magium\Configuration\View\FrontController;
 use Psr\Http\Message\ServerRequestInterface;
 
 class ViewTest extends AbstractViewTestCase
@@ -15,8 +15,8 @@ class ViewTest extends AbstractViewTestCase
 
     public function testGroupDisplayed()
     {
-        $viewConfiguration = $this->getViewConfiguration(['section' => 'section1']);
-        $viewManager = $this->getMockBuilder(ViewManager::class)->setMethods([
+        $viewConfiguration = $this->getViewConfiguration(['section' => ['label' => 'section1']]);
+        $viewManager = $this->getMockBuilder(FrontController::class)->setMethods([
             'getConfiguration', 'getMergedStructure', 'getBuilder'
         ])->setConstructorArgs([
             'viewConfiguration'             => $viewConfiguration,
@@ -48,7 +48,7 @@ XML
 XML
         ));
 
-        /* @var $viewManager ViewManager */
+        /* @var $viewManager FrontController */
         $viewManager->render();
         $content = $this->getViewContent($viewConfiguration);
         $dom = new \DOMDocument();

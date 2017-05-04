@@ -7,6 +7,7 @@ use Magium\Configuration\Config\BuilderInterface;
 use Magium\Configuration\Config\Repository\ConfigInterface;
 use Magium\Configuration\Config\Repository\ConfigurationRepository;
 use Magium\Configuration\Config\MergedStructure;
+use Magium\Configuration\Config\Storage\StorageInterface;
 use Magium\Configuration\Source\SourceInterface;
 use Magium\Configuration\View\UnableToCreateInstanceException;
 use Magium\Configuration\View\ViewConfiguration;
@@ -19,22 +20,25 @@ class View implements ControllerInterface
     protected $viewConfiguration;
     protected $builder;
     protected $mergedConfiguration;
-    protected $config;
+    protected $storage;
     protected $container;
+    protected $context;
 
     public function __construct(
         ViewConfiguration $viewConfiguration,
         BuilderInterface $builder,
         MergedStructure $mergedConfiguration,
-        ConfigInterface $config,
+        StorageInterface $storage,
+        $context,
         ContainerInterface $container = null
     )
     {
         $this->viewConfiguration = $viewConfiguration;
-        $this->config = $config;
         $this->mergedConfiguration = $mergedConfiguration;
         $this->builder = $builder;
         $this->container = $container;
+        $this->context = $context;
+        $this->storage = $storage;
     }
 
     public function execute(ServerRequestInterface $request)
@@ -45,8 +49,8 @@ class View implements ControllerInterface
         }
         $groups = $this->buildSectionArray($params['section']);
         $viewModel = new ViewModel([
-            'groups'     => $groups,
-            'section'    => $params['section']
+            'groups' => $groups,
+            'section' => $params['section']
         ]);
         $viewModel->setTemplate($this->viewConfiguration->getViewFile());
         return $viewModel;
@@ -73,6 +77,16 @@ class View implements ControllerInterface
             return $reflectionClass->newInstance();
         }
         throw new UnableToCreateInstanceException('If a source model requires constructor parameters a service manager or DI container must be provided');
+    }
+
+    public function getStorage()
+    {
+        return $this->storage;
+    }
+
+    public function getContext()
+    {
+        return $this->context;
     }
 
     public function buildSectionArray($section)
@@ -116,15 +130,16 @@ class View implements ControllerInterface
                 $source = $this->getSource((string)$node['source'])->getSourceData();
             }
             $path = $this->generatePath($node);
-            $value = $this->config->getValue($path);
+            $value = $this->getStorage()->getValue($path, $this->getContext());
 
             $groups[$groupIdentifier]['children'][$identifier] = [
-                'value'             => $value,
-                'source'            => $source,
-                'permittedValues'    => $permittedValues,
-                'type'              => $type,
-                'description'       => $description,
-                'label'             => $label
+                'path' => $path,
+                'value' => $value,
+                'source' => $source,
+                'permittedValues' => $permittedValues,
+                'type' => $type,
+                'description' => $description,
+                'label' => $label
             ];
         }
         return $groups;

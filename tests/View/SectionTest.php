@@ -2,12 +2,13 @@
 
 namespace Magium\Configuration\Tests\View;
 
-use Interop\Container\ContainerInterface;
-use Magium\Configuration\Config\Repository\ConfigurationRepository;
+use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\ServerRequest;
+use Magium\Configuration\Config\MergedStructure;
 use Magium\Configuration\File\Context\AbstractContextConfigurationFile;
 use Magium\Configuration\MagiumConfigurationFactoryInterface;
 use Magium\Configuration\View\ViewConfiguration;
-use Magium\Configuration\View\ViewManager;
+use Magium\Configuration\View\FrontController;
 
 class SectionTest extends AbstractViewTestCase
 {
@@ -15,7 +16,7 @@ class SectionTest extends AbstractViewTestCase
     public function testOnlySectionsRendered()
     {
         $viewConfiguration = $this->getViewConfiguration();
-        $viewManager = $this->getViewManager($viewConfiguration, <<<XML
+        $viewManager = $this->getFrontController($viewConfiguration, <<<XML
 <magiumConfiguration xmlns="http://www.magiumlib.com/Configuration">
 <section identifier="section1">
     <group identifier="test"></group>
@@ -25,19 +26,18 @@ XML
         );
 
 
-        /* @var $viewManager ViewManager */
-        $viewManager->render();
-        $content = $this->getViewContent($viewConfiguration);
-        $simpleXml = new \SimpleXMLElement($content);
+        /* @var $viewManager FrontController */
+        $result = $viewManager->render();
+        $simpleXml = $this->getContent($result);
         self::assertXpathExists($simpleXml, '//title');
-        self::assertXpathExists($simpleXml, '//nav/a[1]');
-        self::assertXpathNotExists($simpleXml, '//nav/a[2]');
+        self::assertXpathExists($simpleXml, '//nav/descendant::li[1]');
+        self::assertXpathNotExists($simpleXml, '//nav/descendant::li[2]');
     }
 
     public function testSectionsRendered()
     {
         $viewConfiguration = $this->getViewConfiguration();
-        $viewManager = $this->getViewManager($viewConfiguration,<<<XML
+        $viewManager = $this->getFrontController($viewConfiguration, <<<XML
 <magiumConfiguration xmlns="http://www.magiumlib.com/Configuration">
 <section identifier="section1" label="Section Eins" />
 <section identifier="section2" label="Section Zwei" />
@@ -45,22 +45,21 @@ XML
 XML
         );
 
-        /* @var $viewManager ViewManager */
-        $viewManager->render();
-        $content = $this->getViewContent($viewConfiguration);
-        $simpleXml = new \SimpleXMLElement($content);
+        /* @var $viewManager FrontController */
+        $response = $viewManager->render();
+        $simpleXml = $this->getContent($response);
         self::assertXpathExists($simpleXml, '//title');
         self::assertXpathExists($simpleXml, '//button[@id="magium-rebuild-configuration"]');
-        self::assertXpathExists($simpleXml, '//nav/a[1]');
-        self::assertXpathExists($simpleXml, '//nav/a[2]');
-        self::assertXpathExists($simpleXml, '//nav/a[@data-section="section1" and .="Section Eins"]');
-        self::assertXpathExists($simpleXml, '//nav/a[@data-section="section2" and .="Section Zwei"]');
+        self::assertXpathExists($simpleXml, '//nav/descendant::li[1]');
+        self::assertXpathExists($simpleXml, '//nav/descendant::li[2]');
+        self::assertXpathExists($simpleXml, '//nav/descendant::li[@data-section="section1" and contains(., "Section Eins")]');
+        self::assertXpathExists($simpleXml, '//nav/descendant::li[@data-section="section2" and contains(., "Section Zwei")]');
     }
 
     public function testSectionsRenderedWithoutLabel()
     {
         $viewConfiguration = $this->getViewConfiguration();
-        $viewManager = $this->getViewManager($viewConfiguration,<<<XML
+        $viewManager = $this->getFrontController($viewConfiguration, <<<XML
 <magiumConfiguration xmlns="http://www.magiumlib.com/Configuration">
 <section identifier="section1" />
 <section identifier="section2" />
@@ -68,22 +67,21 @@ XML
 XML
         );
 
-        /* @var $viewManager ViewManager */
-        $viewManager->render();
-        $content = $this->getViewContent($viewConfiguration);
-        $simpleXml = new \SimpleXMLElement($content);
+        /* @var $viewManager FrontController */
+        $response = $viewManager->render();
+        $simpleXml = $this->getContent($response);
         self::assertXpathExists($simpleXml, '//title');
-        self::assertXpathExists($simpleXml, '//nav/a[1]');
-        self::assertXpathExists($simpleXml, '//nav/a[2]');
-        self::assertXpathExists($simpleXml, '//nav/a[@data-section="section1" and .="section1"]');
-        self::assertXpathExists($simpleXml, '//nav/a[@data-section="section2" and .="section2"]');
+        self::assertXpathExists($simpleXml, '//nav/descendant::a[1]');
+        self::assertXpathExists($simpleXml, '//nav/descendant::a[2]');
+        self::assertXpathExists($simpleXml, '//nav/descendant::a[@data-section="section1" and contains(., "section1")]');
+        self::assertXpathExists($simpleXml, '//nav/descendant::a[@data-section="section2" and contains(., "section2")]');
     }
 
     public function testSectionsNotRendered()
     {
 
         $viewConfiguration = $this->getViewConfiguration();
-        $viewManager = $this->getViewManager($viewConfiguration,<<<XML
+        $viewManager = $this->getFrontController($viewConfiguration, <<<XML
 <magiumConfiguration xmlns="http://www.magiumlib.com/Configuration">
 <section identifier="section1" label="Section Eins" />
 <section identifier="section2" label="Section Zwei" hidden="yes" />
@@ -91,26 +89,41 @@ XML
 XML
         );
 
-        /* @var $viewManager ViewManager */
-        $viewManager->render();
-        $content = $this->getViewContent($viewConfiguration);
-        $simpleXml = new \SimpleXMLElement($content);
-        self::assertXpathExists($simpleXml, '//nav/a[@data-section="section1" and .="Section Eins"]');
-        self::assertXpathNotExists($simpleXml, '//nav/a[@data-section="section2" and .="Section Zwei"]');
+        /* @var $viewManager FrontController */
+        $response = $viewManager->render();
+        $simpleXml = $this->getContent($response);
+        self::assertXpathExists($simpleXml, '//nav/descendant::li[@data-section="section1" and contains(., "Section Eins")]');
+        self::assertXpathNotExists($simpleXml, '//nav/descendant::li[@data-section="section2" and contains(., "Section Zwei")]');
+    }
+
+    public function testGylphiconRendered()
+    {
+
+        $viewConfiguration = $this->getViewConfiguration();
+        $viewManager = $this->getFrontController($viewConfiguration, <<<XML
+<magiumConfiguration xmlns="http://www.magiumlib.com/Configuration">
+<section identifier="section1" label="Section Eins" glyphicon="test"/>
+</magiumConfiguration>
+XML
+        );
+
+        /* @var $viewManager FrontController */
+        $response = $viewManager->render();
+        $simpleXml = $this->getContent($response);
+        self::assertXpathExists($simpleXml, '//nav/descendant::li/i[contains(concat(" ",normalize-space(@class)," "), " glyphicon-test "]');
     }
 
     public function testJqueryRendered()
     {
         $viewConfiguration = $this->getViewConfiguration();
-        $viewManager = $this->getViewManager($viewConfiguration,<<<XML
+        $viewManager = $this->getFrontController($viewConfiguration, <<<XML
 <magiumConfiguration xmlns="http://www.magiumlib.com/Configuration" />
 XML
         );
 
-        /* @var $viewManager ViewManager */
-        $viewManager->render();
-        $content = $this->getViewContent($viewConfiguration);
-        $simpleXml = new \SimpleXMLElement($content);
+        /* @var $viewManager FrontController */
+        $response = $viewManager->render();
+        $simpleXml = $this->getContent($response);
         self::assertXpathExists($simpleXml, '/html/head/script[1]');
     }
 
@@ -118,15 +131,14 @@ XML
     {
         $viewConfiguration = $this->getViewConfiguration();
         $viewConfiguration->setJqueryUrl(false);
-        $viewManager = $this->getViewManager($viewConfiguration,<<<XML
+        $viewManager = $this->getFrontController($viewConfiguration, <<<XML
 <magiumConfiguration xmlns="http://www.magiumlib.com/Configuration" />
 XML
         );
 
-        /* @var $viewManager ViewManager */
-        $viewManager->render();
-        $content = $this->getViewContent($viewConfiguration);
-        $simpleXml = new \SimpleXMLElement($content);
+        /* @var $viewManager FrontController */
+        $response = $viewManager->render();
+        $simpleXml = $this->getContent($response);
         self::assertXpathNotExists($simpleXml, '/html/head/script[1]');
     }
 
@@ -134,38 +146,66 @@ XML
     {
         $viewConfiguration = $this->getViewConfiguration();
         $viewConfiguration->setProvideWrapperHtml(false);
-        $viewManager = $this->getViewManager($viewConfiguration,<<<XML
+        $viewManager = $this->getFrontController($viewConfiguration, <<<XML
 <magiumConfiguration xmlns="http://www.magiumlib.com/Configuration" />
 XML
         );
 
-        /* @var $viewManager ViewManager */
-        $viewManager->render();
-        $content = $this->getViewContent($viewConfiguration);
-        $simpleXml = new \SimpleXMLElement(sprintf('<div>%s</div>', $content));
-        self::assertXpathNotExists($simpleXml, '//html');
-        self::assertXpathNotExists($simpleXml, '//body');
-        self::assertXpathExists($simpleXml, '//nav');
-        self::assertXpathExists($simpleXml, '//main');
-        self::assertXpathExists($simpleXml, '//header');
+        /* @var $viewManager FrontController */
+        $response = $viewManager->render();
+        $body = $response->getBody();
+        $body->rewind();
+        $contents = $body->getContents();
+        self::assertNotContains( '<html', $contents);
+        self::assertNotContains('<body', $contents);
+        self::assertContains('<nav', $contents);
+        self::assertContains('<main', $contents);
+        self::assertContains('<header', $contents);
     }
 
     /**
      * @param ViewConfiguration $viewConfiguration
      * @param $xml
-     * @return ViewManager
+     * @return FrontController
      */
 
-    public function getViewManager(ViewConfiguration $viewConfiguration, $xml)
+    public function getFrontController(ViewConfiguration $viewConfiguration, $xml)
     {
-        $viewManager = $this->getMockBuilder(ViewManager::class)->setMethods(['getConfiguration', 'getContextFile'])->setConstructorArgs([
-            'viewConfiguration'             => $viewConfiguration,
-            'magiumConfigurationFactory'    => $this->createMock(MagiumConfigurationFactoryInterface::class),
-            'diContainer'                   => $this->createMock(ContainerInterface::class)
-        ])->getMock();
-        $viewManager->expects(self::atLeastOnce())->method('getConfiguration')->willReturn(new ConfigurationRepository($xml));
-        $viewManager->expects(self::atLeastOnce())->method('getContextFile')->willReturn($this->createMock(AbstractContextConfigurationFile::class));
-        return $viewManager;
+        $frontController = $this->getMockBuilder(FrontController::class)->setMethods(
+            [
+                'getContextFile',
+                'provideContexts',
+                'getMergedStructure',
+                'getRequest',
+                'getViewConfiguration',
+                'getConfigurationFactory',
+                'getResponse'
+            ]
+        )->disableOriginalConstructor()->getMock();
+        $frontController->expects(self::atLeastOnce())->method('getRequest')->willReturn(
+            new ServerRequest('GET', 'http://localhost/')
+        );
+        $frontController->expects(self::atLeastOnce())->method('getResponse')->willReturn(
+            new Response()
+        );
+        $frontController->expects(self::atLeastOnce())->method('getMergedStructure')->willReturn(new MergedStructure($xml));
+        $frontController->expects(self::atLeastOnce())->method('provideContexts')->willReturn(['default' => ['label' => 'Default', 'children' => []]]);
+        $frontController->expects(self::atLeastOnce())->method('getConfigurationFactory')->willReturn($this->createMock(MagiumConfigurationFactoryInterface::class));
+        $frontController->expects(self::atLeastOnce())->method('getViewConfiguration')->willReturn($viewConfiguration);
+        $frontController->expects(self::atLeastOnce())->method('getContextFile')->willReturn($this->createMock(AbstractContextConfigurationFile::class));
+        return $frontController;
+    }
+
+    public function getContent(Response $response)
+    {
+        $body = $response->getBody();
+        $body->rewind();
+        $content = $response->getBody()->getContents();
+        $doc = new \DOMDocument();
+        libxml_use_internal_errors(true);
+        $doc->loadHTML($content);
+        $simpleXml = simplexml_import_dom($doc);
+        return $simpleXml;
     }
 
 }
