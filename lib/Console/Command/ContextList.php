@@ -46,7 +46,7 @@ class ContextList extends Command
     protected function writeNode(\SimpleXMLElement $element, OutputInterface $output, $tab = self::TAB)
     {
         $id = (string)$element['id'];
-        $title = (string)$element['title'];
+        $title = (string)$element['label'];
         $output->writeln($tab . $this->formatNode($id, $title));
         foreach ($element->children() as $child) {
             $this->writeNode($child, $output, $tab . self::TAB);

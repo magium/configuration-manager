@@ -5,6 +5,8 @@ namespace Magium\Configuration\Config\Repository;
 interface ConfigInterface
 {
 
+    const CONTEXT_DEFAULT = 'default';
+
      const ALLOWED_TRUES = [
         true, 'true', 1, '1', 'on', 'yes'
     ];

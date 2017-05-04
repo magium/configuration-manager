@@ -4,6 +4,7 @@ namespace Magium\Configuration\Config;
 
 use Magium\Configuration\Config\Repository\ConfigInterface;
 use Magium\Configuration\Config\Repository\ConfigurationRepository;
+use Magium\Configuration\Config\Storage\StorageInterface;
 
 interface BuilderInterface
 {
@@ -21,5 +22,13 @@ interface BuilderInterface
      */
 
     public function getMergedStructure();
+
+    /**
+     * @return StorageInterface
+     */
+
+    public function getStorage();
+
+    public function setValue($path, $value, $requestedContext = ConfigurationRepository::CONTEXT_DEFAULT);
 
 }

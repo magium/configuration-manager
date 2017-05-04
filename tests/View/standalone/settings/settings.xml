@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <magiumConfiguration xmlns="http://www.magiumlib.com/Configuration">
-    <section identifier="website" label="Website">
+    <section identifier="website" label="Website" glyphicon="home">
         <group identifier="contact" label="Contact">
             <element identifier="title" label="Title" />
-            <element identifier="address" label="Address" />
+            <element identifier="address" label="Address" type="textarea"/>
             <element identifier="city" label="City" />
             <element identifier="state" label="State" source="Magium\Configuration\Source\Political\USStates" type="select"/>
+            <element identifier="phone" label="Phone" type="tel"/>
         </group>
-        <group identifier="contact" label="Contact Form">
+        <group identifier="contact_form" label="Contact Form">
             <element identifier="title" label="Title" />
-            <element identifier="sendto" label="Send To" />
+            <element identifier="sendto" label="Send To" type="email"/>
         </group>
     </section>
 </magiumConfiguration>

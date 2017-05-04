@@ -144,10 +144,10 @@ XML
         $this->setFile(<<<XML
 <?xml version="1.0" encoding="utf-8"?>
 <magiumDefaultContext xmlns="http://www.magiumlib.com/ConfigurationContext">
-    <context id="production" title="Production">
-        <context id="store1" title="Store 1" />
+    <context id="production" label="Production">
+        <context id="store1" label="Store 1" />
     </context>
-    <context id="development" title="Development" />
+    <context id="development" label="Development" />
 </magiumDefaultContext>
 
 XML

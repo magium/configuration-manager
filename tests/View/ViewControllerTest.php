@@ -7,6 +7,7 @@ use Magium\Configuration\Config\BuilderInterface;
 use Magium\Configuration\Config\Repository\ConfigInterface;
 use Magium\Configuration\Config\Repository\ConfigurationRepository;
 use Magium\Configuration\Config\MergedStructure;
+use Magium\Configuration\Config\Storage\StorageInterface;
 use Magium\Configuration\Source\Political\CanadianProvinces;
 use Magium\Configuration\Tests\View\Source\ConstructorSource;
 use Magium\Configuration\Tests\View\Source\ConstructorSourceContainer;
@@ -122,7 +123,7 @@ XML
             $this->getViewConfiguration(),
             $this->createMock(BuilderInterface::class),
             $mergedConfiguration,
-            $this->getConfiguration(),
+            $this->getStorage(),
             new ConstructorSourceContainer()
         );
         $result = $controller->buildSectionArray('sectionName');
@@ -136,7 +137,7 @@ XML
             $this->getViewConfiguration(),
             $this->createMock(BuilderInterface::class),
             $mergedConfiguration,
-            $this->getConfiguration()
+            $this->getStorage()
         );
     }
 
@@ -157,19 +158,26 @@ XML
     public function getController(ViewConfiguration $viewConfiguration,
                                   BuilderInterface $builder,
                                   \SimpleXMLElement $mergedConfiguration,
-                                  ConfigInterface $config,
+                                  StorageInterface $storage,
                                   ContainerInterface $container = null)
     {
 
         $controller = $this->getMockBuilder(View::class)->setConstructorArgs([
-            'viewConfiguration'     => $viewConfiguration,
-            'builder'               => $builder,
-            'mergedConfiguration'   => $mergedConfiguration,
-            'config'                => $config,
-            'container'             => $container
+            'viewConfiguration' => $viewConfiguration,
+            'builder' => $builder,
+            'mergedConfiguration' => $mergedConfiguration,
+            'storage' => $storage,
+            'container' => $container
         ])->setMethods(null)->getMock();
         /* @var $controller View */
         return $controller;
+    }
+
+    public function getStorage()
+    {
+        $storage = $this->createMock(StorageInterface::class);
+        $storage->method('getValue')->with('sectionName/groupName/elementName')->willReturn('value');
+        return $storage;
     }
 
     public function getConfiguration()

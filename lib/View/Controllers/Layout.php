@@ -2,9 +2,11 @@
 
 namespace Magium\Configuration\View\Controllers;
 
+use Magium\Configuration\Config\MergedStructure;
 use Magium\Configuration\Config\Repository\ConfigInterface;
 use Magium\Configuration\File\Context\AbstractContextConfigurationFile;
 use Magium\Configuration\MagiumConfigurationFactoryInterface;
+use Magium\Configuration\View\Controllers\Helpers\ContextRepository;
 use Magium\Configuration\View\ViewConfiguration;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\View\Model\ViewModel;
@@ -13,22 +15,22 @@ class Layout implements ControllerInterface
 {
 
     protected $viewConfiguration;
-    protected $configuration;
     protected $contextFile;
     protected $jqueryScript;
     protected $factory;
+    protected $mergedStructure;
 
     public function __construct(
         ViewConfiguration $viewConfiguration,
-        ConfigInterface $config,
         AbstractContextConfigurationFile $contextFile,
-        MagiumConfigurationFactoryInterface $factory
+        MagiumConfigurationFactoryInterface $factory,
+        MergedStructure $mergedStructure
     )
     {
         $this->viewConfiguration = $viewConfiguration;
-        $this->configuration = $config;
         $this->contextFile = $contextFile;
         $this->factory = $factory;
+        $this->mergedStructure = $mergedStructure;
     }
 
     public function execute(ServerRequestInterface $request)
@@ -55,14 +57,14 @@ class Layout implements ControllerInterface
      * @return array
      */
 
-    protected function provideContexts()
+    public function provideContexts()
     {
-        $contexts = $this->getContextFile();
+        return (new ContextRepository($this->contextFile))->getContextHierarchy();
     }
 
-    public function getConfiguration()
+    public function getMergedStructure()
     {
-        return $this->configuration;
+        return $this->mergedStructure;
     }
 
     /**
@@ -71,9 +73,7 @@ class Layout implements ControllerInterface
 
     protected function provideSections()
     {
-        $configuration = $this->factory->getBuilder()->getMergedStructure();
-//        $configuration = $this->getConfiguration();
-        $a = $configuration->asXml();
+        $configuration = $this->getMergedStructure();
         $returnSections = [];
         foreach ($configuration->section as $section) {
             if (isset($section['hidden']) && (string)$section['hidden'] == 'yes') {
@@ -83,7 +83,12 @@ class Layout implements ControllerInterface
             if (isset($section['label']))  {
                 $sectionName = (string)$section['label'];
             }
-            $returnSections[$sectionId] = $sectionName;
+            $returnSections[$sectionId] = [
+                'label' => $sectionName
+            ];
+            if (isset($section['glyphicon'])) {
+                $returnSections[$sectionId]['glyphicon'] = (string)$section['glyphicon'];
+            }
         }
         return $returnSections;
     }
