@@ -42,9 +42,10 @@ class MagiumRenderer extends AbstractHelper
         if ($formElement instanceof Element\Select) {
             $formElement->setOptions(['options' => $options['source']]);
         }
+        $formElement->setAttribute('onchange', 'magiumRegisterChange(event)');
         $formElement->setAttribute('class', 'form-control');
+        $formElement->setAttribute('data-path', $options['path']);
         $formElement->setValue($value);
-        $formElement->setAttribute('id', $id);
         $output = $instance->render($formElement);
         return $output;
     }

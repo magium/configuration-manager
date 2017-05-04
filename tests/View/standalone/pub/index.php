@@ -53,8 +53,8 @@ $di->instanceManager()->setTypePreference(Interop\Container\ContainerInterface::
 
 //$request = $di->get(\GuzzleHttp\Psr7\ServerRequest::class);
 try {
-    $viewManager = $di->get(\Magium\Configuration\View\ViewManager::class);
-    /** @var $viewManager \Magium\Configuration\View\ViewManager */
+    $viewManager = $di->get(\Magium\Configuration\View\FrontController::class);
+    /** @var $viewManager \Magium\Configuration\View\FrontController */
     $response = $viewManager->render();
     $response = \Zend\Psr7Bridge\Psr7Response::toZend($response);
     header($response->renderStatusLine(), true);

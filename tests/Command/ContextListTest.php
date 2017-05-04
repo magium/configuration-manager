@@ -32,8 +32,8 @@ class ContextListTest extends TestCase
             new \SimpleXMLElement(<<<XML
 <?xml version="1.0" encoding="UTF-8" ?>
 <magiumDefaultContext xmlns="http://www.magiumlib.com/ConfigurationContext">
-    <context id="test" title="Test">
-        <context title="SubTest" id="subtest" />
+    <context id="test" label="Test">
+        <context label="SubTest" id="subtest" />
     </context>
     <context id="base"/>
 </magiumDefaultContext>
