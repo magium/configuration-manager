@@ -4,6 +4,7 @@ namespace Magium\Configuration\Tests\Config;
 
 use Interop\Container\ContainerInterface;
 use Magium\Configuration\Config\Builder;
+use Magium\Configuration\Config\BuilderFactory;
 use Magium\Configuration\Config\BuilderInterface;
 use Magium\Configuration\Config\Repository\ConfigInterface;
 use Magium\Configuration\Config\Repository\ConfigurationRepository;
@@ -30,6 +31,31 @@ class BuilderTest extends TestCase
     {
         ConfigurationFileRepository::reset();
         parent::tearDown();
+    }
+
+    public function testCachePassesThrough()
+    {
+        $cache = $this->createMock(\Zend\Cache\Storage\StorageInterface::class);
+
+        $builder = new Builder(
+            $cache,
+            $this->createMock(\Magium\Configuration\Config\Storage\StorageInterface::class),
+            $this->createMock(ConfigurationFileRepository::class)
+        );
+        self::assertInstanceOf(StorageInterface::class, $builder->getStorage());
+    }
+
+    public function testBuilderThrowsExceptionForInvalidSettingsFile()
+    {
+        $this->expectException(InvalidFileException::class);
+        $builder = $this->getMockBuilder(Builder::class)->disableOriginalConstructor()->setMethods([
+            'getRegisteredConfigurationFiles'
+        ])->getMock();
+        $builder->expects(self::once())->method('getRegisteredConfigurationFiles')->willReturn(
+            ['not an object']
+        );
+        /** @var $builder Builder */
+        $builder->getMergedStructure();
     }
 
     public function testBuildConfigurationStructureMerges()
@@ -111,7 +137,7 @@ class BuilderTest extends TestCase
     public function testInvalidConfigurationFilesPassedIntoConstructorThrowsException()
     {
         $this->expectException(InvalidFileException::class);
-        $repository = ConfigurationFileRepository::getInstance([__DIR__], [__DIR__  . '/no-location/config-merge-2.xml']);
+        $repository = ConfigurationFileRepository::getInstance([__DIR__], [__DIR__ . '/no-location/config-merge-2.xml']);
         new Builder(
             $this->getCacheStorageMock(),
             $this->getPersistenceStorageMock(),
@@ -362,7 +388,7 @@ class BuilderTest extends TestCase
     protected function getPersistenceStorageMock()
     {
         $storageBuilder = $this->getMockBuilder(StorageInterface::class);
-        $storage = $storageBuilder->setMethods(['getValue','create', 'setValue'])->getMock();
+        $storage = $storageBuilder->setMethods(['getValue', 'create', 'setValue'])->getMock();
         if (!$storage instanceof StorageInterface) {
             throw new \Exception('You created the wrong kind of mock, buddy');
         }

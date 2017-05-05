@@ -118,7 +118,7 @@ XML
 
     public function testSourceWithConstructorWorksWithContainer()
     {
-        $mergedConfiguration = $this->getSourceConfig(InvalidSource::class);
+        $mergedConfiguration = $this->getSourceConfig(ConstructorSource::class);
         $controller = $this->getController(
             $this->getViewConfiguration(),
             $this->createMock(BuilderInterface::class),
@@ -167,6 +167,7 @@ XML
             'builder' => $builder,
             'mergedConfiguration' => $mergedConfiguration,
             'storage' => $storage,
+            'context' => ConfigInterface::CONTEXT_DEFAULT,
             'container' => $container
         ])->setMethods(null)->getMock();
         /* @var $controller View */
@@ -176,7 +177,7 @@ XML
     public function getStorage()
     {
         $storage = $this->createMock(StorageInterface::class);
-        $storage->method('getValue')->with('sectionName/groupName/elementName')->willReturn('value');
+        $storage->method('getValue')->willReturn('value');
         return $storage;
     }
 

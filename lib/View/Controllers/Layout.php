@@ -39,11 +39,9 @@ class Layout implements ControllerInterface
         $viewModel->setVariable('sections', $this->provideSections());
         $viewModel->setVariable('contexts', $this->provideContexts());
         $viewModel->setVariable('provideHtmlWrapper', $this->viewConfiguration->getProvideWrapperHtml());
-        if ($this->viewConfiguration->getJqueryUrl()) {
-            $viewModel->setVariable('jqueryUrl', $this->viewConfiguration->getJqueryUrl());
-        } else {
-            $viewModel->setVariable('jqueryUrl', null);
-        }
+        $viewModel->setVariable('jqueryUrl', $this->viewConfiguration->getJqueryUrl());
+        $viewModel->setVariable('bootstrapCssUrl', $this->viewConfiguration->getBootstrapCssUrl());
+        $viewModel->setVariable('bootstrapJsUrl', $this->viewConfiguration->getBootstrapJsUrl());
         $viewModel->setTemplate($this->viewConfiguration->getLayoutFile());
         return $viewModel;
     }
