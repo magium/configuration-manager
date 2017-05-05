@@ -19,7 +19,7 @@ class MagiumRecursiveContextRenderer extends AbstractHelper
 {
     function __invoke(array $contexts, $padding = 0)
     {
-        $output = '<ul class="nav nav-pills nav-stacked">';
+        $output = sprintf('<ul class="nav nav-pills nav-stacked"%s>', $padding==0?' id="magium-contexts"':'');
         foreach ($contexts as $context) {
             $output .= sprintf(
                 '<li
