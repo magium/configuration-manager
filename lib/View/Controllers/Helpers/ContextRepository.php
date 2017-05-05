@@ -25,11 +25,11 @@ class ContextRepository
         foreach ($xml->children() as $child) {
             $children[] = $this->buildContextArray($child);
         }
-        $contexts[] = [
+        $contexts = [[
             'id' => 'default',
             'label' => 'Default',
             'children' => $children
-        ];
+        ]];
 
         return $contexts;
     }

@@ -61,7 +61,7 @@ class MagiumConfigurationFactory implements MagiumConfigurationFactoryInterface
     protected static function getInstance($magiumConfigurationFile = null, $context = ConfigurationRepository::CONTEXT_DEFAULT)
     {
         if (!self::$me instanceof self) {
-            new self($magiumConfigurationFile = null, $context = ConfigurationRepository::CONTEXT_DEFAULT);
+            new self($magiumConfigurationFile, $context);
         }
         return self::$me;
     }
