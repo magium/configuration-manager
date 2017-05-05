@@ -4,7 +4,7 @@
           xsi:schemaLocation="http://www.magiumlib.com/BaseConfiguration ../assets/magium-configuration.xsd">
     <persistenceConfiguration>
         <driver>pdo_sqlite</driver>
-        <database></database>
+        <database>:memory:</database>
     </persistenceConfiguration>
     <contextConfigurationFile file="contexts.xml" type="xml"/>
     <cache>

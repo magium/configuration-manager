@@ -6,6 +6,7 @@ use Interop\Container\ContainerInterface;
 use Magium\Configuration\Config\BuilderInterface;
 use Magium\Configuration\Config\Repository\ConfigurationRepository;
 use Magium\Configuration\Config\MergedStructure;
+use Magium\Configuration\Config\Storage\StorageInterface;
 use Magium\Configuration\MagiumConfigurationFactoryInterface;
 use Magium\Configuration\View\FrontController;
 use Psr\Http\Message\ServerRequestInterface;
@@ -15,9 +16,9 @@ class ViewTest extends AbstractViewTestCase
 
     public function testGroupDisplayed()
     {
-        $viewConfiguration = $this->getViewConfiguration(['section' => ['label' => 'section1']]);
+        $viewConfiguration = $this->getViewConfiguration(['section' => 'section1']);
         $viewManager = $this->getMockBuilder(FrontController::class)->setMethods([
-            'getConfiguration', 'getMergedStructure', 'getBuilder'
+            'getConfiguration', 'getMergedStructure', 'getBuilder', 'getStorage'
         ])->setConstructorArgs([
             'viewConfiguration'             => $viewConfiguration,
             'magiumConfigurationFactory'    => $this->createMock(MagiumConfigurationFactoryInterface::class),
@@ -37,6 +38,12 @@ class ViewTest extends AbstractViewTestCase
 XML
         ));
         $viewManager->method('getBuilder')->willReturn($this->createMock(BuilderInterface::class));
+        $storage = $this->getMockBuilder(StorageInterface::class)->setMethods(
+            ['getValue', 'setValue', 'create']
+        )->getMock();
+        // This parallels the XML from below.
+        $storage->expects(self::once())->method('getValue')->willReturn('Element Value');
+        $viewManager->method('getStorage')->willReturn($storage);
         $viewManager->method('getConfiguration')->willReturn(new ConfigurationRepository(<<<XML
 <config>
     <section1>
@@ -57,6 +64,7 @@ XML
         self::assertXpathNotExists($simpleXml, '//title'); // Make sure the layout isn't called
         self::assertXpathExists($simpleXml, '//h2/a[.="Test"]');
         self::assertXpathExists($simpleXml, '//label[.="Element"]');
+        self::assertXpathExists($simpleXml, '//input[@type="text" and @name="section1_test_element"]'); // we do this separately to test if the element exists apart from whether it has a value.
         self::assertXpathExists($simpleXml, '//input[@type="text" and @name="section1_test_element" and @value="Element Value"]');
     }
 

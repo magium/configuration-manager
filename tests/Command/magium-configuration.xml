@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<magiumBase xmlns="http://www.magiumlib.com/BaseConfiguration">
+    <persistenceConfiguration>
+        <driver>pdo_sqlite</driver>
+        <database>:memory:</database>
+    </persistenceConfiguration>
+    <contextConfigurationFile file="contexts.xml" type="xml"/>
+    <cache>
+        <adapter>filesystem</adapter>
+        <options>
+            <cache_dir>/tmp</cache_dir>
+        </options>
+    </cache>
+</magiumBase>

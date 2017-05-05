@@ -46,11 +46,6 @@ class DefaultCommand extends Command
                 $possibleLocations[] = $file;
             }
         }
-        $cwd = getcwd() . DIRECTORY_SEPARATOR . 'magium-configuration.xml';
-        if (file_exists($cwd)) {
-            return false;
-        }
-        $possibleLocations[] = $cwd;
         $possibleLocations  = array_unique($possibleLocations); // just in case...
         return $possibleLocations;
     }
@@ -97,8 +92,8 @@ XML
         file_put_contents($contextPath, <<<XML
 <?xml version="1.0" encoding="UTF-8" ?>
 <magiumDefaultContext xmlns="http://www.magiumlib.com/ConfigurationContext">
-    <context id="production" title="Production" />
-    <context id="development" title="Development" />
+    <context id="production" label="Production" />
+    <context id="development" label="Development" />
 </magiumDefaultContext>
 XML
         );
