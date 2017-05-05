@@ -8,7 +8,7 @@
             <xs:element name="context" type="contextType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="id" type="xs:ID"/>
-        <xs:attribute name="title" use="optional"/>
+        <xs:attribute name="label" use="optional"/>
     </xs:complexType>
     <xs:element name="magiumDefaultContext">
         <xs:complexType>

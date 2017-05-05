@@ -28,7 +28,7 @@ class MagiumConfigurationFactory implements MagiumConfigurationFactoryInterface
 
     protected static $me;
 
-    public function __construct($magiumConfigurationFile = null, $context = ConfigurationRepository::CONTEXT_DEFAULT)
+    public function __construct($magiumConfigurationFile = null, $context = ConfigurationRepository::CONTEXT_DEFAULT, $cwd = __DIR__)
     {
         self::$me = $this;
         if ($context instanceof Context) {
@@ -36,7 +36,6 @@ class MagiumConfigurationFactory implements MagiumConfigurationFactoryInterface
         }
         $this->context = $context;
         if (!$magiumConfigurationFile) {
-            $cwd = __DIR__;
             $baseDir = realpath(DIRECTORY_SEPARATOR);
             while ($cwd && $cwd != $baseDir && file_exists($cwd)) {
                 $checkFile = $cwd . DIRECTORY_SEPARATOR . 'magium-configuration.xml';

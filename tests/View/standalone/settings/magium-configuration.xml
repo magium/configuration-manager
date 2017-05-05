@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<magiumBase xmlns="http://www.magiumlib.com/BaseConfiguration">
+    <persistenceConfiguration>
+        <driver>pdo_sqlite</driver>
+        <database>/tmp/local</database>
+    </persistenceConfiguration>
+    <contextConfigurationFile file="tests/View/standalone/settings/contexts.xml" type="xml"/>
+    <configurationDirectories>
+        <directory>tests/View/standalone/settings</directory>
+    </configurationDirectories>
+    <configurationFiles>
+        <file>settings.xml</file>
+        <file>database.xml</file>
+        <file>active-directory.xml</file>
+    </configurationFiles>
+    <cache>
+        <adapter>filesystem</adapter>
+        <options>
+            <cache_dir>/tmp</cache_dir>
+        </options>
+    </cache>
+</magiumBase>

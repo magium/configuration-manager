@@ -5,10 +5,21 @@ namespace Magium\Configuration\Tests\Config;
 use Magium\Configuration\Config\BuilderFactory;
 use Magium\Configuration\Config\MergedStructure;
 use Magium\Configuration\File\Context\AbstractContextConfigurationFile;
+use Magium\Configuration\InvalidConfigurationException;
 use PHPUnit\Framework\TestCase;
 
 class BuilderFactoryTest extends TestCase
 {
+
+    public function testBuilderMustPointToRealDirectory()
+    {
+        $this->expectException(InvalidConfigurationException::class);
+        new BuilderFactory(
+            new \SplFileInfo('boogers'),
+            new \SimpleXMLElement('<test />'),
+            $this->createMock(AbstractContextConfigurationFile::class)
+        );
+    }
 
     public function testSingleConfigurationDirectory()
     {

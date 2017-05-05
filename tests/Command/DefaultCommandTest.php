@@ -10,12 +10,14 @@ class DefaultCommandTest extends CommandTestCase
 {
 
     const CONFIGURATION_FILE_NAME = 'magium-configuration.xml';
+    const TESTS_CONFIGURATION_FILE_NAME = 'tests/magium-configuration.xml';
     const CONTEXT_FILE_NAME = 'contexts.xml';
 
     protected function setUp()
     {
         parent::setUp();
         $this->removeRealPath(self::CONFIGURATION_FILE_NAME);
+        $this->removeRealPath(self::TESTS_CONFIGURATION_FILE_NAME);
         $this->removeRealPath(self::CONTEXT_FILE_NAME);
     }
 
@@ -46,6 +48,14 @@ class DefaultCommandTest extends CommandTestCase
         $path = realpath('/');
         self::assertNotFalse($paths);
         self::assertNotContains($path, $paths);
+    }
+
+    public function testCwdDirectoryIsNotIncludedInPossibleLocations()
+    {
+        $cwd = getcwd();
+        $paths = $this->getPaths();
+        self::assertNotFalse($paths);
+        self::assertNotContains($cwd, $paths);
     }
 
     protected function getPaths()

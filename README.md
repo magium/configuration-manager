@@ -226,7 +226,7 @@ Your configuration settings are now included with your customer's application.  
 
 Here are a list of features that I want to have included
 
-* An HTML based UI for making configuration changes
+* ~~An HTML based UI for making configuration changes~~
   * Embeddable user restrictions
   * ACL resources
 * ~~A local/remote cache system that caches the configuration locally, but synchronizes with a remote cache~~

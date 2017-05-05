@@ -16,6 +16,8 @@ class ViewConfiguration
     protected $viewFile;
     protected $jqueryUrl;
     protected $provideWrapperHtml;
+    protected $bootstrapJsUrl;
+    protected $bootstrapCssUrl;
 
     /**
      * ViewConfiguration constructor.
@@ -35,7 +37,9 @@ class ViewConfiguration
         $layoutFile = 'layout.phtml',
         $viewFile = 'view.phtml',
         $provideWrapperHtml = true,
-        $jqueryUrl = true
+        $jqueryUrl = 'https://code.jquery.com/jquery-3.2.1.min.js',
+        $bootstrapJsUrl = 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js',
+        $bootstrapCssUrl = 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'
     )
     {
         $this->setRequest($request);
@@ -45,7 +49,43 @@ class ViewConfiguration
         $this->setViewFile($viewFile);
         $this->setProvideWrapperHtml($provideWrapperHtml);
         $this->setJqueryUrl($jqueryUrl);
+        $this->setBootstrapJsUrl($bootstrapJsUrl);
+        $this->setBootstrapCssUrl($bootstrapCssUrl);
     }
+
+    /**
+     * @return mixed
+     */
+    public function getBootstrapCssUrl()
+    {
+        return $this->bootstrapCssUrl;
+    }
+
+    /**
+     * @param mixed $bootstrapCssUrl
+     */
+    public function setBootstrapCssUrl($bootstrapCssUrl)
+    {
+        $this->bootstrapCssUrl = $bootstrapCssUrl;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBootstrapJsUrl()
+    {
+        return $this->bootstrapJsUrl;
+    }
+
+    /**
+     * @param mixed $bootstrapJsUrl
+     */
+    public function setBootstrapJsUrl($bootstrapJsUrl)
+    {
+        $this->bootstrapJsUrl = $bootstrapJsUrl;
+    }
+
+
 
     /**
      * @return mixed

@@ -1,34 +1,226 @@
 <?php /* @var $this \Zend\View\View */ ?>
 <?php if ($provideHtmlWrapper): ?>
-<!DOCTYPE html >
+    <!DOCTYPE html>
 <html>
-    <head>
-        <title>Magium Configuration Manager</title>
-        <?php if ($jqueryUrl): ?>
-            <script type="text/javascript" src="<?php echo htmlspecialchars($jqueryUrl); ?>"></script>
-        <?php endif; ?>
-    </head>
-<body>
+<head>
+    <title>Magium Configuration Manager</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <?php if ($jqueryUrl): ?>
+        <script type="text/javascript" src="<?php echo htmlspecialchars($jqueryUrl); ?>"></script>
+    <?php endif; ?>
+    <?php if ($bootstrapCssUrl): ?>
+    <link rel="stylesheet" href="<?php echo htmlspecialchars($bootstrapCssUrl); ?>">
+    <?php endif; ?>
+    <?php if ($bootstrapJsUrl): ?>
+    <script src="<?php echo htmlspecialchars($bootstrapJsUrl); ?>"></script>
+    <?php endif; ?>
+</head>
+<body style="background-color: #f4f4f4; ">
 <?php else: ?>
     <?php if ($jqueryUrl): ?>
         <script type="text/javascript" src="<?php echo htmlspecialchars($jqueryUrl); ?>"></script>
     <?php endif; ?>
 <?php endif; ?>
-    <nav>
-        <?php if (isset($sections) && is_array($sections)): ?>
-            <?php foreach ($sections as $sectionId => $sectionLabel): ?>
-                <a href="javascript:selectMagiumSection()" data-section="<?php echo htmlspecialchars($sectionId); ?>"><?php echo htmlspecialchars($sectionLabel); ?></a>
-            <?php endforeach; ?>
-        <?php endif; ?>
-    </nav>
-<header>
-    <h1>Magium Configuration Manager</h1>
-    <button id="magium-rebuild-configuration">Rebuild Configuration</button>
+<style>
+    .magium-requires-cursor {
+        cursor: pointer;
+    }
+
+    .magium-context-not-active {
+        color: #333;
+    }
+
+    .magium-btn {
+        background-color: #830000;
+        border-color: #670000;
+    }
+</style>
+<header style="border-bottom: #4b4b4b 1px solid; background-color: #830000; box-shadow: #575757 0 0 2px 1px;">
+    <h1 style="margin-top: 0; padding: 20px; color: white;">
+        <span>Configuration Manager</span>
+        <img src="//magiumlib.com/images/magium.png" class="pull-right">
+    </h1>
 </header>
-    <main>
+<div class="container" style="margin-top: 20px; z-index: 0;">
+    <div class="row">
+        <div class="col-md-4">
+            <div style="padding: 10px; " class="list-group-item">
+                <button id="magium-save-configuration" class="btn btn-danger magium-btn">Save</button>
+                <button id="magium-rebuild-configuration" class="btn btn-danger magium-btn pull-right">Rebuild Configuration</button>
+            </div>
+            <div class="clearfix" style="padding: 10px; "></div>
+            <nav>
+                <?php $currentContext = null; ?>
+                <?php if (isset($contexts) && count($contexts)): ?>
+                    <div class="list-group-item" style="margin-bottom: 20px;">
+                        <h4>Contexts</h4>
+                        <?php $currentContext = $contexts[0]['id']; ?>
+                        <?php echo $this->magiumRecursiveContextRenderer($contexts); ?>
+                    </div>
+                <?php endif; ?>
+                <div class="list-group-item" style="margin-bottom: 20px;">
+                    <h4>Sections</h4>
+                    <ul class="list-group" id="magium-sections">
+                        <?php $currentSection = null; ?>
+                        <?php if (isset($sections) && is_array($sections)): ?>
+                            <?php foreach ($sections as $sectionId => $sectionData): ?>
+                                <?php if ($currentSection === null) {
+                                    $currentSection = $sectionId;
+                                } ?>
+                                <li
+                                        class="list-group-item magium-section magium-requires-cursor"
+                                        data-section="<?php echo htmlspecialchars($sectionId); ?>"
+                                        id="section-<?php echo htmlspecialchars($sectionId); ?>">
+                                    <?php if (isset($sectionData['glyphicon'])): ?>
+                                        <i class="glyphicon glyphicon-<?php echo htmlspecialchars($sectionData['glyphicon']); ?>"></i>
+                                    <?php else: ?>
+                                        <i class="glyphicon glyphicon-plus"></i>
+                                    <?php endif; ?>
+                                    <?php echo htmlspecialchars($sectionData['label']); ?>
+                                </li>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+        <div class="col-md-8">
+            <div id="magium-alert-container"></div>
+            <main class="list-group-item">
 
-    </main>
+            </main>
+        </div>
+    </div>
+</div>
+<div id="magium-spinner" class="loading" style="z-index: 100000; background-color: rgba(0,0,0, 0.35); position: absolute; width: 100%; height: 100%; top: 0; left: 0; "></div>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/css-spinning-spinners/1.1.1/load2.css" rel="stylesheet">
+<script type="text/javascript">
 
+    var magiumConfigurations = {};
+    var magiumContext = 'default';
+
+    function magiumScrollToMessage() {
+        $('html, body').animate({
+            scrollTop: $("#magium-alert-container").offset().top
+        }, 1000);
+    }
+
+    function magiumRegisterChange(e) {
+        var targetName = jQuery(e.target).attr('data-path');
+        var targetValue = jQuery(e.target).val();
+        console.log(targetName);
+        console.log(targetValue);
+        magiumConfigurations[targetName] = targetValue;
+    }
+
+    function magiumAlert(message, status) {
+        var magiumAlert = jQuery('<div class="alert" />');
+        magiumAlert.text(message);
+        magiumAlert.addClass('alert-' + status);
+        jQuery('#magium-alert-container').append(magiumAlert);
+        magiumAlert.slideDown();
+        setTimeout(function() {
+            var ma = magiumAlert;
+            ma.slideUp(function () {
+                jQuery(this).remove();
+            });
+        }, 5000);
+    }
+
+    jQuery('#magium-save-configuration').click(function () {
+        if (jQuery.isEmptyObject(magiumConfigurations)) {
+            magiumAlert('No changes', 'warning');
+            return;
+        }
+        var data = {
+            values: magiumConfigurations,
+            context: magiumContext
+        };
+        magiumSpinner('show');
+        jQuery.ajax({
+            type: 'POST',
+            url: '',
+            data: JSON.stringify(data),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (d) {
+                magiumConfigurations = {};
+                magiumScrollToMessage();
+                jQuery.each(d, function(k, v) {
+                    magiumAlert(v['message'], v['status']);
+                });
+                magiumSpinner();
+            }
+        });
+    });
+
+
+    jQuery('.magium-section').click(selectMagiumSection);
+    jQuery('#magium-rebuild-configuration').click(function(){
+        magiumSpinner('show');
+        jQuery.ajax({
+            type: 'POST',
+            url: '?rebuild=1',
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function(d) {
+                magiumScrollToMessage();
+                magiumSpinner();
+                jQuery.each(d, function(k, v) {
+                    magiumAlert(v['message'], v['status']);
+                });
+            }
+        });
+    });
+
+    function selectMagiumSection() {
+        jQuery('.magium-section').removeClass('active');
+        jQuery('.magium-section').removeClass('magium-section-selected');
+        jQuery(this).addClass('active');
+        jQuery(this).addClass('magium-section-selected');
+        var p = jQuery.param({
+            section: jQuery(this).attr('data-section'),
+            context: magiumContext
+        });
+        magiumSpinner('show');
+        jQuery('main').load('?' + p, magiumSpinner);
+    }
+    <?php if ($currentSection): ?>
+    jQuery('#section-<?php echo htmlspecialchars($currentSection); ?>').trigger('click');
+    <?php endif; ?>
+
+    function selectMagiumContext(e) {
+        e.stopPropagation();
+        if (!jQuery.isEmptyObject(magiumConfigurations)) {
+            if (!confirm('Switching the context will lose any changes you have made.  Tap OK if you wish to discard your changes.')) {
+                return false;
+            }
+            magiumConfigurations = {};
+        }
+
+        jQuery('.magium-context').removeClass('active');
+        jQuery('.magium-context').addClass('magium-context-not-active');
+        jQuery(this).addClass('active');
+        magiumContext = jQuery(this).attr('data-context');
+        jQuery('.magium-section-selected').trigger('click');
+        return false;
+    }
+
+    jQuery('.magium-context').click(selectMagiumContext);
+
+    <?php if ($currentContext): ?>
+    jQuery('#magium-context-<?php echo htmlspecialchars($currentContext); ?>').trigger('click');
+    <?php endif; ?>
+
+    function magiumSpinner(action) {
+        if (action == 'show') {
+            jQuery('#magium-spinner').show();
+            return;
+        }
+        jQuery('#magium-spinner').hide();
+    }
+
+</script>
 <?php if ($provideHtmlWrapper): ?>
 </body>
 </html>

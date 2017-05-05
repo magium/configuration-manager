@@ -29,8 +29,8 @@ class DefaultCommand extends Command
         $paths = explode('/', $path);
         array_shift($paths); // Probably should not be in the root path...
         $configurationLocation = realpath(DIRECTORY_SEPARATOR);
-        $possibleLocations = [];
         $foundVendor = false;
+        $possibleLocations = [];
         foreach ($paths as $path) {
             $configurationLocation .= DIRECTORY_SEPARATOR . $path;
             $configurationLocation = realpath($configurationLocation);
@@ -46,6 +46,7 @@ class DefaultCommand extends Command
                 $possibleLocations[] = $file;
             }
         }
+        $possibleLocations  = array_unique($possibleLocations); // just in case...
         return $possibleLocations;
     }
 
@@ -91,8 +92,8 @@ XML
         file_put_contents($contextPath, <<<XML
 <?xml version="1.0" encoding="UTF-8" ?>
 <magiumDefaultContext xmlns="http://www.magiumlib.com/ConfigurationContext">
-    <context id="production" title="Production" />
-    <context id="development" title="Development" />
+    <context id="production" label="Production" />
+    <context id="development" label="Development" />
 </magiumDefaultContext>
 XML
         );

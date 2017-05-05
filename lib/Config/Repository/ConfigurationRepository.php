@@ -5,8 +5,6 @@ namespace Magium\Configuration\Config\Repository;
 class ConfigurationRepository extends \SimpleXMLElement implements ConfigInterface
 {
 
-    const CONTEXT_DEFAULT = 'default';
-
     public function hasValue($path)
     {
         list($section, $group, $element) = explode('/', $path);
