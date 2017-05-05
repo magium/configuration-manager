@@ -28,11 +28,11 @@
     "symfony/console": "^2",
     "psr/http-message": "^1.0",
     "symfony/yaml": "^2",
-    "zendframework/zend-view": "^2.0",
-    "zendframework/zend-http": "^2.0",
-    "zendframework/zend-form": "^2.0",
-    "zendframework/zend-i18n": "^2.0",
-    "zendframework/zend-json": "^3.0"
+    "zendframework/zend-view": "^2",
+    "zendframework/zend-http": "^2",
+    "zendframework/zend-form": "^2",
+    "zendframework/zend-i18n": "^2",
+    "zendframework/zend-json": "^2"
   },
   "suggest": {
     "zendframework/zend-psr7bridge": "^0.1"
