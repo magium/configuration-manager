@@ -198,7 +198,7 @@ class ViewConfiguration
     }
 
     /**
-     * @return bool
+     * @return mixed
      */
     public function getJqueryUrl()
     {
@@ -206,7 +206,7 @@ class ViewConfiguration
     }
 
     /**
-     * @param bool $jqueryUrl
+     * @param mixed $jqueryUrl
      */
     public function setJqueryUrl($jqueryUrl)
     {
