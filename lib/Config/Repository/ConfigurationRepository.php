@@ -10,10 +10,7 @@ class ConfigurationRepository extends \SimpleXMLElement implements ConfigInterfa
         list($section, $group, $element) = explode('/', $path);
         $xpath = sprintf('/*/%s/%s/%s', $section, $group, $element);
         $element = $this->xpath($xpath);
-        if ($element) {
-            return true;
-        }
-        return false;
+        return !empty($element);
     }
 
     public function getValue($path)

@@ -122,8 +122,11 @@ class Builder implements BuilderInterface
             throw new InvalidConfigurationException('No configuration files provided');
         }
 
-        $this->getContainer()->set($config);
-        $this->getContainer()->set($structure);
+        $container = $this->getContainer();
+        if ($container instanceof GenericContainer) {
+            $container->set($config);
+            $container->set($structure);
+        }
 
         $this->buildConfigurationObject($structure, $config, $context);
 

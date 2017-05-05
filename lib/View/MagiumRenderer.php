@@ -14,10 +14,11 @@ use Zend\Form\View\Helper\FormElement;
 use Zend\Form\View\Helper\FormInput;
 use Zend\Form\View\Helper\FormSelect;
 use Zend\View\Helper\AbstractHelper;
+use Zend\View\Renderer\RendererInterface;
 
 class MagiumRenderer extends AbstractHelper
 {
-    function __invoke($section, $group, $id, $options)
+    public function __invoke($section, $group, $id, $options)
     {
         $type = 'text';
         if (isset($options['type'])) {
@@ -34,8 +35,7 @@ class MagiumRenderer extends AbstractHelper
 
         $instance = $reflectionClass->newInstance();
         $formInstance = new \ReflectionClass($formClass);
-
-        $instance->setView($this->getView());
+        $this->configureFormView($instance);
         $name = sprintf('%s_%s_%s', $section, $group, $id);
         $formElement = $formInstance->newInstance($name, $options);
         /* @var $formElement Element */
@@ -50,5 +50,13 @@ class MagiumRenderer extends AbstractHelper
         return $output;
     }
 
+    protected function configureFormView(AbstractHelper $instance)
+    {
+        $view = $this->getView();
+        if (!$view instanceof RendererInterface) {
+            throw new InvalidViewConfigurationException('View is not the correct instance type');
+        }
+        $instance->setView($view);
+    }
 
 }
