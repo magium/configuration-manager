@@ -78,6 +78,8 @@
                                         id="section-<?php echo htmlspecialchars($sectionId); ?>">
                                     <?php if (isset($sectionData['glyphicon'])): ?>
                                         <i class="glyphicon glyphicon-<?php echo htmlspecialchars($sectionData['glyphicon']); ?>"></i>
+                                    <?php elseif (isset($sectionData['font-awesome'])): ?>
+                                        <i class="fa fa-<?php echo htmlspecialchars($sectionData['font-awesome']); ?>"></i>
                                     <?php else: ?>
                                         <i class="glyphicon glyphicon-plus"></i>
                                     <?php endif; ?>

@@ -4,8 +4,8 @@ namespace Magium\Configuration\Tests\View;
 
 use Interop\Container\ContainerInterface;
 use Magium\Configuration\Config\BuilderInterface;
-use Magium\Configuration\Config\Repository\ConfigurationRepository;
 use Magium\Configuration\Config\MergedStructure;
+use Magium\Configuration\Config\Repository\ConfigurationRepository;
 use Magium\Configuration\Config\Storage\StorageInterface;
 use Magium\Configuration\MagiumConfigurationFactoryInterface;
 use Magium\Configuration\View\FrontController;
@@ -62,7 +62,7 @@ XML
         $dom->loadHTML(sprintf('<html><body>%s</body></html>', $content));
         $simpleXml = simplexml_import_dom($dom);
         self::assertXpathNotExists($simpleXml, '//title'); // Make sure the layout isn't called
-        self::assertXpathExists($simpleXml, '//h2/a[.="Test"]');
+        self::assertXpathExists($simpleXml, '//h2/span[.="Test"]');
         self::assertXpathExists($simpleXml, '//label[.="Element"]');
         self::assertXpathExists($simpleXml, '//input[@type="text" and @name="section1_test_element"]'); // we do this separately to test if the element exists apart from whether it has a value.
         self::assertXpathExists($simpleXml, '//input[@type="text" and @name="section1_test_element" and @value="Element Value"]');

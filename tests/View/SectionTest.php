@@ -7,9 +7,8 @@ use GuzzleHttp\Psr7\ServerRequest;
 use Magium\Configuration\Config\MergedStructure;
 use Magium\Configuration\File\Context\AbstractContextConfigurationFile;
 use Magium\Configuration\MagiumConfigurationFactoryInterface;
-use Magium\Configuration\View\ViewConfiguration;
 use Magium\Configuration\View\FrontController;
-use SebastianBergmann\PHPLOC\Log\XML;
+use Magium\Configuration\View\ViewConfiguration;
 
 class SectionTest extends AbstractViewTestCase
 {
@@ -112,6 +111,22 @@ XML
         $response = $viewManager->render();
         $simpleXml = $this->getContent($response);
         self::assertXpathExists($simpleXml, '//nav/descendant::ul[@id="magium-sections"]/descendant::li/i[contains(concat(" ",normalize-space(@class)," "), " glyphicon-test ")]');
+    }
+    public function testFontAwesomeRendered()
+    {
+
+        $viewConfiguration = $this->getViewConfiguration();
+        $viewManager = $this->getFrontController($viewConfiguration, <<<XML
+<magiumConfiguration xmlns="http://www.magiumlib.com/Configuration">
+<section identifier="section1" label="Section Eins" font-awesome="test"/>
+</magiumConfiguration>
+XML
+        );
+
+        /* @var $viewManager FrontController */
+        $response = $viewManager->render();
+        $simpleXml = $this->getContent($response);
+        self::assertXpathExists($simpleXml, '//nav/descendant::ul[@id="magium-sections"]/descendant::li/i[contains(concat(" ",normalize-space(@class)," "), " fa-test ")]');
     }
 
     public function testJqueryRendered()

@@ -3,7 +3,6 @@
 namespace Magium\Configuration\View\Controllers;
 
 use Magium\Configuration\Config\MergedStructure;
-use Magium\Configuration\Config\Repository\ConfigInterface;
 use Magium\Configuration\File\Context\AbstractContextConfigurationFile;
 use Magium\Configuration\MagiumConfigurationFactoryInterface;
 use Magium\Configuration\View\Controllers\Helpers\ContextRepository;
@@ -86,6 +85,8 @@ class Layout implements ControllerInterface
             ];
             if (isset($section['glyphicon'])) {
                 $returnSections[$sectionId]['glyphicon'] = (string)$section['glyphicon'];
+            } else if (isset($section['font-awesome'])) {
+                $returnSections[$sectionId]['font-awesome'] = (string)$section['font-awesome'];
             }
         }
         return $returnSections;
