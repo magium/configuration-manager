@@ -4,9 +4,9 @@ namespace Magium\Configuration\Tests\View;
 
 use Interop\Container\ContainerInterface;
 use Magium\Configuration\Config\BuilderInterface;
+use Magium\Configuration\Config\MergedStructure;
 use Magium\Configuration\Config\Repository\ConfigInterface;
 use Magium\Configuration\Config\Repository\ConfigurationRepository;
-use Magium\Configuration\Config\MergedStructure;
 use Magium\Configuration\Config\Storage\StorageInterface;
 use Magium\Configuration\Source\Political\CanadianProvinces;
 use Magium\Configuration\Tests\View\Source\ConstructorSource;
@@ -52,7 +52,7 @@ XML
         self::assertEquals('datetime', $result['groupName']['children']['typedElement']['type']);
         self::assertContains('One', $result['groupName']['children']['elementName']['permittedValues']);
         self::assertContains('Two', $result['groupName']['children']['elementName']['permittedValues']);
-        self::assertEmpty($result['groupName']['children']['elementName']['source']);
+        self::assertNotEmpty($result['groupName']['children']['elementName']['source']);
     }
 
     public function testLabelsAreRendered()

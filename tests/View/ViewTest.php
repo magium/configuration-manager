@@ -68,6 +68,11 @@ XML
         self::assertXpathExists($simpleXml, '//input[@type="text" and @name="section1_test_element" and @value="Element Value"]');
     }
 
+    public function testPermittedValues()
+    {
+
+    }
+
     public function getViewConfiguration(array $params = [], $method = 'GET')
     {
         $configuration = parent::getViewConfiguration();
