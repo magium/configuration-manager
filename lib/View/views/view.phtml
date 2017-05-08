@@ -1,10 +1,14 @@
 <div>
     <?php foreach ($groups as $groupId => $group): ?>
         <fieldset id="magium-configuration-group-<?php echo htmlspecialchars($groupId); ?>">
-            <h2 id="magium-configuration-group-title-<?php echo htmlspecialchars($groupId); ?>">
-                <a href="javascript:"><?php echo htmlspecialchars($group['label']); ?></a>
+            <h2 id="magium-configuration-group-title-<?php echo htmlspecialchars($groupId); ?>"
+                class="magium-requires-cursor"
+                onclick="magiumToggleGroup(event, 'magium-configuration-group-section-<?php echo htmlspecialchars($groupId); ?>')">
+                <span><?php echo htmlspecialchars($group['label']); ?></span>
+                <i class="fa fa-angle-up magium-slide-indicator" aria-hidden="true" style="display:none; "></i>
+                <i class="fa fa-angle-down magium-slide-indicator" aria-hidden="true"></i>
             </h2>
-            <div id="magium-configuration-group-section-<?php echo htmlspecialchars($groupId); ?>">
+            <div id="magium-configuration-group-section-<?php echo htmlspecialchars($groupId); ?>" style="display: none; ">
                 <?php foreach ($group['children'] as $id => $child): ?>
                     <div class="form-group">
                     <label for="<?php echo htmlspecialchars($id); ?>"><?php echo htmlspecialchars($child['label']); ?></label>
