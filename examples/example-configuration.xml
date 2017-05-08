@@ -14,7 +14,7 @@
             <element identifier="theme" label="Theme"/>
         </group>
     </section>
-    <section identifier="security" label="Security">
+    <section identifier="security" label="Security" font-awesome="lock">
         <group identifier="authentication" label="Authentication">
             <element identifier="require" label="Require Authentication" type="select" source="Magium\Configuration\Source\YesNo"/>
         </group>
