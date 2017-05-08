@@ -12,7 +12,8 @@ class NextTenYears implements SourceInterface
         $now = date('Y');
         $return = [];
         do {
-            $return[] = $now++;
+            $year = $now++;
+            $return[$year] = $year;
         } while (count($return) < 10);
         return $return;
 
