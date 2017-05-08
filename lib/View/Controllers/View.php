@@ -4,9 +4,8 @@ namespace Magium\Configuration\View\Controllers;
 
 use Interop\Container\ContainerInterface;
 use Magium\Configuration\Config\BuilderInterface;
-use Magium\Configuration\Config\Repository\ConfigInterface;
-use Magium\Configuration\Config\Repository\ConfigurationRepository;
 use Magium\Configuration\Config\MergedStructure;
+use Magium\Configuration\Config\Repository\ConfigurationRepository;
 use Magium\Configuration\Config\Storage\StorageInterface;
 use Magium\Configuration\Source\SourceInterface;
 use Magium\Configuration\View\UnableToCreateInstanceException;
@@ -109,26 +108,12 @@ class View implements ControllerInterface
                 ];
             }
             $identifier = $label = (string)$node['identifier'];
-            $permittedValues = $source = [];
-            $description = '';
-            $type = 'text';
-            if (isset($node['label'])) {
-                $label = (string)$node['label'];
-            }
-            if (isset($node->description)) {
-                $description = (string)$node->description;
-            }
-            if (isset($node->permittedValues)) {
-                foreach ($node->permittedValues->value as $value) {
-                    $permittedValues[] = (string)$value;
-                }
-            }
-            if (isset($node['type'])) {
-                $type = (string)$node['type'];
-            }
-            if (isset($node['source'])) {
-                $source = $this->getSource((string)$node['source'])->getSourceData();
-            }
+            $permittedValues = $this->getPermittedValues($node);
+            $source = $this->getSourceData($node);
+            $description = $this->getDescription($node);
+            $label = $this->getLabel($node);
+            $type = $this->getType($node);
+
             $path = $this->generatePath($node);
             $value = $this->getStorage()->getValue($path, $this->getContext());
 
@@ -143,6 +128,56 @@ class View implements ControllerInterface
             ];
         }
         return $groups;
+    }
+
+    protected function getSourceData(\SimpleXMLElement $node)
+    {
+        if (isset($node['source'])) {
+            return $this->getSource((string)$node['source'])->getSourceData();
+        } else if (isset($node->permittedValues)) {
+            $source = [];
+            foreach ($node->permittedValues->children() as $value) {
+                $source[] = (string)$value;
+            }
+            return $source;
+        }
+        return [];
+    }
+
+    protected function getLabel(\SimpleXMLElement $node)
+    {
+        if (isset($node['label'])) {
+            return (string)$node['label'];
+        }
+        return (string)$node['identifier'];
+    }
+
+    protected function getType(\SimpleXMLElement $node)
+    {
+        $type = 'text';
+        if (isset($node['type'])) {
+            $type = (string)$node['type'];
+        }
+        return $type;
+    }
+
+    protected function getDescription(\SimpleXMLElement $node)
+    {
+        if (isset($node->description)) {
+            return (string)$node->description;
+        }
+        return '';
+    }
+
+    protected function getPermittedValues(\SimpleXMLElement $node)
+    {
+        $permittedValues = [];
+        if (isset($node->permittedValues)) {
+            foreach ($node->permittedValues->value as $value) {
+                $permittedValues[] = (string)$value;
+            }
+        }
+        return $permittedValues;
     }
 
     protected function generatePath(\SimpleXMLElement $node)

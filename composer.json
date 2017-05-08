@@ -2,7 +2,7 @@
   "name": "magium/configuration-manager",
   "description": "Provides a generic plugable configuration management interface similar to Magento",
   "minimum-stability": "stable",
-  "license": "ASL-2.0",
+  "license": "Apache-2.0",
   "authors": [
     {
       "name": "Kevin Schroeder",
