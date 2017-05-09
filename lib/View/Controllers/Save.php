@@ -2,13 +2,8 @@
 
 namespace Magium\Configuration\View\Controllers;
 
-use Interop\Container\ContainerInterface;
 use Magium\Configuration\Config\BuilderInterface;
 use Magium\Configuration\Config\Repository\ConfigInterface;
-use Magium\Configuration\Config\MergedStructure;
-use Magium\Configuration\Config\Repository\ConfigurationRepository;
-use Magium\Configuration\Config\Storage\StorageInterface;
-use Magium\Configuration\View\ViewConfiguration;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\View\Model\JsonModel;
 
@@ -62,7 +57,9 @@ class Save implements ControllerInterface
         if (strpos($request->getHeader('content-type'),  'application/json') === false) {
             throw new InvalidRequestException('MCM save operation requires an application/json content type');
         }
-        $json  = json_decode($request->getBody()->getContents(), true);
+        $body = $request->getBody();
+        $body->rewind();
+        $json  = json_decode($body->getContents(), true);
         if ($json === false) {
             throw new InvalidRequestException('Unable to read JSON string');
         }
