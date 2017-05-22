@@ -54,7 +54,11 @@ class Save implements ControllerInterface
 
     public function read(ServerRequestInterface $request)
     {
-        if (strpos($request->getHeader('content-type'),  'application/json') === false) {
+        $header = $request->getHeader('content-type');
+        if (is_array($header)) {
+            $header = array_shift($header);
+        }
+        if (strpos($header,  'application/json') === false) {
             throw new InvalidRequestException('MCM save operation requires an application/json content type');
         }
         $body = $request->getBody();
