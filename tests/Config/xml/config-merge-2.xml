@@ -5,6 +5,10 @@
     <section identifier="general" label="General">
         <group identifier="website" label="Website">
             <element identifier="title" label="Title">
+                <permittedValues>
+                    <value>My Homepage</value>
+                    <value>Your Homepage</value>
+                </permittedValues>
                 <value>My Homepage</value>
             </element>
             <element identifier="languages" label="Languages" source="Namespace\MySource" type="multi"/>

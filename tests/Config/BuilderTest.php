@@ -4,22 +4,21 @@ namespace Magium\Configuration\Tests\Config;
 
 use Interop\Container\ContainerInterface;
 use Magium\Configuration\Config\Builder;
-use Magium\Configuration\Config\BuilderFactory;
 use Magium\Configuration\Config\BuilderInterface;
-use Magium\Configuration\Config\Repository\ConfigInterface;
-use Magium\Configuration\Config\Repository\ConfigurationRepository;
 use Magium\Configuration\Config\InsufficientContainerException;
 use Magium\Configuration\Config\InvalidArgumentException;
 use Magium\Configuration\Config\InvalidConfigurationLocationException;
 use Magium\Configuration\Config\InvalidDirectoryException;
 use Magium\Configuration\Config\MergedStructure;
 use Magium\Configuration\Config\MissingConfigurationException;
+use Magium\Configuration\Config\Repository\ConfigInterface;
+use Magium\Configuration\Config\Repository\ConfigurationRepository;
 use Magium\Configuration\Config\Storage\StorageInterface;
 use Magium\Configuration\Config\UncallableCallbackException;
 use Magium\Configuration\File\Configuration\ConfigurationFileRepository;
 use Magium\Configuration\File\Configuration\UnsupportedFileTypeException;
-use Magium\Configuration\File\InvalidFileException;
 use Magium\Configuration\File\Configuration\XmlFile;
+use Magium\Configuration\File\InvalidFileException;
 use Magium\Configuration\InvalidConfigurationException;
 use Magium\Configuration\Tests\Container\ModelInjected;
 use PHPUnit\Framework\TestCase;
@@ -79,6 +78,26 @@ class BuilderTest extends TestCase
         )->getMock();
         $builder->expects(self::once())->method('getMergedStructure')->willReturn(null);
         $builder->build();
+    }
+
+    public function testEnsureThatElementChildrenAreIncluded()
+    {
+        $repository = ConfigurationFileRepository::getInstance(
+            [__DIR__],
+            [
+                realpath(__DIR__ . '/xml/config-merge-1.xml'),
+                realpath(__DIR__ . '/xml/config-merge-2.xml')
+            ]
+        );
+        $builder = new Builder(
+            $this->getCacheStorageMock(),
+            $this->getPersistenceStorageMock(),
+            $repository
+        );
+        $merged = $builder->getMergedStructure();
+        $merged->registerXPathNamespace('s', 'http://www.magiumlib.com/Configuration');
+        $thatThing = $merged->xpath('//s:element[@identifier="title"]/descendant::s:value[@identifier]');
+        self::assertCount(0, $thatThing);
     }
 
     public function testBuildConfigurationNewChildren()
