@@ -73,8 +73,8 @@ XML
         self::assertXpathExists($simpleXml, '//input[@type="text" and @name="section1_test_element"]'); // we do this separately to test if the element exists apart from whether it has a value.
         self::assertXpathExists($simpleXml, '//input[@type="text" and @name="section1_test_element" and @value="Element Value"]');
         self::assertXpathExists($simpleXml, '//select[@name="section1_test_permitted"]');
-        self::assertXpathExists($simpleXml, '//select[@name="section1_test_permitted"]/option[.="yes"]');
-        self::assertXpathExists($simpleXml, '//select[@name="section1_test_permitted"]/option[.="no"]');
+        self::assertXpathExists($simpleXml, '//select[@name="section1_test_permitted"]/option[.="yes" and @value="yes"]');
+        self::assertXpathExists($simpleXml, '//select[@name="section1_test_permitted"]/option[.="no" and @value="no"]');
     }
 
     public function getViewConfiguration(array $params = [], $method = 'GET')

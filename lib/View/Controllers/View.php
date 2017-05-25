@@ -137,7 +137,7 @@ class View implements ControllerInterface
         } else if (isset($node->permittedValues)) {
             $source = [];
             foreach ($node->permittedValues->children() as $value) {
-                $source[] = (string)$value;
+                $source[(string)$value] = (string)$value;
             }
             return $source;
         }
