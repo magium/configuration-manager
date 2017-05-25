@@ -309,10 +309,26 @@ class Builder implements BuilderInterface
                 foreach ($newElement->attributes() as $name => $value) {
                     $element[$name] = (string)$value;
                 }
-                foreach ($newElement->children() as $key => $item) {
-                    $element->$key = (string)$item;
-                }
+                $this->mergeAllChildren($element, $newElement);
             }
+        }
+    }
+
+    protected function mergeAllChildren(\SimpleXMLElement $destination, \SimpleXMLElement $source)
+    {
+        foreach ($source->attributes() as $name => $value) {
+            $destination[$name] = (string)$value;
+        }
+        foreach ($source->children() as $key => $item) {
+            $childNodes = $destination->xpath(sprintf('/%s', $key));
+            if (!empty($childNodes) && $childNodes[0] instanceof \SimpleXMLElement) {
+                $element = $childNodes[0];
+            } else {
+                $value = trim((string)$item);
+                $element = $destination->addChild($key, $value);
+            }
+            $this->mergeAllChildren($element, $item);
+
         }
     }
 
