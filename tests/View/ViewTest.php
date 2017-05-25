@@ -14,7 +14,7 @@ use Psr\Http\Message\ServerRequestInterface;
 class ViewTest extends AbstractViewTestCase
 {
 
-    public function testGroupDisplayed()
+    public function testViewRendering()
     {
         $viewConfiguration = $this->getViewConfiguration(['section' => 'section1']);
         $viewManager = $this->getMockBuilder(FrontController::class)->setMethods([
@@ -32,6 +32,12 @@ class ViewTest extends AbstractViewTestCase
         <element identifier="element" label="Element">
             <description>This is a description</description>
         </element>
+        <element identifier="permitted" type="select">
+            <permittedValues>
+                <value>yes</value>
+                <value>no</value>
+            </permittedValues>
+        </element>
     </group>
 </section>
 </magiumConfiguration>
@@ -42,7 +48,7 @@ XML
             ['getValue', 'setValue', 'create']
         )->getMock();
         // This parallels the XML from below.
-        $storage->expects(self::once())->method('getValue')->willReturn('Element Value');
+        $storage->expects(self::any())->method('getValue')->willReturn('Element Value');
         $viewManager->method('getStorage')->willReturn($storage);
         $viewManager->method('getConfiguration')->willReturn(new ConfigurationRepository(<<<XML
 <config>
@@ -66,11 +72,9 @@ XML
         self::assertXpathExists($simpleXml, '//label[.="Element"]');
         self::assertXpathExists($simpleXml, '//input[@type="text" and @name="section1_test_element"]'); // we do this separately to test if the element exists apart from whether it has a value.
         self::assertXpathExists($simpleXml, '//input[@type="text" and @name="section1_test_element" and @value="Element Value"]');
-    }
-
-    public function testPermittedValues()
-    {
-
+        self::assertXpathExists($simpleXml, '//select[@name="section1_test_permitted"]');
+        self::assertXpathExists($simpleXml, '//select[@name="section1_test_permitted"]/option[.="yes"]');
+        self::assertXpathExists($simpleXml, '//select[@name="section1_test_permitted"]/option[.="no"]');
     }
 
     public function getViewConfiguration(array $params = [], $method = 'GET')
