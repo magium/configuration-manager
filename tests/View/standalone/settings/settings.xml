@@ -11,6 +11,13 @@
         <group identifier="contact_form" label="Contact Form">
             <element identifier="title" label="Title" />
             <element identifier="sendto" label="Send To" type="email"/>
+
+            <element identifier="permitted" type="select">
+                <permittedValues>
+                    <value>yes</value>
+                    <value>no</value>
+                </permittedValues>
+            </element>
         </group>
     </section>
 </magiumConfiguration>
