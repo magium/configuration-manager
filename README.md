@@ -73,6 +73,34 @@ Open them up and take a look around.
 
 Take a look inside the `magium-configuration.xml` file.  Much of it is, I believe, self explanatory.  However, note the `persistenceConfiguration` and `cache` nodes.  Those are converted to arrays and passed into the `Zend\Db\Adapter\Adapter` and `Zend\Cache\StorageFactory` classes, respectively.  Note, also, the `contextConfigurationFile` node.  That contains a reference to the next configuration file.
 
+Your magium-configuration.xml file may look something like this:
+
+```
+<?xml version="1.0" encoding="UTF-8" ?>
+<magiumBase xmlns="http://www.magiumlib.com/BaseConfiguration">
+    <persistenceConfiguration>
+        <driver>pdo_mysql</driver>
+        <database>magium_configuration</database>
+        <username>root</username>
+        <password>password</password>
+        <hostname>database</hostname>
+    </persistenceConfiguration>
+    <contextConfigurationFile file="contexts.xml" type="xml"/>
+    <configurationDirectories>
+        <directory>config</directory>
+    </configurationDirectories>
+    <configurationFiles>
+        <file>settings.xml</file>
+    </configurationFiles>
+    <cache>
+        <adapter>redis</adapter>
+        <options>
+            <server>database:6379</server>
+        </options>
+    </cache>
+</magiumBase>
+```
+
 The `contexts.xml` file does not need to be called that; that's just what the CLI creates by default.  It contains a hierarchical list of contexts.  Each context must be uniquely named, but they can be hierarchical.
 
 ```
