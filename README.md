@@ -22,7 +22,7 @@ If you want to see it in action, instead of reading about it, check out the intr
 ## Getting Started
 ### Wiring Configuration
 
-The core object is the [`ConfigurationRepository`](lib/Config/Repository/ConfigurationRepository.php) object.  That is what your application will typically interact with.  The intent is that all you need to do is require a `Config` object as a dependency and it all works out nicely.  
+The core object is the [`ConfigurationRepository`](lib/Config/Repository/ConfigurationRepository.php) object.  That is what your application will typically interact with.  The intent is that all you need to do is require a `ConfigurationRepository` object (or an object implementing `ConfigInterface`)as a dependency and it all works out nicely.  
 
 In other words, this:
 
