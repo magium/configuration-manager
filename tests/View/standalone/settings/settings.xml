@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <magiumConfiguration xmlns="http://www.magiumlib.com/Configuration">
-    <section identifier="website" label="Website" glyphicon="home">
+    <section identifier="website" label="Website" font-awesome="home">
         <group identifier="contact" label="Contact">
             <element identifier="title" label="Title" />
             <element identifier="address" label="Address" type="textarea"/>
@@ -11,7 +11,6 @@
         <group identifier="contact_form" label="Contact Form">
             <element identifier="title" label="Title" />
             <element identifier="sendto" label="Send To" type="email"/>
-
             <element identifier="permitted" type="select">
                 <permittedValues>
                     <value>yes</value>

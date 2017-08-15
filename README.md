@@ -177,6 +177,49 @@ Also, you can provide default values and descriptions:
 </magiumConfiguration>
 ```
 
+That is just the tip of the iceberg of configuration, though.  The configuration can be managed either via the CLI command using `bin/magium-configuration magium:configuration:set` or with an [included](tests/View/standalone/pub/index.php) web-based view manager.  There are additional configuration options to make that experience more valuable.  Following is an example that shows what some of these additional options may look like:
+
+```
+<?xml version="1.0" encoding="UTF-8" ?>
+<magiumConfiguration xmlns="http://www.magiumlib.com/Configuration">
+    <section identifier="website" label="Website" font-awesome="home">
+        <group identifier="contact" label="Contact">
+            <element identifier="title" label="Title" />
+            <element identifier="address" label="Address" type="textarea"/>
+            <element identifier="city" label="City" />
+            <element identifier="state" label="State" source="Magium\Configuration\Source\Political\USStates" type="select"/>
+            <element identifier="phone" label="Phone" type="tel"/>
+        </group>
+        <group identifier="contact_form" label="Contact Form">
+            <element identifier="title" label="Title" />
+            <element identifier="sendto" label="Send To" type="email"/>
+            <element identifier="permitted" type="select">
+                <permittedValues>
+                    <value>yes</value>
+                    <value>no</value>
+                </permittedValues>
+            </element>
+        </group>
+    </section>
+</magiumConfiguration>
+```
+
+`/website` shows the `label` and `font-awesome` attributes, which provides more user friendly configuration interactions.  The `font-awesome` (also `glyphicon` ) attribute decorates the section with an icon from either of those collections.  
+
+On the element side, looking at `website/contact/address`, you can see that there are different types of form fields available.  They are:
+
+* multi
+* select
+* text
+* textarea
+* url
+* tel
+* email
+* date (for future use)
+* datetime (for future use)
+
+ You can also see that the individual elements can be populated from a source when looking at `website/contact/state`.  These sources can be used to prepopulate text fields or provide select options.  See the [source code](lib/Source) for a full list.
+
 #### Configuring Your Application
 
 If you are going to use the basic factory included with the package, wiring MCM is pretty easy.
