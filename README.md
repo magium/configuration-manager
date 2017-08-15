@@ -22,24 +22,27 @@ If you want to see it in action, instead of reading about it, check out the intr
 ## Getting Started
 ### Wiring Configuration
 
-The core object is the [`Config`](lib/Config/Config.php) object.  That is what your application will typically interact with.  The intent is that all you need to do is require a `Config` object as a dependency and it all works out nicely.  
+The core object is the [`ConfigurationRepository`](lib/Config/Repository/ConfigurationRepository.php) object.  That is what your application will typically interact with.  The intent is that all you need to do is require a `Config` object as a dependency and it all works out nicely.  
 
 In other words, this:
 
 ```
-use Magium\Configuration\Config\Config;
+use Magium\Configuration\Config\Repository\ConfigInterface;
 
 class Pinky
 {
 
     protected $brain;
     
-    public function __construct(Config $brain) 
+    public function __construct(ConfigInterface $brain) 
     {
         $this->brain = $brain;
     }
 
 }
+
+$magiumFactory = new \Magium\Configuration\MagiumConfigurationFactory();
+new Pinky($magiumFactory->getConfiguration());
 
 ```
 
