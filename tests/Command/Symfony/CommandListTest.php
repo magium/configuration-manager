@@ -2,6 +2,7 @@
 
 namespace Magium\Configuration\Tests\Command\Symfony;
 
+use Magium\Configuration\Console\Command\ConfigurationBuild;
 use Magium\Configuration\Console\Command\DefaultCommand;
 use Magium\Configuration\Console\Symfony\CommandList;
 use PHPUnit\Framework\TestCase;
@@ -28,7 +29,7 @@ class CommandListTest extends TestCase
             if (!$reflectionClass->isInstantiable() || $reflectionClass->isSubclassOf(\Exception::class)) {
                 continue;
             }
-            $object = new $class();
+            $object = new $class(null, true);
             if ($object instanceof Command) {
                 $consoleName = $object->getName();
                 $appInstance = $application->get($consoleName);
@@ -37,6 +38,17 @@ class CommandListTest extends TestCase
                 self::fail('Command classes need to extend Command: ' . $class);
             }
         }
+    }
+
+    public function testUseShortWorks()
+    {
+        $command = new ConfigurationBuild(null, true);
+        self::assertNotContains('magium:configuration', $command->getName());
+    }
+    public function testUseLongWorks()
+    {
+        $command = new ConfigurationBuild(null, false);
+        self::assertContains('magium:configuration', $command->getName());
     }
 
 }

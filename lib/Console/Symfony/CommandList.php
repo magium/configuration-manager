@@ -17,14 +17,15 @@ class CommandList
 
     public function addCommands(Application $application)
     {
-        $application->add(new DefaultCommand());
-        $application->add(new ConfigurationBuild());
-        $application->add(new ConfigurationGet());
-        $application->add(new ConfigurationSet());
-        $application->add(new ConfigurationListKeys());
-        $application->add(new ContextList());
-        $application->add(new CreateTable());
-        $application->setDefaultCommand(DefaultCommand::COMMAND);
+        $default = new DefaultCommand(null, true);
+        $application->add($default);
+        $application->add(new ConfigurationBuild(null, true));
+        $application->add(new ConfigurationGet(null, true));
+        $application->add(new ConfigurationSet(null, true));
+        $application->add(new ConfigurationListKeys(null, true));
+        $application->add(new ContextList(null, true));
+        $application->add(new CreateTable(null, true));
+        $application->setDefaultCommand($default->getName());
     }
 
 }
