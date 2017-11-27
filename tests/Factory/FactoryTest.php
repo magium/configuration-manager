@@ -6,8 +6,6 @@ use Magium\Configuration\Config\Builder;
 use Magium\Configuration\Config\Context;
 use Magium\Configuration\Config\InvalidConfigurationLocationException;
 use Magium\Configuration\Config\MissingConfigurationException;
-use Magium\Configuration\Config\Repository\ConfigurationRepository;
-use Magium\Configuration\File\Configuration\ConfigurationFileRepository;
 use Magium\Configuration\File\Context\AbstractContextConfigurationFile;
 use Magium\Configuration\File\Context\XmlFile;
 use Magium\Configuration\InvalidConfigurationException;
@@ -28,6 +26,7 @@ class FactoryTest extends TestCase
     {
         $this->configFile[$filename] = __DIR__ . '/../../' . $filename;
         file_put_contents($this->configFile[$filename], $contents);
+        return $this->configFile[$filename];
     }
 
     protected function tearDown()
@@ -52,7 +51,29 @@ class FactoryTest extends TestCase
     {
         $this->setFile();
         $path = realpath($this->configFile[self::CONFIG]);
-        new MagiumConfigurationFactory($path);
+        $factory = new MagiumConfigurationFactory($path);
+
+        self::assertEquals($path, $factory->getMagiumConfigurationFilePath());
+    }
+
+
+    public function testEnvironmentVariableOverrideReturnsValue()
+    {
+        $this->setFile();
+        $factory = new MagiumConfigurationFactory();
+        putenv('MCM_CACHE_OPTIONS_SERVER=boogers');
+        $value = $factory->getEnvironmentVariableOverride('cache/options/server');
+        self::assertEquals('boogers', $value);
+    }
+
+    public function testEnvironmentVariableOverrideXmlValue()
+    {
+        putenv('MCM_CACHE_OPTIONS_SERVER=boogers');
+        $this->setFile(file_get_contents(__DIR__ . '/magium-configuration.xml'));
+        $factory = new MagiumConfigurationFactory();
+        $xml = $factory->getXml();
+        $value = (string)$xml->cache->options->server;
+        self::assertEquals('boogers', $value);
     }
 
     public function testValidateDocumentSucceeds()
@@ -223,8 +244,10 @@ XML
 
     public function testFindExistingConfigFile()
     {
-        $this->setFile();
-        new MagiumConfigurationFactory();
+        $filename = realpath($this->setFile());
+        $factory = new MagiumConfigurationFactory();
+
+        self::assertEquals($filename, $factory->getMagiumConfigurationFilePath());
     }
     public function testInvalidConfigFileThrowsException()
     {

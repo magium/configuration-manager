@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<magium xmlns="http://www.magiumlib.com/BaseConfiguration">
+<magiumBase xmlns="http://www.magiumlib.com/BaseConfiguration">
     <persistenceConfiguration>
         <driver></driver>
         <database></database>
     </persistenceConfiguration>
     <contextConfigurationFile file="" type="xml"/>
-</magium>
+    <cache>
+        <adapter>redis</adapter>
+        <options>
+            <server>database:6379</server>
+        </options>
+    </cache>
+</magiumBase>

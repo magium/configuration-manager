@@ -5,9 +5,9 @@ namespace Magium\Configuration;
 use Magium\Configuration\Config\BuilderFactory;
 use Magium\Configuration\Config\BuilderFactoryInterface;
 use Magium\Configuration\Config\BuilderInterface;
-use Magium\Configuration\Config\Repository\ConfigurationRepository;
 use Magium\Configuration\Config\Context;
 use Magium\Configuration\Config\MissingConfigurationException;
+use Magium\Configuration\Config\Repository\ConfigurationRepository;
 use Magium\Configuration\File\Context\AbstractContextConfigurationFile;
 use Magium\Configuration\Manager\CacheFactory;
 use Magium\Configuration\Manager\Manager;
@@ -56,6 +56,59 @@ class MagiumConfigurationFactory implements MagiumConfigurationFactoryInterface
         $this->baseDir = dirname($this->file);
         chdir($this->baseDir);
         $this->xml = simplexml_load_file($magiumConfigurationFile);
+        $this->overrideWithEnvironmentVariables();
+    }
+
+    protected function overrideWithEnvironmentVariables()
+    {
+        $document = dom_import_simplexml($this->xml)->ownerDocument;
+        $xpath = new \DOMXPath($document);
+        $elements = $xpath->query('//*');
+        foreach ($elements as $element) {
+            if ($element instanceof \DOMElement) {
+                $paths = [];
+                do {
+                    $paths[] = $element->nodeName;
+                } while ($element = $element->parentNode);
+
+                // Get rid of the base node and base document.  They mean nothing to us.
+                array_pop($paths);
+                array_pop($paths);
+                if ($paths) {
+                    $paths = array_reverse($paths);
+                    $path = implode('/', $paths);
+                    $value = $this->getEnvironmentVariableOverride($path);
+                    if ($value !== null) {
+                        foreach ($paths as &$path) {
+                            $path = 's:' . $path;
+                        }
+                        $path = implode('/', $paths);
+                        $xpathExpression = '/s:magiumBase/' . $path;
+                        $this->xml->registerXPathNamespace('s', 'http://www.magiumlib.com/BaseConfiguration');
+                        $simpleXmlElement = $this->xml->xpath($xpathExpression);
+                        if ($simpleXmlElement) {
+                            $simpleXmlElement = $simpleXmlElement[0];
+                            $simpleXmlElement[0] = $value; // self reference
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+
+    /**
+     * @return \SimpleXMLElement
+     */
+
+    public function getXml()
+    {
+        return $this->xml;
+    }
+
+    public function getMagiumConfigurationFilePath()
+    {
+        return $this->file;
     }
 
     protected static function getInstance($magiumConfigurationFile = null, $context = ConfigurationRepository::CONTEXT_DEFAULT)
@@ -92,6 +145,16 @@ class MagiumConfigurationFactory implements MagiumConfigurationFactoryInterface
     public function setContext($context)
     {
         $this->context = $context;
+    }
+
+    public function getEnvironmentVariableOverride($path)
+    {
+        $pathTranslated = 'MCM_' . str_replace('/', '_', strtoupper($path));
+        $value = getenv($pathTranslated);
+        if (!$value) {
+            return null;
+        }
+        return $value;
     }
 
     protected function buildContextFile()

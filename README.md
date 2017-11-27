@@ -72,7 +72,7 @@ Open them up and take a look around.
 
 > A quick word on XML.  Why is he using XML?  It's not cool anymore!  YAML or JSON would make me feel much better.
 >
-> The answer is that neither YAML, JSON, nor PHP files are self documenting.  I'm sure there are tools out there that might allow you to do some of that but there is nothing out there that compares to what is available for XML.  I am a firm believer that some for of introspection which can be used for error detection or, more importantly, code completion, significantly reduce the amount of startup time.  It simply requires less memorizing and less copy-and-pasting.  But that said, if you look in the /lib directory you will find that the intention is to support all of those formats for the masochists out there.  I just haven't done it yet.
+> The answer is that neither YAML, JSON, nor PHP files are self documenting.  I'm sure there are tools out there that might allow you to do some of that but there is nothing out there that compares to what is available for XML.  I am a firm believer that when introspection is be used for error detection or, more importantly, code completion, it significantly reduce the amount of time spent on getting things to work.  It simply requires less memorizing and less copy-and-pasting.  But that said, if you look in the /lib directory you will find that the intention is to support all of those formats for the masochists out there.  
 
 Take a look inside the `magium-configuration.xml` file.  Much of it is, I believe, self explanatory.  However, note the `persistenceConfiguration` and `cache` nodes.  Those are converted to arrays and passed into the `Zend\Db\Adapter\Adapter` and `Zend\Cache\StorageFactory` classes, respectively.  Note, also, the `contextConfigurationFile` node.  That contains a reference to the next configuration file.
 
@@ -219,6 +219,23 @@ On the element side, looking at `website/contact/address`, you can see that ther
 * datetime (for future use)
 
  You can also see that the individual elements can be populated from a source when looking at `website/contact/state`.  These sources can be used to prepopulate text fields or provide select options.  See the [source code](lib/Source) for a full list.
+ 
+#### Environment Variable Overrides
+
+You can also override the values in your `magium-configuration.xml` file by using environment variables. This allows you to change the base settings, such as the local cache adapter host name, based off of the environment that you are running in.  For example, your development environment might have a Redis adapter sitting on the `localhost` but in production it lives at `cache.myhost`.   To handle this, set the value for `cache/options/server` to `cache.myhost` in the source code (to default to production).  Then in your *development* environment add this to your webserver config (or something like it):
+
+```
+location ~ \.php$ {
+    fastcgi_pass     unix:/your_sock_location/nginxFastCGI.sock;
+    fastcgi_param    SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    fastcgi_param    MCM_CACHE_OPTIONS_SERVER=localhost;
+    include          fastcgi_params;
+}
+```
+
+Any value in the `magium-configuration.xml` file can be overridden and replaced with an environment variable by creating the variable with the prefix `MCM_` and appending the node path to the node that you want to change.  
+
+For example, looking at what we did above, it was for the configuration node `cache/options/server` and so we named our environment variable `MCM_CACHE_OPTIONS_SERVER`.
 
 #### Configuring Your Application
 
