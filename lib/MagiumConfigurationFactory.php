@@ -74,7 +74,7 @@ class MagiumConfigurationFactory implements MagiumConfigurationFactoryInterface
                 // Get rid of the base node and base document.  They mean nothing to us.
                 array_pop($paths);
                 array_pop($paths);
-                if ($paths) {
+                if (!empty($paths)) {
                     $paths = array_reverse($paths);
                     $path = implode('/', $paths);
                     $value = $this->getEnvironmentVariableOverride($path);
@@ -86,7 +86,7 @@ class MagiumConfigurationFactory implements MagiumConfigurationFactoryInterface
                         $xpathExpression = '/s:magiumBase/' . $path;
                         $this->xml->registerXPathNamespace('s', 'http://www.magiumlib.com/BaseConfiguration');
                         $simpleXmlElement = $this->xml->xpath($xpathExpression);
-                        if ($simpleXmlElement) {
+                        if (!empty($simpleXmlElement)) {
                             $simpleXmlElement = $simpleXmlElement[0];
                             $simpleXmlElement[0] = $value; // self reference
                         }
