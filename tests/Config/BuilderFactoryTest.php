@@ -121,6 +121,44 @@ XML
         self::assertEquals('mongodb://username:password@hostname:27017', $dsn);
     }
 
+    public function testExceptionThrownWithoutADriver()
+    {
+        $this->expectException(\Exception::class);
+        $config = new \SimpleXMLElement(<<<XML
+<?xml version="1.0" encoding="UTF-8" ?>
+<magiumBase xmlns="http://www.magiumlib.com/BaseConfiguration">
+    <persistenceConfiguration />
+</magiumBase>
+XML
+        );
+        $builderFactory = new BuilderFactory(
+            new \SplFileInfo(__DIR__),
+            $config,
+            $this->getMockBuilder(AbstractContextConfigurationFile::class)->disableOriginalConstructor()->getMock()
+        );
+        $builderFactory->getPersistence();
+    }
+
+    public function testExceptionThrownWithoutADatabase()
+    {
+        $this->expectException(\Exception::class);
+        $config = new \SimpleXMLElement(<<<XML
+<?xml version="1.0" encoding="UTF-8" ?>
+<magiumBase xmlns="http://www.magiumlib.com/BaseConfiguration">
+    <persistenceConfiguration>
+    <driver>mongo</driver>
+    </persistenceConfiguration>
+</magiumBase>
+XML
+        );
+        $builderFactory = new BuilderFactory(
+            new \SplFileInfo(__DIR__),
+            $config,
+            $this->getMockBuilder(AbstractContextConfigurationFile::class)->disableOriginalConstructor()->getMock()
+        );
+        $builderFactory->getPersistence();
+    }
+
     public function testMongoDsnWithRequiredOnly()
     {
         $config = new \SimpleXMLElement(<<<XML

@@ -47,6 +47,9 @@ class BuilderFactory implements BuilderFactoryInterface
 
     public function getRelationalAdapter()
     {
+        if (!class_exists(Adapter::class)) {
+            throw new \Exception('Please make sure you have zendframework/zend-db installed for data storage');
+        }
         if (!$this->adapter instanceof Adapter) {
             $config = $this->getDatabaseConfiguration();
             $this->adapter = new Adapter($config);
@@ -59,11 +62,11 @@ class BuilderFactory implements BuilderFactoryInterface
         $config = $this->getDatabaseConfiguration();
         $dsn = 'mongodb://';  //[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database][?options]]';
         $at = false;
-        if (isset($config['username'])) {
+        if (!empty($config['username'])) {
             $dsn .= $config['username'];
             $at = true;
         }
-        if (isset($config['password'])) {
+        if (!empty($config['password'])) {
             $dsn .= ':'.$config['password'];
             $at = true;
         }
@@ -71,7 +74,7 @@ class BuilderFactory implements BuilderFactoryInterface
             $dsn .= '@';
         }
         $dsn .= $config['hostname'];
-        if (isset($config['port'])) {
+        if (!empty($config['port'])) {
             $dsn .= ':' . $config['port'];
         }
         return $dsn;
@@ -79,15 +82,26 @@ class BuilderFactory implements BuilderFactoryInterface
 
     public function getMongoAdapter()
     {
+        if (!class_exists(Client::class)) {
+            throw new \Exception('Please make sure you have mongodb/mongodb installed for data storage');
+        }
         $config = $this->getDatabaseConfiguration();
         $dsn = $this->getMongoDsnString();
         $client = new Client($dsn);
-        $collection = isset($config['table'])?$config['table']:Mongo::TABLE;
+        $collection = empty($config['table'])?Mongo::TABLE:$config['table'];
         return new Mongo($client->selectCollection($config['database'], $collection));
     }
 
     public function getPersistence()
     {
+        if (empty($this->configuration->persistenceConfiguration->driver)) {
+            throw new \Exception('Please set your driver type either corresponding to its Zend DB adapter '
+                . 'name or the specific document database, such as mongo.  Ensure that you have either installed '
+                . 'zendframework/zend-db or mongodb/mongodb depending on where you want to store your configuration.');
+        }
+        if (empty($this->configuration->persistenceConfiguration->database)) {
+            throw new \Exception('You must specify a database in your persistenceConfiguration');
+        }
         if (stripos($this->configuration->persistenceConfiguration->driver, 'mongo') === 0) {
             return $this->getMongoAdapter();
         }
@@ -125,7 +139,7 @@ class BuilderFactory implements BuilderFactoryInterface
         $config = json_encode($this->configuration->configurationFiles);
         $config = json_decode($config, true);
         $files = [];
-        if (isset($config['file'])) {
+        if (!empty($config['file'])) {
             if (!is_array($config['file'])) {
                 $config['file'] = [$config['file']];
             }
