@@ -6,7 +6,7 @@ php:
 
 before_script:
   - composer self-update
-  - composer install --prefer-source --no-interaction --dev
+  - composer install --prefer-source --no-interaction --ignore-platform-reqs
 
 script:
   vendor/bin/phpunit --configuration tests/phpunit.xml.dist --coverage-text
