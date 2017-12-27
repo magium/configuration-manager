@@ -2,11 +2,13 @@
 
 namespace Magium\Configuration\Config;
 
+use Magium\Configuration\Config\Storage\Mongo;
 use Magium\Configuration\Config\Storage\RelationalDatabase;
 use Magium\Configuration\File\Configuration\ConfigurationFileRepository;
 use Magium\Configuration\File\Context\AbstractContextConfigurationFile;
 use Magium\Configuration\InvalidConfigurationException;
 use Magium\Configuration\Manager\CacheFactory;
+use MongoDB\Client;
 use Zend\Db\Adapter\Adapter;
 
 class BuilderFactory implements BuilderFactoryInterface
@@ -36,19 +38,60 @@ class BuilderFactory implements BuilderFactoryInterface
         return $cacheFactory->getCache($element);
     }
 
-    public function getAdapter()
+    public function getDatabaseConfiguration()
+    {
+        $config = json_encode($this->configuration->persistenceConfiguration);
+        $config = json_decode($config, true);
+        return $config;
+    }
+
+    public function getRelationalAdapter()
     {
         if (!$this->adapter instanceof Adapter) {
-            $config = json_encode($this->configuration->persistenceConfiguration);
-            $config = json_decode($config, true);
+            $config = $this->getDatabaseConfiguration();
             $this->adapter = new Adapter($config);
         }
         return $this->adapter;
     }
 
+    public function getMongoDsnString()
+    {
+        $config = $this->getDatabaseConfiguration();
+        $dsn = 'mongodb://';  //[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database][?options]]';
+        $at = false;
+        if (isset($config['username'])) {
+            $dsn .= $config['username'];
+            $at = true;
+        }
+        if (isset($config['password'])) {
+            $dsn .= ':'.$config['password'];
+            $at = true;
+        }
+        if ($at) {
+            $dsn .= '@';
+        }
+        $dsn .= $config['hostname'];
+        if (isset($config['port'])) {
+            $dsn .= ':' . $config['port'];
+        }
+        return $dsn;
+    }
+
+    public function getMongoAdapter()
+    {
+        $config = $this->getDatabaseConfiguration();
+        $dsn = $this->getMongoDsnString();
+        $client = new Client($dsn);
+        $collection = isset($config['table'])?$config['table']:Mongo::TABLE;
+        return new Mongo($client->selectCollection($config['database'], $collection));
+    }
+
     public function getPersistence()
     {
-        $persistence = new RelationalDatabase($this->getAdapter(), $this->contextFile);
+        if (stripos($this->configuration->persistenceConfiguration->driver, 'mongo') === 0) {
+            return $this->getMongoAdapter();
+        }
+        $persistence = new RelationalDatabase($this->getRelationalAdapter(), $this->contextFile);
         return $persistence;
     }
 

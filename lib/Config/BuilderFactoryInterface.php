@@ -29,7 +29,7 @@ interface BuilderFactoryInterface
      * @return Adapter
      */
 
-    public function getAdapter();
+    public function getRelationalAdapter();
 
     /**
      * @return Storage\StorageInterface

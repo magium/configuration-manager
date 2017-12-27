@@ -24,23 +24,26 @@
     "zendframework/zend-http": "^2",
     "zendframework/zend-form": "^2",
     "zendframework/zend-i18n": "^2",
-    "zendframework/zend-json": "^2"
+    "zendframework/zend-json": "^2",
+    "mongodb/mongodb": "^1.2",
+    "zendframework/zend-db": "^2.0"
   },
   "require": {
     "zendframework/zend-cache": "^2.0",
     "psr/container": "^1",
-    "zendframework/zend-db": "^2.0",
     "symfony/console": "~2.3|~3.0",
     "psr/http-message": "^1.0",
     "symfony/yaml": "^2"
   },
   "suggest": {
-    "zendframework/zend-psr7bridge": "^0.1",
-    "zendframework/zend-view": "^2",
-    "zendframework/zend-http": "^2",
-    "zendframework/zend-form": "^2",
-    "zendframework/zend-i18n": "^2",
-    "zendframework/zend-json": "^2"
+    "zendframework/zend-psr7bridge": "For use with the optional view layer",
+    "zendframework/zend-view": "For use with the optional view layer",
+    "zendframework/zend-http": "For use with the optional view layer",
+    "zendframework/zend-form": "For use with the optional view layer",
+    "zendframework/zend-i18n": "For use with the optional view layer",
+    "zendframework/zend-json": "For use with the optional view layer",
+    "mongodb/mongodb": "If you intend to use MongoDB for your configuration storage",
+    "zendframework/zend-db": "If you intend to use a relational DB for your configuration storage"
     },
   "bin": ["bin/magium-configuration"]
 }

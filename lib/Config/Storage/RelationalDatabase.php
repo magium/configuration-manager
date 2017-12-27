@@ -21,16 +21,18 @@ class RelationalDatabase implements StorageInterface
     protected $adapter;
     protected $configurationFile;
     protected $data = [];
+    protected $table;
 
     public function __construct(
         Adapter $adapter,
-        AbstractContextConfigurationFile $context
+        AbstractContextConfigurationFile $context,
+        $table = self::TABLE
     )
     {
         $adapter->getDriver()->getConnection()->connect(); // Force a consistent connect point
         $this->adapter = $adapter;
         $this->configurationFile = $context;
-
+        $this->table = $table;
     }
 
     public function getContexts()
@@ -158,7 +160,7 @@ class RelationalDatabase implements StorageInterface
 
     public function create()
     {
-        $table = new CreateTable(self::TABLE);
+        $table = new CreateTable($this->table);
         $table->addColumn(new Varchar('path', 255));
         $table->addColumn(new Text('value'));
         $table->addColumn(new Varchar('context', 255));

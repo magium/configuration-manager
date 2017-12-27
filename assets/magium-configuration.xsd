@@ -33,6 +33,7 @@
         <xs:sequence>
             <xs:element type="xs:string" name="driver" />
             <xs:element type="xs:string" name="database" />
+            <xs:element type="xs:string" name="table" minOccurs="0"/>
             <xs:element type="xs:string" name="username" minOccurs="0"/>
             <xs:element type="xs:string" name="password"  minOccurs="0"/>
             <xs:element type="xs:string" name="hostname"  minOccurs="0"/>
