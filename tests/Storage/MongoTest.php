@@ -11,6 +11,14 @@ use PHPUnit\Framework\TestCase;
 class MongoTest extends TestCase
 {
 
+    protected function setUp()
+    {
+        if (!extension_loaded('mongodb')) {
+            $this->markTestSkipped('Mongo extension not installed');
+        }
+        parent::setUp();
+    }
+
     public function testGetOnNullReturnsNull()
     {
         $collection = $this->getMockBuilder(Collection::class)->disableOriginalConstructor()
