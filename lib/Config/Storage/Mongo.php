@@ -46,9 +46,12 @@ class Mongo implements StorageInterface
         ]);
         $paths = explode('/', $path);
         if ($document === null) {
-            $document = [];
+            $document = [
+                'context' => $context,
+                'document'=> []
+            ];
         }
-        $document[$paths[0]][$paths[1]][$paths[2]] = $value;
+        $document['document'][$paths[0]][$paths[1]][$paths[2]] = $value;
         if (isset($document['_id'])) {
             $this->mongo->replaceOne(['_id' => $document['_id']], $document);
             return;

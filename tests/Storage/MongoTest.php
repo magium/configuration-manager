@@ -55,7 +55,10 @@ class MongoTest extends TestCase
             'context' => ConfigInterface::CONTEXT_DEFAULT
         ]);
         $collection->expects(self::once())->method('insertOne')->willReturn(null)->with([
-            'a' => ['b' => ['c' => true]]
+            'context' => ConfigInterface::CONTEXT_DEFAULT,
+            'document' => [
+                'a' => ['b' => ['c' => true]]
+            ]
         ]);
         $mongo = new Mongo($collection);
         $mongo->setValue('a/b/c', true);
@@ -65,10 +68,13 @@ class MongoTest extends TestCase
     {
         $storageDocument = new BSONDocument([
             '_id' => new ObjectId(),
-            'a' => ['b' => ['c' => true]]
+            'context' => ConfigInterface::CONTEXT_DEFAULT,
+            'document' => [
+                'a' => ['b' => ['c' => true]]
+            ]
         ]);
         $storageDocumentTest = clone $storageDocument;
-        $storageDocumentTest['a']['b']['c'] = false;
+        $storageDocumentTest['document']['a']['b']['c'] = false;
         $collection = $this->getMockBuilder(Collection::class)->disableOriginalConstructor()
             ->setMethods(['findOne', 'replaceOne'])->getMock();
         $collection->expects(self::once())->method('findOne')->willReturn($storageDocument)->with(
