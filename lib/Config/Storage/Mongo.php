@@ -31,10 +31,13 @@ class Mongo implements StorageInterface
         ]);
         $paths = explode('/', $path);
         if ($document === null) {
-            $document = [];
+            $document = [
+                'context' => $context,
+                'document'=> []
+            ];
         }
-        if (isset($document[$paths[0]][$paths[1]][$paths[2]])) {
-            return $document[$paths[0]][$paths[1]][$paths[2]];
+        if (isset($document['document'][$paths[0]][$paths[1]][$paths[2]])) {
+            return $document['document'][$paths[0]][$paths[1]][$paths[2]];
         }
         return null;
     }

@@ -1,6 +1,7 @@
 <?php
 
 namespace Magium\Configuration\Tests\Storage;
+
 use Magium\Configuration\Config\Repository\ConfigInterface;
 use Magium\Configuration\Config\Storage\Mongo;
 use MongoDB\BSON\ObjectId;
@@ -35,7 +36,9 @@ class MongoTest extends TestCase
     {
         $storageDocument = new BSONDocument([
             '_id' => new ObjectId(),
-            'a' => ['b' => ['c' => 'test']]
+            'document' => [
+                'a' => ['b' => ['c' => 'test']]
+            ]
         ]);
         $collection = $this->getMockBuilder(Collection::class)->disableOriginalConstructor()
             ->setMethods(['findOne', 'insertOne'])->getMock();
