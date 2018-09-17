@@ -7,6 +7,14 @@ use PHPUnit\Framework\TestCase;
 
 class YamlConfigurationRepositoryTest extends TestCase
 {
+    protected function setUp()
+    {
+        if (!class_exists('Symfony\Component\Yaml\Yaml')) {
+            $this->markTestSkipped(
+                'The package symfony/yaml is not available.'
+            );
+        }
+    }
 
     public function testXpath()
     {
