@@ -29,12 +29,10 @@
     "zendframework/zend-db": "^2.0"
   },
   "require": {
-    "php": "^7.1.3",
     "zendframework/zend-cache": "^2.0",
     "psr/container": "^1",
     "symfony/console": "~2.3|~3.0|^4.0",
-    "psr/http-message": "^1.0",
-    "symfony/yaml": "^2.0|^4.0"
+    "psr/http-message": "^1.0"
   },
   "suggest": {
     "zendframework/zend-psr7bridge": "For use with the optional view layer",
@@ -44,7 +42,8 @@
     "zendframework/zend-i18n": "For use with the optional view layer",
     "zendframework/zend-json": "For use with the optional view layer",
     "mongodb/mongodb": "If you intend to use MongoDB for your configuration storage",
-    "zendframework/zend-db": "If you intend to use a relational DB for your configuration storage"
+    "zendframework/zend-db": "If you intend to use a relational DB for your configuration storage",
+    "symfony/yaml": "If you intend to use yaml for parsing configuration files"
     },
   "bin": ["bin/magium-configuration"]
 }
